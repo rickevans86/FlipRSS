@@ -46,5 +46,11 @@ first and the emulator job is conditional on supported host OS/architecture.
 Removed hosted-Ubuntu sudo/KVM host modifications and duplicate branch-push runs.
 Workflow syntax checked with actionlint (custom runner label explicitly configured)
 and git diff --check. No application source changes or repeated local app tests.
-New remote run results pending publication; historical billing failure above
+Retry run 43646504809 was created and confirmed queued for `SelfHosted`, with
+no runner assigned at last observation. Subsequent records-only push may create
+a replacement run; check PR #3 for the latest status. No new build or interaction
+results are claimed. Runner must be online, accessible to the repository and
+carry the actual `SelfHosted` label (not merely that name).
+Workflow change committed as `70171b3`; issue restored to `status:review`.
+Remote push confirmed; no merge performed. Historical billing failure above historical billing failure above
 refers to GitHub-hosted jobs, not the new self-hosted attempt.

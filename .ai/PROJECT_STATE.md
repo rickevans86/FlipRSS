@@ -38,4 +38,6 @@ live data/cache, real article rendering and UX refinement after device feedback.
 ## CI retry — 2026-11-15 (Codex)
 
 Rick added runner label `SelfHosted`; workflow routed to it for #2 / PR #3.
-New run pending. Emulator action is limited to x64 Linux/macOS hosts.
+Retry run 43646504809 confirmed queued with label `SelfHosted`; no runner
+assigned/no new tests executed at last observation. Check PR #3 for latest run
+following record synchronization. Emulator action is limited to x64 Linux/macOS hosts.
