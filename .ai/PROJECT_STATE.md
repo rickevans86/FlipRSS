@@ -23,6 +23,9 @@ GReader API. Equal UX pillars: magazine grid, swipe reader and topic sections.
 Local debug APK, test APK, unit tests (3) and lint build successfully. Device UI
 execution is pending CI or Rick’s device: cloud emulator startup was blocked by
 workspace disk limits; KVM is unavailable. No manual visual/device check claimed.
+GitHub Actions run 43603822915 could not start its jobs because GitHub reports
+failed account payments or spending-limit restrictions. CI device validation and
+APK artifact creation are blocked; Rick can build/run locally.
 Lint has non-blocking dependency update / backup configuration warnings; see PR.
 The reader slides horizontally; a 3D flip animation is not implemented.
 

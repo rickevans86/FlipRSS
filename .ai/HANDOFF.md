@@ -7,7 +7,7 @@ bundled sample stories/photos, Today magazine grid, topic sections/filtering,
 full-screen swipe reader, saved/read persistence, Saved view, tests and CI.
 Corrected stale bootstrap state using merged PR #1 and current GitHub history.
 
-**In progress:** Awaiting CI/device results and independent review; no further implementation claimed.
+**In progress:** Awaiting device results and independent review; CI blocked by GitHub billing; no further implementation claimed.
 
 **Branch/PR:** `codex/2-prototype` → [PR #3](https://github.com/rickevans86/FlipRSS/pull/3) (open, unmerged). Issue #2 is `ai:codex`, `status:review`.
 
@@ -18,8 +18,13 @@ CI includes API 30 emulator tests for reading, saving and topic navigation.
 No manual visual/device verification claimed. Non-blocking lint warnings remain
 for newer dependency versions and Android backup configuration.
 
-**Blockers:** No implementation blocker. Live FreshRSS functionality is outside
-this demo; all stories are clearly marked sample content. Device/CI interaction
+**Blockers:** GitHub Actions jobs did not start: GitHub reports failed account
+payments or spending-limit restrictions (run 43603822915). No CI APK artifact is
+available. Rick can run the documented Gradle checks locally or restore Actions
+billing availability. No code/test failure from CI is claimed.
+
+Live FreshRSS functionality is outside
+this demo; all stories are clearly marked sample content. Device interaction
 results and Rick’s independent reviewer selection are pending.
 
 **Next action:** Rick to try the debug build, name an independent reviewer, and
