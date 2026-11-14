@@ -1,34 +1,32 @@
 # PROJECT_STATE
 
-_Current project overview. Keep this to the present state of the repo._
+## Product
 
-## What FlipRSS is
+FlipRSS is a native Kotlin/Jetpack Compose Android client planned for the FreshRSS
+GReader API. Equal UX pillars: magazine grid, swipe reader and topic sections.
 
-A native Android client for a self-hosted FreshRSS instance that presents feeds in a
-Flipboard-style experience. Three experience pillars (all equal priority, per Rick):
+## Current state
 
-1. **Magazine card grid** — large cover images, varied tile sizes, clean typography.
-2. **Swipe/flip reader** — full-screen, one story per page, flip between stories.
-3. **Topic sections** — content grouped into named sections (FreshRSS folders/tags)
-   you move between.
+- Claude’s coordination bootstrap is merged in PR #1 (`b63f43b`).
+- Codex’s Issue #2 branch `codex/2-prototype` adds an offline UI prototype:
+  image-led Today grid, topic filtering/browsing, horizontal article pager,
+  vertical article scrolling, persistent local bookmarks/read flags and Saved view.
+- Six original fictional sample stories and bundled Unsplash photos. No server,
+  credentials or internet permission; no live FreshRSS integration yet.
+- Gradle wrapper, Android project, unit/instrumentation tests and build/emulator CI.
+- Toolchain: Kotlin 2.1.20, Compose BOM 2025.03.01, AGP 8.9.1, Gradle 8.11.1,
+  JDK 17+; min SDK 26, compile/target SDK 35. Versions are pinned for this prototype.
 
-## Backend
+## Validation and limitations
 
-FreshRSS GReader API at `<instance>/api/greader.php`, reachable over the public
-internet. Native HTTP client connects directly (no CORS proxy needed). Auth via
-`ClientLogin` (username + FreshRSS API password) → `GoogleLogin auth=<token>` header.
+Local debug APK, test APK, unit tests (3) and lint build successfully. Device UI
+execution is pending CI or Rick’s device: cloud emulator startup was blocked by
+workspace disk limits; KVM is unavailable. No manual visual/device check claimed.
+Lint has non-blocking dependency update / backup configuration warnings; see PR.
+The reader slides horizontally; a 3D flip animation is not implemented.
 
-## Current status
+## Next
 
-- **Stage:** Bootstrap. Repo contains `README.md` and this coordination system.
-- **No application code yet.** Stack is agreed (see `AGENTS.md` → PROJECT DETAILS)
-  but not scaffolded.
-- **Next:** stand up the Gradle/Compose project skeleton, then the API layer, then
-  the three UI pillars. Tracked as GitHub Issues.
-
-## Environment constraints
-
-- Gradle/Android builds are run by Rick locally (Android Studio) or in CI; the AI
-  cloud sessions cannot assume access to the Android SDK or a device.
-- Rick builds and releases Android apps already (maintains a Mihon fork), so the
-  deliverable is a buildable project, not a pre-compiled APK.
+Rick reviews the prototype and names an independent AI reviewer. Rick alone merges.
+Proposed future work (not yet assigned): FreshRSS GReader client + secure auth,
+live data/cache, real article rendering and UX refinement after device feedback.

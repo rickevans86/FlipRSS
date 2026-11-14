@@ -1,7 +1,11 @@
 # FILE_OWNERSHIP
 
-Planned files for in-progress tasks only. Claude’s bootstrap PR #1 is merged.
+Planned file modifications for in-progress tasks only.
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-| `app/**`, `gradle/**`, root Gradle files/wrappers, `.github/workflows/**`, `README.md`, `AGENTS.md`, `.ai/**` | #2 Android prototype | Codex | `codex/2-prototype` |
+| — | No implementation files currently claimed | — | — |
+
+Claude’s bootstrap merged in PR #1. Codex completed implementation for #2;
+its proposed changes are on `codex/2-prototype`, awaiting independent review.
+Check open PRs before claiming overlapping files.

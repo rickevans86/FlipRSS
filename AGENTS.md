@@ -14,8 +14,7 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
   instance. It presents the user's feeds in a Flipboard-style reading experience:
   a magazine card grid, a full-screen swipe/flip article reader, and content
   grouped into topic sections (FreshRSS folders/tags).
-- **Stack:** Kotlin, Jetpack Compose (Material 3), Android (min SDK TBD, target
-  latest stable).
+- **Stack:** Kotlin, Jetpack Compose (Material 3), Android (min SDK 26, compile/target SDK 35 for the prototype).
 - **Key libraries (planned):** Retrofit + OkHttp (FreshRSS Google Reader API),
   Kotlin Coroutines/Flow, Coil (image loading), Jsoup (extract cover images from
   item HTML), Jetpack DataStore + EncryptedSharedPreferences (credentials/token),
@@ -31,9 +30,9 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 - **Test:** `./gradlew test` (unit) and `./gradlew connectedAndroidTest` (instrumented).
 - **Lint / format:** `./gradlew lint`; code style via ktlint/detekt if added.
 
-> Status: the project is at bootstrap stage (README only). The stack above is the
-> agreed design, not yet implemented. Update these commands as the Gradle project
-> lands. Items that cannot be determined yet are flagged in `.ai/DECISIONS.md`.
+> Status: Issue #2 adds the offline Compose prototype and Gradle project.
+> Networking, authentication and offline feed caching remain planned. Build with
+> JDK 17+ and Android SDK 35. See README.md for prototype use and CI checks.
 
 ---
 
