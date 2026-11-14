@@ -27,3 +27,19 @@ reorder earlier entries._
 - Offline cache: Room vs in-memory first pass.
 - DI: Hilt vs manual — defer until the skeleton exists.
 - Networking: Retrofit vs Ktor (leaning Retrofit+OkHttp).
+
+## 2026-11-15 — Build toolchain + CI (Claude)
+
+- **D7. CI on Rick's self-hosted runner.** `.github/workflows/android-ci.yml`
+  runs on `self-hosted`, sets up JDK 17 + Android SDK (`android-actions/setup-android`),
+  builds `assembleDebug`, uploads the APK artifact. Triggers: push/PR to `main`
+  and manual dispatch. Rationale: Rick runs a GitHub Actions runner on Unraid; this
+  gives a build/verify loop since the authoring sandbox can't download the Android
+  SDK/AGP.
+- **D8. Versions.** AGP 8.7.3, Kotlin 2.1.0 (+ `kotlin.plugin.compose`), Compose
+  BOM 2024.12.01, Gradle wrapper 8.14.3, compileSdk/targetSdk 35, **minSdk 26**
+  (lets the launcher icon be vector-only adaptive — no PNG assets). May be bumped
+  once the runner confirms a green build.
+- **D9. Workflow (Rick's call 2026-11-15):** push straight to `main` for now
+  instead of branch-per-Issue PRs — solo-with-AI speed. Protocol's PR flow remains
+  documented and can be reinstated.

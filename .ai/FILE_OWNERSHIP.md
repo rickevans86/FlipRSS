@@ -5,7 +5,7 @@ claim a task; remove them in the PR that completes it._
 
 | Files / paths | Task (Issue) | Agent | Branch |
 |---------------|--------------|-------|--------|
-| `AGENTS.md`, `.ai/*` | Coordination bootstrap (no Issue) | Claude | `claude/coordination-setup` |
+| _none_ | — | — | — |
 
-_Once this bootstrap PR merges, the row above is removed. No feature files are
-claimed yet._
+_No cross-agent work in progress. (Workflow is currently push-to-main — see
+DECISIONS D9.)_

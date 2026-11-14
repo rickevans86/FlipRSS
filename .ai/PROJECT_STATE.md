@@ -20,11 +20,13 @@ internet. Native HTTP client connects directly (no CORS proxy needed). Auth via
 
 ## Current status
 
-- **Stage:** Bootstrap. Repo contains `README.md` and this coordination system.
-- **No application code yet.** Stack is agreed (see `AGENTS.md` → PROJECT DETAILS)
-  but not scaffolded.
-- **Next:** stand up the Gradle/Compose project skeleton, then the API layer, then
-  the three UI pillars. Tracked as GitHub Issues.
+- **Stage:** Skeleton + CI. Buildable Kotlin/Compose app shell (landing screen
+  only) with a committed Gradle wrapper and an Android CI workflow that builds the
+  debug APK on Rick's self-hosted runner.
+- **Verified:** Not yet — awaiting the first green run on the runner (the authoring
+  sandbox can't download the Android SDK/AGP).
+- **Next:** FreshRSS GReader API client + login, then the three UI pillars
+  (magazine grid, swipe/flip reader, topic sections).
 
 ## Environment constraints
 
