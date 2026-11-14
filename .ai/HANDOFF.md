@@ -7,7 +7,9 @@ bundled sample stories/photos, Today magazine grid, topic sections/filtering,
 full-screen swipe reader, saved/read persistence, Saved view, tests and CI.
 Corrected stale bootstrap state using merged PR #1 and current GitHub history.
 
-**In progress:** Awaiting device results and independent review; CI blocked by GitHub billing; no further implementation claimed.
+**In progress:** Codex retrying CI on Rick’s runner label `SelfHosted`.
+Workflow build reports runner OS/architecture. Emulator job runs after a successful
+build only on x64 Linux/macOS; other host platforms require separate device testing.
 
 **Branch/PR:** `codex/2-prototype` → [PR #3](https://github.com/rickevans86/FlipRSS/pull/3) (open, unmerged). Issue #2 is `ai:codex`, `status:review`.
 
@@ -36,3 +38,13 @@ Codex must not independently review its own PR or merge into main.
 **Remote synchronization:** Confirmed. main fetched and ancestry checked; implementation
 commit `1f3eaaf` pushed and PR #3 creation confirmed via GitHub. Final record-link
 update is committed on the same branch. No merge performed.
+
+## 2026-11-15 — Self-hosted retry (Codex, #2 / PR #3)
+
+Rick supplied custom label `SelfHosted`. Both jobs now target it; the build runs
+first and the emulator job is conditional on supported host OS/architecture.
+Removed hosted-Ubuntu sudo/KVM host modifications and duplicate branch-push runs.
+Workflow syntax checked with actionlint (custom runner label explicitly configured)
+and git diff --check. No application source changes or repeated local app tests.
+New remote run results pending publication; historical billing failure above
+refers to GitHub-hosted jobs, not the new self-hosted attempt.

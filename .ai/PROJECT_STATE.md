@@ -34,3 +34,8 @@ The reader slides horizontally; a 3D flip animation is not implemented.
 Rick reviews the prototype and names an independent AI reviewer. Rick alone merges.
 Proposed future work (not yet assigned): FreshRSS GReader client + secure auth,
 live data/cache, real article rendering and UX refinement after device feedback.
+
+## CI retry — 2026-11-15 (Codex)
+
+Rick added runner label `SelfHosted`; workflow routed to it for #2 / PR #3.
+New run pending. Emulator action is limited to x64 Linux/macOS hosts.

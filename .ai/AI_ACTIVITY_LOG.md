@@ -31,3 +31,10 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   account payment failures or a spending-limit restriction. No CI code/test
   execution occurred and no CI APK artifact exists. Local checks remain passed;
   device validation is pending. Updated handoff/state with the external blocker.
+
+- 2026-11-15 — **ChatGPT Codex** — At Rick’s request, #2 / PR #3 CI retry.
+  Routed both Android jobs to Rick’s `SelfHosted` label, report host OS/arch,
+  serialize emulator after build and skip unsupported Windows/ARM emulator hosts.
+  Removed hosted Ubuntu sudo/KVM changes and duplicate branch push triggers.
+  Workflow actionlint and diff checks passed. App source unchanged; remote
+  build/device results pending the new workflow run.
