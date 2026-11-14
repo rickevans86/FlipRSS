@@ -1,11 +1,7 @@
 # FILE_OWNERSHIP
 
-_Planned file modifications for **in-progress** tasks only. Add your files when you
-claim a task; remove them in the PR that completes it._
+Planned files for in-progress tasks only. Claude’s bootstrap PR #1 is merged.
 
-| Files / paths | Task (Issue) | Agent | Branch |
-|---------------|--------------|-------|--------|
-| `AGENTS.md`, `.ai/*` | Coordination bootstrap (no Issue) | Claude | `claude/coordination-setup` |
-
-_Once this bootstrap PR merges, the row above is removed. No feature files are
-claimed yet._
+| Files / paths | Task | Agent | Branch |
+|---|---|---|---|
+| `app/**`, `gradle/**`, root Gradle files/wrappers, `.github/workflows/**`, `README.md`, `AGENTS.md`, `.ai/**` | #2 Android prototype | Codex | `codex/2-prototype` |
