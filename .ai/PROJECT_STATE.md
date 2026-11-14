@@ -8,7 +8,8 @@ GReader API. Equal UX pillars: magazine grid, swipe reader and topic sections.
 ## Current state
 
 - Claude’s coordination bootstrap is merged in PR #1 (`b63f43b`).
-- Codex’s Issue #2 branch `codex/2-prototype` adds an offline UI prototype:
+- Codex’s Issue #2 / [PR #3](https://github.com/rickevans86/FlipRSS/pull/3)
+  (open, unmerged), branch `codex/2-prototype`, adds an offline UI prototype:
   image-led Today grid, topic filtering/browsing, horizontal article pager,
   vertical article scrolling, persistent local bookmarks/read flags and Saved view.
 - Six original fictional sample stories and bundled Unsplash photos. No server,

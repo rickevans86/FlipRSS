@@ -7,9 +7,9 @@ bundled sample stories/photos, Today magazine grid, topic sections/filtering,
 full-screen swipe reader, saved/read persistence, Saved view, tests and CI.
 Corrected stale bootstrap state using merged PR #1 and current GitHub history.
 
-**In progress:** Preparing PR; no further feature implementation claimed.
+**In progress:** Awaiting CI/device results and independent review; no further implementation claimed.
 
-**Branch/PR:** `codex/2-prototype`; PR pending creation.
+**Branch/PR:** `codex/2-prototype` → [PR #3](https://github.com/rickevans86/FlipRSS/pull/3) (open, unmerged). Issue #2 is `ai:codex`, `status:review`.
 
 **Tests:** Local `testDebugUnitTest` (3 passed), `lintDebug`, `assembleDebug` and
 `assembleDebugAndroidTest` passed. Instrumentation execution not run locally:
@@ -28,5 +28,6 @@ Codex must not independently review its own PR or merge into main.
 
 **Shared records updated:** Yes (all six `.ai/` files; project status in AGENTS.md).
 
-**Remote synchronization:** main fetched and ancestry checked; branch push/PR
-confirmation will be recorded after publication.
+**Remote synchronization:** Confirmed. main fetched and ancestry checked; implementation
+commit `1f3eaaf` pushed and PR #3 creation confirmed via GitHub. Final record-link
+update is committed on the same branch. No merge performed.
