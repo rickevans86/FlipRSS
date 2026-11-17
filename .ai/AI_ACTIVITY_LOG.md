@@ -43,3 +43,15 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   queued on label `SelfHosted` without an assigned runner. No new CI tests ran.
   Workflow syntax/diff checks passed; issue #2 returned to review. Removed file
   claim and synchronized handoff/state. PR #3 remains open and unmerged.
+
+- 2026-11-18 — **ChatGPT Codex** — Rick requested an APK build in chat (#2).
+  Built from prototype source `083e048`; assembleDebug/testDebugUnitTest/lintDebug
+  succeeded using cached outputs where applicable (51 tasks: 5 executed,
+  46 up-to-date); lint 0 errors/7 warnings. APK v2 signature and min SDK 26 /
+  target 35 verified. APK SHA-256:
+  `2a9aba83b124f83dbc81291bf51719e7892eb9e04a4471623288281f6d866466`.
+  Added APK/checksum/build notes under `downloads/` on `codex/2-apk-build` and
+  replaced handoff; application source unchanged. Read latest GitHub history:
+  Claude scaffold commit and revert on main, PR #3 still open; latest main merged
+  into download branch only. Empty draft release removed after upload HTTP 401;
+  Git branch is the delivery route. No merge into main or device execution.

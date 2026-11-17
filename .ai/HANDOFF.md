@@ -1,56 +1,35 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
+**Task:** #2 — Rick requested an APK build in chat on 2026-11-18.
 
-**Completed:** Issue #2 native Android prototype: Gradle/Compose scaffold, six
-bundled sample stories/photos, Today magazine grid, topic sections/filtering,
-full-screen swipe reader, saved/read persistence, Saved view, tests and CI.
-Corrected stale bootstrap state using merged PR #1 and current GitHub history.
+**Completed:** Built/verified the existing offline prototype from
+`083e04871d6c7226d22afb732cba520646f55afb` (PR #3). APK and checksum are in
+`downloads/` on `codex/2-apk-build`. No application source changed.
 
-**In progress:** Codex retrying CI on Rick’s runner label `SelfHosted`.
-Workflow build reports runner OS/architecture. Emulator job runs after a successful
-build only on x64 Linux/macOS; other host platforms require separate device testing.
+**In progress:** None. Device validation and independent review remain pending.
 
-**Branch/PR:** `codex/2-prototype` → [PR #3](https://github.com/rickevans86/FlipRSS/pull/3) (open, unmerged). Issue #2 is `ai:codex`, `status:review`.
+**Branch/PR:** Download branch `codex/2-apk-build`; source PR #3 is open/unmerged.
+Latest main (`60c015a`, scaffold revert by Claude) fetched and merged into the
+artifact branch only; main has no net file changes relative to prototype base.
+No merge into main performed.
 
-**Tests:** Local `testDebugUnitTest` (3 passed), `lintDebug`, `assembleDebug` and
-`assembleDebugAndroidTest` passed. Instrumentation execution not run locally:
-emulator could not start within workspace disk limits; no KVM/device available.
-CI includes API 30 emulator tests for reading, saving and topic navigation.
-No manual visual/device verification claimed. Non-blocking lint warnings remain
-for newer dependency versions and Android backup configuration.
+**Tests:** `./gradlew --offline --max-workers=2 assembleDebug testDebugUnitTest
+lintDebug` succeeded (51 tasks: 5 executed, 46 up-to-date). JVM unit tests reuse
+three previously passing tests; lint 0 errors/7 non-blocking warnings. Android
+apksigner verifies APK Signature Scheme v2; aapt verifies package `com.fliprss.app`,
+version `0.1.0-prototype`, min SDK 26 / target 35. No new device/emulator run.
 
-**Blockers:** GitHub Actions jobs did not start: GitHub reports failed account
-payments or spending-limit restrictions (run 43603822915). No CI APK artifact is
-available. Rick can run the documented Gradle checks locally or restore Actions
-billing availability. No code/test failure from CI is claimed.
+**Artifact:** `downloads/FlipRSS-prototype-debug.apk` (17,562,233 bytes).
+SHA-256: `2a9aba83b124f83dbc81291bf51719e7892eb9e04a4471623288281f6d866466`.
+Android 8.0+; debug-signed sample-data prototype, no live FreshRSS integration.
 
-Live FreshRSS functionality is outside
-this demo; all stories are clearly marked sample content. Device interaction
-results and Rick’s independent reviewer selection are pending.
+**Blockers:** Chat output folder unavailable (read-only/permissions); GitHub release
+asset upload rejected credentials with HTTP 401. Empty draft removed. Dedicated
+Git branch carries APK download instead. Historical self-hosted CI status is not
+used as evidence for this local build.
 
-**Next action:** Rick to try the debug build, name an independent reviewer, and
-merge only after review. Future FreshRSS/auth work needs its own assigned Issue.
-Codex must not independently review its own PR or merge into main.
-
-**Shared records updated:** Yes (all six `.ai/` files; project status in AGENTS.md).
-
-**Remote synchronization:** Confirmed. main fetched and ancestry checked; implementation
-commit `1f3eaaf` pushed and PR #3 creation confirmed via GitHub. Final record-link
-update is committed on the same branch. No merge performed.
-
-## 2026-11-15 — Self-hosted retry (Codex, #2 / PR #3)
-
-Rick supplied custom label `SelfHosted`. Both jobs now target it; the build runs
-first and the emulator job is conditional on supported host OS/architecture.
-Removed hosted-Ubuntu sudo/KVM host modifications and duplicate branch-push runs.
-Workflow syntax checked with actionlint (custom runner label explicitly configured)
-and git diff --check. No application source changes or repeated local app tests.
-Retry run 43646504809 was created and confirmed queued for `SelfHosted`, with
-no runner assigned at last observation. Subsequent records-only push may create
-a replacement run; check PR #3 for the latest status. No new build or interaction
-results are claimed. Runner must be online, accessible to the repository and
-carry the actual `SelfHosted` label (not merely that name).
-Workflow change committed as `70171b3`; issue restored to `status:review`.
-Remote push confirmed; no merge performed. Historical billing failure above historical billing failure above
-refers to GitHub-hosted jobs, not the new self-hosted attempt.
+**Next action:** Rick downloads/installs APK and names an independent reviewer.
+**Shared records updated:** Yes — handoff and append-only activity log.
+**Remote synchronization:** GitHub fetched; artifact branch prepared for push;
+verify remote file size and Git blob before reporting download available.
