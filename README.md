@@ -228,3 +228,12 @@ while attaching APK assets waits for runner execution. No signing key is committ
 
 AI: **ChatGPT Codex**, #14. Updater: `data/GitHubUpdates.kt`, `AppUpdater.kt`,
 `UpdateControls.kt`; reader filtering: `LibraryController.kt`, `MainActivity.kt`.
+
+## Publishing from main (#16)
+
+Rick authorized merging the feature chain into main. APK publishing now runs on
+GitHub-hosted Ubuntu; Android build/test jobs can still use Rick's Windows
+SelfHosted runner. The publisher only retrieves already-built, signed APKs from
+immutable artifact commits and verifies hashes, so no Android SDK or signing key
+is needed on the publishing runner. Dispatch **Publish APK releases** on main to
+attach FlipRSS.apk/checksum/build metadata for every manifest version.
