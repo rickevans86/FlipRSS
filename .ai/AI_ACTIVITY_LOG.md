@@ -267,3 +267,17 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   SHA-256 823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4;
   signing/alignment/version/SDK/signer equality checked. Combined regular v0.9.0
   merge/publication follows; no native upload or independent review claimed yet.
+
+- 2026-11-18 — **ChatGPT Codex** — Completed #24/#25, Search correction #26
+  merged at 2b9525c and voice #27 at 155c680. Main app tree matches b1fb05f.
+  Hosted publication 44300897612 SUCCESS; regular/latest v0.9.0 native APK/
+  checksum/build-info attached. All nine APK asset digests match manifest; latest
+  downloaded bytes (13,299,931) SHA-256
+  823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4 verified.
+  73 JVM tests per debug/release, both builds/lint (0 errors, 1 existing warning),
+  instrumentation compilation, five publisher tests/actionlint passed. Actual
+  phone/audio/naturalness/installer/account writes and independent review not
+  claimed. Search old cache auto-cleared, 20-result pages; Android engine/voice/
+  preview/tuning with explicit online opt-in shipped, no cloud key/account.
+  Closed tasks, README/six records updated, no claims, binary/signing separation
+  preserved. Final records-only merge continues authorized publication workflow.

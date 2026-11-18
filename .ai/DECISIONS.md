@@ -239,3 +239,13 @@ reorder earlier entries._
   Lifecycle/focus/generation safety and user preview remain.
 - Ship Search cache/title/paging correction together with speech as regular
   v0.9.0/code 10; intermediate 0.8.1/code 9 was not separately published.
+
+## 2026-11-18 — Combined v0.9.0 verified (#24/#25, Codex)
+
+- Publish one regular code-10 update containing Search correction and requested
+  speech controls; intermediate code 9 never became a separate release. Preserve
+  installed-data/signing compatibility, invalidate only obsolete public directory
+  cache and verify actual native bytes plus all asset digests.
+- Online voice selection remains explicit opt-in, quality engine-rated and preview
+  user-controlled. Do not describe unit/build success as audible naturalness or
+  claim a separate paid cloud AI provider was integrated.
