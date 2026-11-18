@@ -29,7 +29,8 @@ cancelled, not build evidence for this release.
 
 **In progress:** Shared-record PR awaiting review; no implementation work claimed.
 **Branch/PR:** codex/4-prototype-release (records only); release/download already
-published. PR link added after opening. Do not merge artifact branch.
+published. [PR #5](https://github.com/rickevans86/FlipRSS/pull/5) is open for records review.
+Issue #4 is `ai:codex`, `status:review`. Do not merge artifact branch.
 **Blockers:** None for the published download. Production signing, live FreshRSS,
 and device validation remain future tasks. Release assets use linked repository
 hosting because the upload endpoint rejected credentials.
