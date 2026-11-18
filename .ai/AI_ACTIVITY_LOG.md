@@ -123,3 +123,9 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   test-signed release variant, signature/alignment/version/SDK checks pass.
   Stacked on PR #9 / #7; Rick selects reviewer and merges. No main merge or
   published release performed.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #11 for #10, base
+  codex/8-reading-controls (PR #9), and confirmed issue status review. Retrieved
+  preview APK through GitHub blob API and verified bytes/SHA-256. Updated handoff,
+  project state and task board from live Issues. Merge chain: #7 then retarget #9,
+  then retarget #11; Rick selects independent reviewer. Main/release unchanged.

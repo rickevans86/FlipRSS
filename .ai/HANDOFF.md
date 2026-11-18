@@ -14,8 +14,7 @@ No microphone permission, background service or automatic next article.
 **Files:** ArticleSpeech.kt, SpeechControls.kt, SpeechText.kt, MainActivity.kt,
 AndroidManifest.xml, app/build.gradle.kts, SpeechTextTest.kt, README.md and .ai/.
 **Branch/PR:** codex/10-article-speech, source implementation
-4b0dd2852137d5a312121e1de9885175d29da4b8. Speech PR to be opened after this record
-update; base codex/8-reading-controls (PR #9), which depends on PR #7. Merge #7
+4b0dd2852137d5a312121e1de9885175d29da4b8. [PR #11](https://github.com/rickevans86/FlipRSS/pull/11) open; #10 status:review; base codex/8-reading-controls (PR #9), which depends on PR #7. Merge #7
 first; retarget #9 to main before merging; then retarget speech PR to main and
 sync shared records. Rick merges and selects independent reviewer.
 
@@ -45,4 +44,5 @@ Main remains 92613d6 offline prototype; no main merge/new release performed.
 handles merge order above. Do not merge binary download branches.
 **Shared records updated:** Yes; append-only history preserved.
 **Remote synchronization:** origin/main and bases fetched, main ancestry checked,
-source/artifact branches pushed. Download verification recorded after completion.
+source/artifact branches pushed. GitHub blob download retrieved and SHA-256
+verified (13,217,955 bytes). PR #11 and issue #10 review status confirmed.

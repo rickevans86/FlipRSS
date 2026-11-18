@@ -29,7 +29,7 @@ production-signing limitations remain. Add Feed uses default server folder.
 Merge PR #7 first, then retarget the controls follow-up to main before merging.
 No new published release or main merge performed for these controls.
 
-## Article speech — #10, stacked on PR #9 (not merged)
+## Article speech — #10 / PR #11, stacked on PR #9 (not merged)
 
 AI: ChatGPT Codex. codex/10-article-speech, source 4b0dd285. Reader play/pause/
 resume/stop uses Android TextToSpeech and device language, prefers installed voice,

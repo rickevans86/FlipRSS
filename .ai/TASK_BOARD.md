@@ -4,7 +4,7 @@ Rebuilt from live GitHub open Issues on 2026-11-18 by Codex. GitHub is authorita
 
 | Issue | Title | Responsible AI | Status | Branch / PR |
 |---|---|---|---|---|
-| #10 | Read articles aloud with Android text-to-speech | Codex (`ai:codex`) | In progress (`status:in-progress`); implementation/builds done, preparing PR | codex/10-article-speech; stacked on PR #9 |
+| #10 | Read articles aloud with Android text-to-speech | Codex (`ai:codex`) | Review (`status:review`); implementation/builds done | codex/10-article-speech; PR #11 (base PR #9) |
 | #8 | Add feed subscription, hide-read, mark-all-read and app settings | Codex (`ai:codex`) | Review (`status:review`); implementation/builds done | codex/8-reading-controls; PR #9 (base PR #7) |
 | #6 | Implement FreshRSS login, feeds, topics and read/star synchronization | Codex (`ai:codex`) | Review (`status:review`) | codex/6-freshrss; PR #7 open |
 | #4 | Build and publish v0.1.0-prototype APK prerelease | Codex (`ai:codex`) | Review (`status:review`); release published | Records preserved in PR #7; PR #5 closed/superseded |
