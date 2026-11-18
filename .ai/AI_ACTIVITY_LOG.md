@@ -217,3 +217,18 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   confirmed review status. Native v0.7.0-preview APK bytes/hash and hosted
   publisher success verified. Updated handoff/project/task board with PR refs.
   No new main merge; Rick selects independent reviewer and validates on phone.
+
+- 2026-11-18 — **ChatGPT Codex** — #21, Rick authorized main implementation,
+  build and publication. Merged foundation PR #20 (0bd0077); implemented independent
+  source tabs/combined Saved/routed writes, local-only Search,+ only FreshRSS, local
+  feed URL/copy/confirmed server subscription, default-off scroll read, daily cached
+  Feeder/Feedspot imports and website/direct-feed discovery. Source 7dc9763. Files
+  app/**, README/release manifest and six .ai records. All 64 JVM tests pass per
+  debug/release variant; builds/lint pass (0 errors, 1 existing warning), device
+  tests compile only. Five publisher tests/actionlint pass. Production parsers
+  extracted 114/454 public links from live downloaded pages; production-header
+  HTTP checks both 200. No actual phone/installer/audio/account writes. APK
+  artifact 04a95a4, 13,283,547 bytes, SHA-256
+  39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6; signature/
+  alignment/package/version/SDK and prior signer equality checked. Authorized
+  merge and native publication follow; no independent self-review claimed.
