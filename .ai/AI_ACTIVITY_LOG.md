@@ -106,3 +106,8 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   `15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69`.
   Artifact commit 1bdaf3d downloaded and checksum verified. No main merge or new
   release; follow-up PR must be retargeted after PR #7 merges.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #9 for #8, base codex/6-freshrss
+  (PR #7). Confirmed issue status review and recorded preview/checks. Main and
+  published releases unchanged. Merge #7 first, retarget #9 to main and sync
+  records before merging; Rick selects the independent reviewer.

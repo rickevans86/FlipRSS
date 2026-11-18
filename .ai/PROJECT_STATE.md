@@ -12,7 +12,7 @@ codex/6-freshrss adds login/encrypted token, catalogue/counts, paginated feeds/
 topics/saved reader, read/star sync and separate demo mode. Source edcac98;
 0.2.0 preview on codex/6-freshrss-download. Its 18 tests pass in both variants.
 
-## Reading controls — #8, stacked on PR #7 (not merged)
+## Reading controls — #8 / PR #9, stacked on PR #7 (not merged)
 
 codex/8-reading-controls, source 302a180: Add Feed subscribes on FreshRSS; top
 hide-read persists and filters server pages; confirmed mark-all-read scopes to

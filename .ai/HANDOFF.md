@@ -16,7 +16,8 @@ text size 16–26, auto-mark-read, cover images and the same hide-read preferenc
 Account entry/reset-defaults preserve credentials, bookmarks and subscriptions.
 
 **Branch/PR:** codex/8-reading-controls, source implementation `302a1808cdd0e342ec55e54f35b79c473be4beec`.
-Follow-up PR pending, BASE IS codex/6-freshrss (PR #7), not main. Merge #7 first,
+[PR #9](https://github.com/rickevans86/FlipRSS/pull/9) is open; #8 is `ai:codex`,
+`status:review`. BASE IS codex/6-freshrss (PR #7), not main. Merge #7 first,
 then retarget this follow-up to main and sync records before merging. No other
 agent changes discarded; no main merge or new published release performed.
 
