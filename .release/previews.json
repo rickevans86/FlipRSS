@@ -43,5 +43,15 @@
     "apk": "FlipRSS-v0.5.0-local-preview.apk",
     "sha256": "1a21f4bab30d7aebb731556e63e949affc74853be84eb0d1850bb104f0f00f6c",
     "description": "Standalone local RSS/Atom, optional FreshRSS and hide-empty-category setting. Issue #12, awaiting review."
+  },
+  {
+    "tag": "v0.6.0",
+    "artifact_commit": "3cd57a66a4672990f0a2a52dc179f7199b3f99e5",
+    "directory": "release-download",
+    "source_commit": "de926519c5f44c3c8f3f19553bcab78ffafb98fd",
+    "apk": "FlipRSS.apk",
+    "sha256": "ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4",
+    "prerelease": false,
+    "description": "Regular release: verified GitHub updates, always-visible read bookmarks and cleaner library pages. AI: ChatGPT Codex, #14."
   }
 ]
