@@ -83,5 +83,15 @@
     "sha256": "823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4",
     "prerelease": false,
     "description": "Fixes repeated NBC News labels by matching Feedspot rows to their own headings. Incorrect old directory cache is replaced automatically, preserving subscriptions/Saved. Search now shows 20 results at a time with explicit Load more.\n\nNew Speech and voices from Settings or Voice in reader: installed engine/speaker choice, automatic engine-rated best quality, preview, reading speed and pitch. Online voices require explicit opt-in and may send text over the internet via the chosen Android engine. Install voice packs through Android settings and Refresh voices; audible quality depends on engine/device.\n\nAI: ChatGPT Codex, #24/#25. Both builds/lint and 73 JVM tests per debug/release variant pass; instrumentation compiled, not run. Five publisher tests/actionlint pass. Actual phone/audio/naturalness/account-write testing not run. Existing test signer retained for updates; production signing unconfigured. No new service account/API key required for Android voice engine path."
+  },
+  {
+    "tag": "v0.10.0",
+    "artifact_commit": "6590f2e4d53fa08d9df0c8ab52d2a3af210ab541",
+    "directory": "release-download",
+    "source_commit": "57db2bcd6e5d3417b8bc121c21dc9a18735fe1ac",
+    "apk": "FlipRSS.apk",
+    "sha256": "636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5",
+    "prerelease": false,
+    "description": "Opening a story now loads longer public article text inside the reader when available, including Read aloud support. Feed text stays available during loading and on failure; manual retry and a persistent Load full articles setting are included. No login/paywall bypass. Verified on the TechCrunch story from Rick's screenshot: 144-character excerpt expands to 2,573 characters across nine text blocks.\n\nFreshRSS and FlipRSS now have Mark all read at the bottom of their story lists. Settings \u2192 Confirm mark all read defaults on; turn it off to use either bulk-read button immediately for the current source/category, including unloaded stories. Saved/Search are excluded.\n\nAI: ChatGPT Codex, #29/#30. 85 JVM tests per debug/release, both builds/lint (0 errors, 1 existing warning), five publisher tests and actionlint passed. Instrumentation compiled, not executed. Actual phone/audio/account-write tests not run. Existing test signer retained for upgrades; production signing unconfigured."
   }
 ]

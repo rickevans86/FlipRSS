@@ -4,7 +4,7 @@ Rebuilt from live GitHub Issues 2026-11-18 by ChatGPT Codex.
 
 | Issue | Task | AI | Status |
 |---|---|---|---|
-| #29 | End-of-list bulk read / optional confirmation | Codex | Implemented; validation/PR |
-| #30 | Fuller public article text in reader | Codex | Assigned; sequential follow-up |
+| #29 | Bottom bulk-read button / optional confirmation | Codex | #31 merged; combined publication pending |
+| #30 | Fuller public article text in reader | Codex | Implemented; validation/publication in progress |
 
-No other open issues or competing PRs. Previous #24/#25 closed.
+No other open issues/competing PRs. Previous tasks closed. Physical device tests not run.

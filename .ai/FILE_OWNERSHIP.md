@@ -3,4 +3,4 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-#29 implementation complete. #30 sequential follow-up by Codex; verify live claims.
+#29/#30 implementation complete; combined publication pending. No active implementation claims. Never merge artifact branches.
