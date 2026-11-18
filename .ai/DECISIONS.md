@@ -287,3 +287,10 @@ reorder earlier entries._
   focus loss. No wake lock, new permission, preference or preview behavior change.
 - Publish patch v0.10.1/code13 with existing update-compatible signing identity;
   device assertions compile only and require actual phone validation.
+
+## 2026-11-18 — Screen-awake patch publication verified (#34, Codex)
+
+- Ship v0.10.1/code13 as a regular upgrade with existing signing identity; verify
+  actual native download and all eleven release APK digests after hosted publish.
+- Keep physical screen-timeout/audio validation explicitly pending; compiling
+  lifecycle assertions is not a device test result.
