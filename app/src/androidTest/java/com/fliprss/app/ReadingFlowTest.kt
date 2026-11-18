@@ -25,7 +25,7 @@ class ReadingFlowTest {
         compose.onNodeWithContentDescription("Next story").performClick()
         compose.onNodeWithText("2 / 6").assertIsDisplayed()
         compose.onNodeWithContentDescription("Back to stories").performClick()
-        compose.onNodeWithText("Your daily perspective.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("FlipRSS").performScrollTo().assertIsDisplayed()
     }
     @Test fun bookmarkAppearsInSavedAndCanBeRemoved() {
         val title = DemoLibrary.articles.first().title
@@ -47,6 +47,7 @@ class ReadingFlowTest {
         compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().assertIsDisplayed()
     }
     @Test fun accountFormCanBeOpenedAndDismissedWithoutReplacingDemo() {
+        compose.onNodeWithContentDescription("App settings").performScrollTo().performClick()
         compose.onNodeWithText("Connect FreshRSS (optional)").performScrollTo().performClick()
         compose.onNodeWithText("Sign in").assertIsNotEnabled()
         compose.onNodeWithText("FreshRSS URL").performTextReplacement("https://rss.example.org")
@@ -54,7 +55,7 @@ class ReadingFlowTest {
         compose.onNodeWithText("API password").performTextInput("not-a-real-password")
         compose.onNodeWithText("Sign in").assertIsEnabled()
         compose.onNodeWithText("Continue demo").performClick()
-        compose.onNodeWithText("Your daily perspective.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("FlipRSS").performScrollTo().assertIsDisplayed()
     }
 
     @Test fun settingsThemeCanBeChangedAndDefaultsRestored() {
@@ -88,4 +89,18 @@ class ReadingFlowTest {
         compose.onNodeWithText("Mark unread").assertIsDisplayed()
     }
 
+    @Test fun savedAlwaysIncludesReadStoriesAndHasNoHideReadToggle() {
+        val story = DemoLibrary.articles.first()
+        compose.runOnIdle {
+            val library = ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library
+            library.toggleSaved(story.id)
+            library.setRead(story.id, true)
+            library.updateSettings(AppSettings(hideRead = true))
+        }
+        compose.onNodeWithText("Saved", useUnmergedTree = true).performClick()
+        compose.onNodeWithText(story.title).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Hide read").assertDoesNotExist()
+        compose.onNodeWithText("Your daily perspective.").assertDoesNotExist()
+        compose.onNodeWithText("Account").assertDoesNotExist()
+    }
 }

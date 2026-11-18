@@ -35,7 +35,7 @@ import kotlin.math.roundToInt
             Text("A quieter reading experience.", fontFamily = FontFamily.Serif,
                 fontSize = settings.readerTextSize.sp, lineHeight = (settings.readerTextSize * 1.55f).sp)
             HorizontalDivider()
-            SettingsToggle("Hide read stories", "Also available at the top of the reading room.", settings.hideRead) {
+            SettingsToggle("Hide read stories", "Applies to Today; Saved always includes read stories.", settings.hideRead) {
                 library.updateSettings(settings.copy(hideRead = it))
             }
             SettingsToggle("Hide categories with no unread articles", "Hide empty categories and feeds in Today and Topics.", settings.hideEmptyCategories) {
@@ -51,6 +51,8 @@ import kotlin.math.roundToInt
             Text(state.account?.let { "Connected as ${it.username}" } ?: if (state.local) "Local feeds on this device" else "Using demo stories")
             TextButton(onClick = onAccount) { Text(if (state.demo || state.local) "Connect FreshRSS (optional)" else "FreshRSS account") }
             if (!state.local) TextButton(onClick = { library.useLocalFeeds(); onClose() }) { Text("Use local feeds") }
+            HorizontalDivider()
+            UpdateControls()
             TextButton(onClick = { library.updateSettings(AppSettings(useLocalFeeds = settings.useLocalFeeds)) }) { Text("Reset defaults") }
         }
     }, confirmButton = { TextButton(onClick = onClose) { Text("Done") } })

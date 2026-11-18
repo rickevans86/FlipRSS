@@ -34,7 +34,7 @@ data class LibraryState(
     val visibleSections: List<Section> get() = sections.filter { section ->
         !settings.hideEmptyCategories || (if (demo) DemoLibrary.articles.count { it.topic == section.id && it.id !in readIds } else section.unread) != 0
     }
-    val visibleArticles: List<Article> get() = if (settings.hideRead) articles.filterNot { it.id in readIds } else articles
+    val visibleArticles: List<Article> get() = if (settings.hideRead && !scope.savedOnly) articles.filterNot { it.id in readIds } else articles
 }
 
 /** Owns async/account boundaries independently of Android, allowing race and rollback tests. */
@@ -183,7 +183,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
     fun selectScope(value: LibraryScope) {
         val section = value.sectionId?.takeIf { id -> mutable.value.sections.any { it.id == id } }
         val selection = value.copy(sectionId = if (!mutable.value.demo && value.savedOnly) null else section,
-            unreadOnly = mutable.value.settings.hideRead)
+            unreadOnly = mutable.value.settings.hideRead && !value.savedOnly)
         if (selection == mutable.value.scope) return
         loadJob?.cancel()
         mutable.update { it.copy(scope = selection, articles = emptyList(), continuation = null, loadingMore = false, error = null) }
