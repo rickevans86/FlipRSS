@@ -215,3 +215,13 @@ reorder earlier entries._
   with Search; metadata source counts indicate extraction, not validation of all
   external targets. Actual source/installer UI and account writes require phone
   validation; do not infer that from JVM/build/publication success.
+
+## 2026-11-18 — Search name regression and cache upgrade (#24, Codex)
+
+- Match Feedspot numeric row ID with its own heading; only use row-local fallback
+  when no numeric ID exists. Never search a shared ancestor or the global RSS link
+  list for titles. Skip unmatched entries rather than mislabel subscriptions.
+- Version directory cache (schema 2); old bad labels are discarded and refetched
+  immediately, regardless of daily timer. Local subscriptions and Saved unaffected.
+- Limit displayed catalogue to 20 per explicit Load more and reset on criteria/
+  dataset change; preserve distinct feeds with legitimately identical publishers.

@@ -245,3 +245,12 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   links; no actual phone/installer/audio/account-write tests or independent review
   claimed. Source/binary histories/signing key preserved. Final records-only merge
   authorized by Rick, no additional app change.
+
+- 2026-11-18 — **ChatGPT Codex** — #24: reproduced and fixed Feedspot's shared-
+  ancestor first-heading bug, old-name cache invalidation and explicit 20-result
+  search paging. Source 72b2956. Files importer/cache/search/nav/tests/version,
+  README and six .ai records. 68 JVM tests pass per debug/release, build/lint pass
+  (0 errors, 1 existing warning), instrumentation compiled only. Actual parser
+  verified 453 URLs/449 titles, one NBC News, WordPress correct. No physical UI/
+  audio/account checks. Merge and combined publication with added #25 speech
+  request follow; no APK publication or independent self-review claimed here.

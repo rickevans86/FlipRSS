@@ -109,15 +109,20 @@ internal object DirectoryImporter {
                 link?.queryParameter("url")?.let { add(it, a.text()) }
             }
         } else {
-            doc.select("[data-site]").forEach { row ->
-                val url = runCatching { URLDecoder.decode(row.attr("data-site"), "UTF-8") }.getOrNull()
-                val title = row.parent()?.selectFirst("h3")?.text().orEmpty()
-                if (url != null) add(url, title)
-            }
-            // Public RSS links; never import follow buttons, publisher homepages or tracking URLs.
-            doc.select("a.ext[href]:not(.extdomain)").forEach { a ->
-                val title = a.parents().firstOrNull { it.selectFirst("h3") != null }?.selectFirst("h3")?.text().orEmpty()
-                add(a.attr("href"), title)
+            // Feedspot places many headings/rows directly under one common parent.
+            // Never search an ancestor's descendants: that assigns the first name to every row.
+            doc.select("[data-site], p.trow").forEach { row ->
+                val numericId = row.attr("data").takeIf { it.matches(Regex("[0-9]+")) }
+                    ?: row.id().removePrefix("row").takeIf { it.matches(Regex("[0-9]+")) }
+                val heading = if (numericId != null) doc.getElementById("h$numericId")?.takeIf { it.normalName() == "h3" }
+                    else row.previousElementSibling()?.takeIf { it.normalName() == "h3" }
+                        ?: row.parent()?.takeIf { parent -> parent.select("h3").size == 1 && parent.select("[data-site], p.trow").size == 1 }
+                            ?.selectFirst("h3")
+                val title = heading?.text()?.takeIf(String::isNotBlank) ?: return@forEach
+                val encoded = row.attr("data-site")
+                val address = if (encoded.isNotBlank()) runCatching { URLDecoder.decode(encoded, "UTF-8") }.getOrNull()
+                    else row.selectFirst("a.ext[href]:not(.extdomain)")?.attr("href")
+                if (address != null) add(address, title)
             }
         }
         return entries.distinctBy { it.url }.take(1000)

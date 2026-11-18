@@ -51,4 +51,24 @@ class DirectoryCacheTest {
         }
         try {FeedWeb().get("https://user:secret@example.org");fail()}catch (_: FreshRssProblem) { }
     }
+    @Test fun oldCachedDuplicateNamesAreDiscardedAndRefreshedImmediately() = runBlocking {
+        val jobs=CoroutineScope(SupervisorJob()+Dispatchers.Unconfined)
+        val dir=java.nio.file.Files.createTempDirectory("fliprss-bad-cache").toFile()
+        val requests=AtomicInteger()
+        try {
+            val file=java.io.File(dir,"lists.json")
+            file.writeText("""{"sources":{"Feedspot":[{"id":"bad","title":"NBC News","category":"Feedspot","description":"wrong old cache","url":"https://wordpress.com/blog/feed/"}]},"updated":100000000,"attempted":100000000}""")
+            val client=OkHttpClient.Builder().addInterceptor { chain ->
+                requests.incrementAndGet()
+                val body=if(chain.request().url.host=="feeder.co") "<table><tr><td>Example</td><td><code>https://example.org/rss</code></td></tr></table>"
+                    else "<h3 id='h123'>WordPress RSS Feed</h3><p class='trow' id='row123' data-site='https%3A%2F%2Fwordpress.com%2Fblog%2Ffeed%2F'></p>"
+                Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("fixture").body(body.toResponseBody()).build()
+            }.build()
+            val model=FeedSearchModel(jobs,file,FeedWeb(client),now={100_000_000L})
+            withTimeout(5000){model.state.first { !it.updating&&it.notice!=null }}
+            assertEquals(2,requests.get())
+            assertEquals("WordPress",model.state.value.feeds.single { it.url=="https://wordpress.com/blog/feed/" }.title)
+            assertTrue(file.readText().contains("\"schemaVersion\":2"))
+        } finally {jobs.cancel();dir.deleteRecursively()}
+    }
 }

@@ -7,7 +7,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal data class DirectoryCache(val sources: Map<String, List<PopularFeed>> = emptyMap(), val updated: Long = 0, val attempted: Long = 0)
+internal const val DIRECTORY_CACHE_SCHEMA = 2
+
+internal data class DirectoryCache(val sources: Map<String, List<PopularFeed>> = emptyMap(), val updated: Long = 0, val attempted: Long = 0, val schemaVersion: Int = 0)
 internal data class FeedSearchState(val feeds: List<PopularFeed> = FeedDirectory.feeds, val updating: Boolean = false,
     val updated: Long = 0, val notice: String? = null, val finding: Boolean = false,
     val found: List<PopularFeed> = emptyList(), val discoveryMessage: String? = null)
@@ -22,6 +24,8 @@ internal class FeedSearchModel(private val scope: CoroutineScope, file: File,
     val state = mutable.asStateFlow()
     init { scope.launch {
         cache = withContext(Dispatchers.IO) { runCatching { store.read()?.let { gson.fromJson(it, DirectoryCache::class.java) } }.getOrNull() ?: DirectoryCache() }
+        // Discard only obsolete directory results, never subscriptions or reading state.
+        if (cache.schemaVersion != DIRECTORY_CACHE_SCHEMA) cache = DirectoryCache(schemaVersion = DIRECTORY_CACHE_SCHEMA)
         runCatching { publish() }.onFailure { cache = DirectoryCache(); publish() }
         ready = true; refreshIfDue()
     } }
@@ -46,7 +50,7 @@ internal class FeedSearchModel(private val scope: CoroutineScope, file: File,
                 } catch (cancelled: CancellationException) { throw cancelled }
                 catch (_: Exception) { failures += name }
             }
-            cache = DirectoryCache(sources, if (successes > 0) now() else cache.updated, now())
+            cache = DirectoryCache(sources, if (successes > 0) now() else cache.updated, now(), DIRECTORY_CACHE_SCHEMA)
             val kept = withContext(Dispatchers.IO) { runCatching { store.write(gson.toJson(cache)) }.isSuccess }
             publish()
             mutable.value = mutable.value.copy(updating = false, notice = when {

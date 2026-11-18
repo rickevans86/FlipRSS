@@ -100,6 +100,8 @@ private val Red = Color(0xFFB83224)
     var feedInitialUrl by remember { mutableStateOf("") }
     var feedQuery by rememberSaveable { mutableStateOf("") }
     var feedCategory by rememberSaveable { mutableStateOf("All topics") }
+    var feedPageSize by rememberSaveable(feedQuery, feedCategory) { mutableIntStateOf(20) }
+    LaunchedEffect(directory.feeds) { feedPageSize = 20 }
     var website by remember { mutableStateOf("") }
     var manageFeeds by rememberSaveable { mutableStateOf(false) }
     var viewFeed by remember { mutableStateOf<LocalFeed?>(null) }
@@ -203,7 +205,8 @@ private val Red = Color(0xFFB83224)
             }
             if (destination == "Search") {
                 feedSearchPage(directory, feedQuery, feedCategory, { feedQuery = it }, { feedCategory = it }, website, { website = it },
-                    { model.directory.find(website) }, model.directory::refresh, !local.addingFeed && !local.restoring, ::addLocal)
+                    { model.directory.find(website) }, model.directory::refresh, !local.addingFeed && !local.restoring, ::addLocal,
+                    feedPageSize, { feedPageSize += 20 })
             } else if (destination == "FreshRSS" && fresh.demo) item {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("FreshRSS", style = MaterialTheme.typography.headlineMedium)

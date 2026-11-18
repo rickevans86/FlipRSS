@@ -317,3 +317,14 @@ Both builds/lint and 64 unit tests per variant passed; device tests compile only
 Hosted publication 44295156332 succeeded, all eight APK asset digests match the
 manifest and the latest native download checksum was verified. Actual phone,
 Android installer, audio and real-account write validation remain not run.
+
+## Search regression correction (#24)
+
+Feedspot's shared page container must never supply one publisher name to every
+RSS row. The importer now pairs numeric row/heading IDs (or an unambiguous local
+entry), scopes fallback RSS links to that row, and skips unmatched rows. The old
+directory cache is versioned out so incorrect names disappear on update and lists
+refresh immediately; subscriptions and Saved are untouched. Catalogue results show
+20 at a time with an explicit Load more feeds button, resetting on query/topic or
+catalogue changes. Production parser verification on the actual page found 453
+feed URLs, 449 distinct titles, one NBC News and the correctly named WordPress URL.
