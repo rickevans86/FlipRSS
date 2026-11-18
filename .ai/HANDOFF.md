@@ -17,7 +17,7 @@ LibraryViewModel, MainActivity, Account/AddFeed/Settings dialogs, app version,
 LocalFeedsTest/LibraryControllerTest/instrumentation fixtures, release publisher
 workflow/script/tests/manifest, Android CI, README/AGENTS and all six .ai records.
 **Branch/PR:** codex/12-local-feeds, source implementation
-63f47b52e3c80b5264bef766a7f12009c779dcf2. PR to be opened after this update, BASE
+63f47b52e3c80b5264bef766a7f12009c779dcf2. [PR #13](https://github.com/rickevans86/FlipRSS/pull/13) open; #12 status:review, BASE
 codex/10-article-speech (PR #11), dependent on PR #9 and PR #7. Merge #7 first;
 retarget each later PR to main before merging and synchronize shared records.
 Rick alone merges and selects independent reviewer. Author does not self-review.
@@ -38,7 +38,8 @@ Publish APK previews workflow on [SelfHosted, Windows] uses Actions token to att
 verified APK/checksum/build metadata from immutable artifact commits, refuses
 asset mismatches, and updates completion notes. Manifest .release/previews.json.
 Triggered publish-previews-20261118-backfill: run 44247234997 queued. New manifest
-includes v0.5; another publishing tag will trigger after records update. No runner
+includes v0.5; publish-previews-20261118-local-v5 triggered run 44247783494,
+pending behind backfill. No runner
 execution/asset-upload success claimed. Download links work independently.
 
 **Tests:** 42 JVM tests passed in EACH debug/release variant; debug/release build

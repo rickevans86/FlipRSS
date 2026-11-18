@@ -144,3 +144,10 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   Direct asset upload returned HTTP 401. Triggered Windows SelfHosted publisher
   run 44247234997, queued; no asset-upload success claimed. Stacked on #11/#9/#7;
   Rick selects reviewer/merges; no main merge performed.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #13 for #12, base PR #11,
+  confirmed issue review label and updated records from live GitHub. Published
+  v0.5 release page and verified APK download; all v0.1–v0.5 pages confirmed.
+  Triggered latest publishing run 44247783494 (pending behind queued backfill
+  44247234997). No assets attached yet; HTTP 401/session limitation documented.
+  Shared records updated, source/artifact branches synchronized. No main merge.
