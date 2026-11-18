@@ -17,6 +17,7 @@ data class Article(
     val initiallyRead: Boolean = false,
     val initiallyStarred: Boolean = false,
     val demo: Boolean = true,
+    val local: Boolean = false,
 )
 
 object DemoLibrary {

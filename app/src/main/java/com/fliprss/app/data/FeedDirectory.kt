@@ -36,6 +36,6 @@ internal object FeedDirectory {
 }
 
 internal fun libraryDestinations(showFeedSearch: Boolean) =
-    if (showFeedSearch) listOf("Today", "Topics", "Search", "Saved") else listOf("Today", "Topics", "Saved")
+    if (showFeedSearch) listOf("FreshRSS", "FlipRSS", "Search", "Saved") else listOf("FreshRSS", "FlipRSS", "Saved")
 internal fun availableDestination(current: String, showFeedSearch: Boolean) =
-    current.takeIf { it in libraryDestinations(showFeedSearch) } ?: "Today"
+    current.takeIf { it in libraryDestinations(showFeedSearch) } ?: "FlipRSS"

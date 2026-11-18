@@ -36,8 +36,8 @@ internal fun AccountDialog(state: LibraryState, library: LibraryController, onCl
                 if (account != null && !state.sessionExpired) {
                     Text("Signed in as ${account.username}")
                     Text(account.endpoint, style = MaterialTheme.typography.bodySmall)
-                    Text("Read and saved changes sync to this account. Use local feeds without a server, or sign out to forget this account.")
-                    TextButton(enabled = !state.connecting, onClick = { library.signOut() }) { Text("Sign out and use local feeds") }
+                    Text("Read and saved changes sync to this account. Local feeds remain available in the FlipRSS tab. Sign out to forget this account.")
+                    TextButton(enabled = !state.connecting, onClick = { library.signOut() }) { Text("Sign out") }
                 } else {
                     Text("Enable API access in FreshRSS, then set an API password in your profile. Use that API password here.")
                     OutlinedTextField(server, { server = it }, label = { Text("FreshRSS URL") }, singleLine = true,
@@ -53,9 +53,6 @@ internal fun AccountDialog(state: LibraryState, library: LibraryController, onCl
                     }
                     TextButton(enabled = !state.connecting, onClick = { library.signOut(); password = "" }) { Text("Forget saved sign-in") }
                 }
-                if (state.local) TextButton(enabled = !state.connecting, onClick = { submitted = true; library.useSavedFreshRss() }) { Text("Use saved FreshRSS account") }
-                TextButton(enabled = !state.connecting, onClick = { library.useDemo(); password = ""; onClose() }) { Text("Try sample stories") }
-                TextButton(enabled = !state.connecting, onClick = { library.useLocalFeeds(); password = ""; onClose() }) { Text("Use local feeds without FreshRSS") }
                 state.loginError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 if (state.connecting) LinearProgressIndicator(Modifier.fillMaxWidth())
             }
@@ -67,6 +64,6 @@ internal fun AccountDialog(state: LibraryState, library: LibraryController, onCl
                 }) { Text("Sign in") }
             } else TextButton(enabled = !state.connecting, onClick = onClose) { Text("Done") }
         },
-        dismissButton = { TextButton(enabled = !state.connecting, onClick = onClose) { Text(if (state.demo) "Continue demo" else "Close") } },
+        dismissButton = { TextButton(enabled = !state.connecting, onClick = onClose) { Text("Close") } },
     )
 }

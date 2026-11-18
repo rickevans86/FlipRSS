@@ -1,11 +1,11 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub open Issues on 2026-11-18 by ChatGPT Codex.
+Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex.
 
-| Issue | Title | Responsible AI | Status | Branch / PR |
-|---|---|---|---|---|
-| #19 | Add pure-black OLED theme and optional popular-feed search page | Codex (ai:codex) | Review (status:review); implementation/build/APK done | codex/19-oled-feed-search; PR #20, base main |
+| Issue | Title | Agent | Status |
+|---|---|---|---|
+| #21 | Ship source tabs, combined Saved, scroll read and live feed discovery | Codex | ai:codex, status:in-progress |
+| #19 | Add pure-black OLED theme and optional popular-feed search page | Codex | ai:codex, status:review |
 
-Prior tasks #4/#6/#8/#10/#12/#14/#16 remain closed; feature merges/publication
-completed on main. #19 is new work awaiting review/main merge. Review prerelease
-v0.7.0-preview has native assets; stable main/release remains v0.6.0.
+Foundation #20 merged at Rick's instruction. #21 implementation/build complete;
+authorized main merge/publication pending. Prior native releases remain available.

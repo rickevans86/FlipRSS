@@ -83,208 +83,211 @@ private val Red = Color(0xFFB83224)
 }
 
 @Composable fun FlipApp(model: LibraryViewModel = viewModel()) {
-    val library = model.library
-    val state by library.state.collectAsStateWithLifecycle()
-    var destination by rememberSaveable { mutableStateOf("Today") }
+    val local by model.localLibrary.state.collectAsStateWithLifecycle()
+    val fresh by model.freshLibrary.state.collectAsStateWithLifecycle()
+    val feeds by model.localFeeds.collectAsStateWithLifecycle()
+    val directory by model.directory.state.collectAsStateWithLifecycle()
+    var destination by rememberSaveable { mutableStateOf("FlipRSS") }
     var topic by rememberSaveable { mutableStateOf<String?>(null) }
     var readerIds by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+    var seenFreshRevision by rememberSaveable { mutableIntStateOf(fresh.accountRevision) }
+    var seenLocalRevision by rememberSaveable { mutableIntStateOf(local.accountRevision) }
     var initialPage by rememberSaveable { mutableIntStateOf(0) }
     var accountOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
-    var feedOpen by rememberSaveable { mutableStateOf(false) }
+    var feedOpen by remember { mutableStateOf(false) }
+    var feedToServer by remember { mutableStateOf(false) }
     var feedInitialUrl by remember { mutableStateOf("") }
-    var pendingFeedUrl by remember { mutableStateOf<String?>(null) }
     var feedQuery by rememberSaveable { mutableStateOf("") }
     var feedCategory by rememberSaveable { mutableStateOf("All topics") }
+    var website by remember { mutableStateOf("") }
+    var manageFeeds by rememberSaveable { mutableStateOf(false) }
+    var viewFeed by remember { mutableStateOf<LocalFeed?>(null) }
+    var transferFeed by remember { mutableStateOf<LocalFeed?>(null) }
+    var transferRevision by remember { mutableIntStateOf(0) }
     var markTarget by remember { mutableStateOf<MarkReadTarget?>(null) }
-    var seenAccountRevision by rememberSaveable { mutableIntStateOf(state.accountRevision) }
-    val libraryScroll = rememberLazyListState()
-    LaunchedEffect(state.accountRevision) {
-        if (seenAccountRevision != state.accountRevision) {
-            seenAccountRevision = state.accountRevision; destination = "Today"; topic = null; readerIds = emptyList()
-            feedOpen = false; markTarget = null
-        }
-    }
-    LaunchedEffect(state.settings.showFeedSearch) {
-        destination = availableDestination(destination, state.settings.showFeedSearch)
-    }
-    LaunchedEffect(state.accountRevision, pendingFeedUrl, state.sessionExpired, state.connecting) {
-        val pending = pendingFeedUrl
-        if (pending != null && !state.demo && !state.sessionExpired && !state.connecting && !state.restoring) {
-            feedInitialUrl = pending; pendingFeedUrl = null
-            library.clearFeedError(); feedOpen = true; accountOpen = false
-        }
-    }
-    LaunchedEffect(destination, topic) {
-        libraryScroll.scrollToItem(0)
-        if (destination != "Search") library.selectScope(LibraryScope(topic, destination == "Saved"))
-    }
-    LaunchedEffect(state.settings.hideEmptyCategories, state.visibleSections, state.loading, topic) {
-        if (state.settings.hideEmptyCategories && !state.loading && !state.restoring && topic != null &&
-            state.visibleSections.none { it.id == topic }) topic = null
-    }
+    val library = if (destination == "FreshRSS") model.freshLibrary else model.localLibrary
+    val source = if (destination == "FreshRSS") fresh else local
+    val state = if (destination == "Saved") combinedSaved(
+        local.copy(articles = model.localLibrary.bookmarkedArticles()), fresh.copy(articles = model.freshLibrary.bookmarkedArticles()))
+        else source.copy(settings = local.settings)
+    val sourcePage = destination == "FreshRSS" || destination == "FlipRSS"
     val selected = state.visibleArticles
-    val readerArticles = readerIds.mapNotNull(library::findArticle)
-    val sectionTitle = state.sections.find { it.id == topic }?.title
-    val scopeMatchesView = state.scope.sectionId == topic && state.scope.savedOnly == (destination == "Saved") &&
-        state.scope.unreadOnly == (state.settings.hideRead && destination != "Saved")
-    fun open(article: Article) { initialPage = selected.indexOf(article); readerIds = selected.map { it.id } }
-
-    if (readerArticles.isNotEmpty()) {
-        Reader(readerArticles, initialPage, state, library) { readerIds = emptyList() }
-    } else {
-        Scaffold(bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                libraryDestinations(state.settings.showFeedSearch).forEach { item ->
-                    NavigationBarItem(selected = destination == item, onClick = { destination = item; topic = null },
-                        icon = { Icon(when (item) {
-                            "Search" -> Icons.Outlined.Search
-                            "Topics" -> Icons.Outlined.GridView
-                            "Saved" -> Icons.Outlined.BookmarkBorder
-                            else -> Icons.Outlined.ViewDay
-                        }, null) }, label = { Text(item) },
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.surfaceVariant))
-                }
+    val readerArticles = readerIds.mapNotNull(model::findArticle)
+    val scroll = rememberLazyListState()
+    val context = LocalContext.current
+    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+    val uriHandler = LocalUriHandler.current
+    LaunchedEffect(local.settings.showFeedSearch) { destination = availableDestination(destination, local.settings.showFeedSearch) }
+    LaunchedEffect(fresh.accountRevision, local.accountRevision) {
+        if (seenFreshRevision != fresh.accountRevision || seenLocalRevision != local.accountRevision) {
+            seenFreshRevision = fresh.accountRevision; seenLocalRevision = local.accountRevision
+            readerIds = emptyList(); topic = null
+        }
+    }
+    LaunchedEffect(destination, topic, fresh.accountRevision, local.accountRevision) {
+        scroll.scrollToItem(0)
+        when (destination) {
+            "FreshRSS" -> if (!fresh.demo) model.freshLibrary.selectScope(LibraryScope(topic))
+            "FlipRSS" -> model.localLibrary.selectScope(LibraryScope(topic))
+            "Search" -> model.directory.setEnabled(local.settings.showFeedSearch)
+            "Saved" -> {
+                model.localLibrary.selectScope(LibraryScope(savedOnly = true))
+                if (!fresh.demo) model.freshLibrary.selectScope(LibraryScope(savedOnly = true))
             }
-        }) { padding ->
-            LazyColumn(Modifier.fillMaxSize().padding(padding), state = libraryScroll,
-                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                item {
-                    Masthead(onSettings = { settingsOpen = true }, onAddFeed = {
-                        feedInitialUrl = ""; pendingFeedUrl = null
-                        if (state.demo || state.sessionExpired) accountOpen = true
-                        else { library.clearFeedError(); feedOpen = true }
-                    }, onRefresh = library::refresh,
-                        refreshEnabled = destination != "Search" && !state.demo && !state.loading && !state.restoring,
-                        addEnabled = !state.addingFeed && !state.markingAll && !state.connecting)
-                    if (state.loading || state.restoring || state.markingAll) LinearProgressIndicator(Modifier.fillMaxWidth())
-                    if (destination != "Search") Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        if (destination != "Saved") Row(Modifier.toggleable(value = state.settings.hideRead, role = Role.Switch,
-                            onValueChange = { library.updateSettings(state.settings.copy(hideRead = it)) }),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Switch(state.settings.hideRead, onCheckedChange = null)
-                            Text("Hide read", Modifier.padding(start = 6.dp), style = MaterialTheme.typography.labelLarge)
-                        }
-                        Spacer(Modifier.weight(1f))
-                        TextButton(onClick = { markTarget = library.markReadTarget() },
-                            enabled = destination != "Topics" && scopeMatchesView && !state.loading && !state.loadingMore && !state.restoring &&
-                                !state.markingAll && !state.addingFeed && !state.connecting && !state.sessionExpired && state.pending.isEmpty()) {
-                            Text(if (state.markingAll) "Marking…" else "Mark all read")
-                        }
-                    }
-                }
-                state.notice?.let { notice -> item {
-                    Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(8.dp)) {
-                        Column(Modifier.fillMaxWidth().padding(12.dp)) {
-                            Text(notice, style = MaterialTheme.typography.bodyMedium)
-                            TextButton(onClick = library::dismissNotice) { Text("Dismiss") }
-                        }
-                    }
-                } }
-                state.error?.let { problem -> item { ProblemBanner(problem, library::dismissError) { library.refresh() } } }
-                if (destination == "Search" && state.settings.showFeedSearch) {
-                    feedSearchPage(feedQuery, feedCategory, { feedQuery = it }, { feedCategory = it },
-                        canAdd = !state.addingFeed && !state.markingAll && !state.connecting && !state.restoring,
-                        source = if (state.local) "Adds to this device" else if (state.demo) "Choose local feeds or FreshRSS to add" else "Adds to FreshRSS",
-                        onAdd = { feed -> pendingFeedUrl = feed.url; if (state.demo || state.sessionExpired) accountOpen = true })
-                } else if (destination == "Topics") {
-                    val topics = state.visibleSections.filterNot { it.feed }
-                    items(topics, key = { it.id }) { section ->
-                        Box(Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant).clickable { topic = section.id; destination = "Today" }) {
-                            val cover = library.cover(section)
-                            if (cover != null && state.settings.showImages) Cover(cover, Modifier.fillMaxSize())
-                            Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .75f)))))
-                            Column(Modifier.align(Alignment.BottomStart).padding(20.dp)) {
-                                Text(section.title, color = Color.White, fontFamily = FontFamily.Serif, fontSize = 30.sp)
-                                Text(if (state.demo) "${DemoLibrary.articles.count { it.topic == section.id }} sample stories"
-                                    else section.unread?.let { "$it unread" } ?: "Open section", color = Color.White, fontSize = 12.sp)
-                            }
-                        }
-                    }
-                    val feeds = state.visibleSections.filter { it.feed }
-                    if (feeds.isNotEmpty()) item { Eyebrow("YOUR FEEDS") }
-                    items(feeds, key = { it.id }) { feed ->
-                        ListItem(headlineContent = { Text(feed.title) }, supportingContent = { Text(feed.unread?.let { "$it unread" } ?: "Open feed") },
-                            leadingContent = { Icon(Icons.Outlined.RssFeed, null) }, modifier = Modifier.clickable { topic = feed.id; destination = "Today" })
-                    }
-                    if (state.visibleSections.isEmpty() && !state.loading) item { Text(if (state.settings.hideEmptyCategories) "No categories with unread articles. Turn off the category setting to show all." else "No feeds yet. Use Add feed to subscribe.") }
-                } else {
-                    if (destination != "Saved" || state.demo) item {
-                        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(selected = topic == null, onClick = { topic = null }, label = { Text("All stories") })
-                            state.visibleSections.filterNot { it.feed }.forEach { section ->
-                                FilterChip(selected = topic == section.id, onClick = { topic = section.id }, label = { Text(section.title) })
-                            }
-                        }
-                    }
-                    if (selected.isEmpty() && !state.loading) item {
-                        Column(Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Icon(if (destination == "Saved") Icons.Outlined.BookmarkBorder else Icons.Outlined.RssFeed, null, Modifier.size(36.dp))
-                            Text(if (state.settings.hideRead && destination != "Saved") "No unread stories here." else if (destination == "Saved") "A little space for a good story." else "No stories here yet.", fontFamily = FontFamily.Serif, fontSize = 24.sp)
-                            Text(if (state.settings.hideRead && destination != "Saved") "Turn off Hide read to include read stories." else if (destination == "Saved") "Bookmark stories to find them here." else "Refresh your feeds or choose another section.",
-                                style = MaterialTheme.typography.bodyMedium)
-                            if (destination == "Saved") TextButton(onClick = { destination = "Today"; topic = null }) { Text("Explore stories") }
-                        }
-                    }
-                    if (selected.isNotEmpty()) {
-                        item {
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                Eyebrow(if (destination == "Saved") "SAVED FOR YOU" else sectionTitle?.uppercase() ?: "THE READING ROOM")
-                                Text("${selected.size} stories", style = MaterialTheme.typography.labelSmall)
-                            }
-                        }
-                        item { StoryCard(selected.first(), true, state, library) { open(selected.first()) } }
-                        val rows = selected.drop(1).chunked(2)
-                        items(rows.size, key = { "stories-${rows[it].first().id}" }) { index ->
-                            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                rows[index].forEach { article -> Box(Modifier.weight(1f)) { StoryCard(article, false, state, library) { open(article) } } }
-                                if (rows[index].size == 1) Spacer(Modifier.weight(1f))
-                            }
-                        }
-                    }
-                    if (state.continuation != null) item {
-                        OutlinedButton(onClick = library::loadMore, enabled = !state.loading && !state.loadingMore, modifier = Modifier.fillMaxWidth()) {
-                            Text(if (state.loadingMore) "Loading…" else "Load more stories")
-                        }
-                    } else if (selected.isNotEmpty() && !state.loading) item {
-                        HorizontalDivider()
-                        Text(if (state.demo) "YOU’RE ALL CAUGHT UP WITH THE DEMO." else "END OF THIS STREAM",
-                            Modifier.fillMaxWidth().padding(top = 20.dp), fontSize = 10.sp, letterSpacing = 1.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+        }
+    }
+    LaunchedEffect(local.settings.hideEmptyCategories, state.visibleSections, state.loading, topic) {
+        if (sourcePage && local.settings.hideEmptyCategories && !state.loading && topic != null && state.visibleSections.none { it.id == topic }) topic = null
+    }
+    LaunchedEffect(fresh.feedAddedRevision) {
+        if (transferFeed != null && fresh.feedAddedRevision > transferRevision) {
+            transferFeed = null; Toast.makeText(context, "Feed added to FreshRSS. Local feed kept.", Toast.LENGTH_LONG).show()
+        }
+    }
+    val rows = selected.drop(1).chunked(2)
+    val cards = buildMap<String, List<Article>> {
+        selected.firstOrNull()?.let { put("story:${it.id}", listOf(it)) }
+        rows.forEach { put("story-row:${it.first().id}", it) }
+    }
+    LaunchedEffect(destination, topic, manageFeeds, local.settings.markReadOnScroll, selected.map { it.id }) {
+        if (sourcePage && local.settings.markReadOnScroll && !(destination == "FreshRSS" && fresh.demo)) {
+            val tracker = ScrollReadTracker()
+            snapshotFlow {
+                Triple(scroll.layoutInfo.visibleItemsInfo.filter { it.key.toString() in cards }.associate { it.key.toString() to it.index },
+                    scroll.firstVisibleItemIndex to scroll.firstVisibleItemScrollOffset, scroll.isScrollInProgress)
+            }.collect { (visible, position, scrolling) ->
+                tracker.observe(visible, position.first, position.second, scrolling).forEach { key ->
+                    cards[key].orEmpty().forEach { model.owner(it).setRead(it.id, true) }
                 }
             }
         }
     }
-    if (accountOpen) AccountDialog(state, library) {
-        accountOpen = false
-        val current = library.state.value
-        if (current.demo || current.sessionExpired) pendingFeedUrl = null
+    fun open(article: Article) { initialPage = selected.indexOf(article); readerIds = selected.map { it.id } }
+    fun addLocal(feed: PopularFeed) {
+        model.localLibrary.clearFeedError(); feedInitialUrl = feed.url; feedToServer = false; feedOpen = true
     }
-    if (settingsOpen) SettingsDialog(state, library,
-        onAccount = { settingsOpen = false; accountOpen = true }, onClose = { settingsOpen = false })
-    if (feedOpen) AddFeedDialog(state, library,
-        onAccount = { pendingFeedUrl = feedInitialUrl; feedOpen = false; accountOpen = true },
-        onClose = { feedOpen = false }, initialUrl = feedInitialUrl)
-    markTarget?.let { target ->
-        AlertDialog(onDismissRequest = { markTarget = null }, title = { Text("Mark all read?") },
-            text = { Text("Mark all stories in “${target.title}” as read${if (state.demo) "" else " on FreshRSS, including stories not loaded yet"}? A timestamp cutoff keeps newer stories unread.") },
-            confirmButton = { TextButton(onClick = { markTarget = null; library.markAllRead(target) }) { Text("Mark read") } },
-            dismissButton = { TextButton(onClick = { markTarget = null }) { Text("Cancel") } })
+    fun refresh() { when (destination) {
+        "Search" -> model.directory.refresh()
+        "Saved" -> { model.localLibrary.refresh(); if (!fresh.demo) model.freshLibrary.refresh() }
+        else -> library.refresh()
+    } }
+    if (readerArticles.isNotEmpty()) Reader(readerArticles, initialPage, state, model) { readerIds = emptyList() }
+    else Scaffold(bottomBar = {
+        NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+            libraryDestinations(local.settings.showFeedSearch).forEach { item ->
+                NavigationBarItem(selected = destination == item, onClick = { destination = item; topic = null },
+                    icon = { Icon(when (item) { "Search" -> Icons.Outlined.Search; "Saved" -> Icons.Outlined.BookmarkBorder
+                        "FreshRSS" -> Icons.Outlined.RssFeed; else -> Icons.Outlined.ViewDay }, null) }, label = { Text(item) })
+            }
+        }
+    }) { padding ->
+        LazyColumn(Modifier.fillMaxSize().padding(padding), state = scroll,
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            item {
+                Masthead(onSettings = { settingsOpen = true }, onAddFeed = {
+                    if (fresh.demo || fresh.sessionExpired) accountOpen = true else {
+                        model.freshLibrary.clearFeedError(); feedInitialUrl = ""; feedToServer = true; feedOpen = true
+                    }
+                }, onRefresh = ::refresh, refreshEnabled = !state.loading && !state.restoring && !directory.updating,
+                    addEnabled = !fresh.addingFeed && !fresh.connecting && !fresh.restoring, showAdd = destination == "FreshRSS")
+                if (state.loading || state.restoring) LinearProgressIndicator(Modifier.fillMaxWidth())
+                if (sourcePage && !(destination == "FreshRSS" && fresh.demo)) Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.toggleable(local.settings.hideRead, role = Role.Switch,
+                        onValueChange = { model.updateSettings(local.settings.copy(hideRead = it)) }), verticalAlignment = Alignment.CenterVertically) {
+                        Switch(local.settings.hideRead, null); Text("Hide read", Modifier.padding(start = 6.dp))
+                    }
+                    Spacer(Modifier.weight(1f))
+                    TextButton(onClick = { markTarget = library.markReadTarget() }, enabled = !state.loading && !state.markingAll && !state.addingFeed && state.pending.isEmpty()) { Text("Mark all read") }
+                }
+            }
+            if (destination == "Search") {
+                feedSearchPage(directory, feedQuery, feedCategory, { feedQuery = it }, { feedCategory = it }, website, { website = it },
+                    { model.directory.find(website) }, model.directory::refresh, !local.addingFeed && !local.restoring, ::addLocal)
+            } else if (destination == "FreshRSS" && fresh.demo) item {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text("FreshRSS", style = MaterialTheme.typography.headlineMedium)
+                    Text("Connect your server to read and sync its feeds. Local subscriptions are available in FlipRSS.")
+                    fresh.loginError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    Button(onClick = { accountOpen = true }, enabled = !fresh.restoring) { Text("Connect FreshRSS") }
+                }
+            } else {
+                state.error?.let { message -> item { ProblemBanner(message, { model.localLibrary.dismissError(); model.freshLibrary.dismissError() }, ::refresh) } }
+                state.notice?.let { message -> item { TextButton(onClick = library::dismissNotice) { Text(message + " · Dismiss") } } }
+                if (destination == "FlipRSS") {
+                    item { TextButton(onClick = { manageFeeds = !manageFeeds }) { Text(if (manageFeeds) "Hide local feeds" else "Manage local feeds (${feeds.size})") } }
+                    if (manageFeeds) items(feeds, key = { "local-feed:${it.id}" }) { feed ->
+                        var menu by remember { mutableStateOf(false) }
+                        ListItem(headlineContent = { Text(feed.title) }, trailingContent = {
+                            Box {
+                                IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, "Actions for ${feed.title}") }
+                                DropdownMenu(menu, { menu = false }) {
+                                    DropdownMenuItem(text = { Text("View feed URL") }, onClick = { menu = false; viewFeed = feed })
+                                    DropdownMenuItem(text = { Text("Copy feed URL") }, onClick = { menu = false; clipboard.setText(androidx.compose.ui.text.AnnotatedString(feed.url)); Toast.makeText(context, "Feed URL copied", Toast.LENGTH_SHORT).show() })
+                                    DropdownMenuItem(text = { Text("Add to FreshRSS") }, onClick = { menu = false; model.freshLibrary.clearFeedError(); transferRevision = fresh.feedAddedRevision; transferFeed = feed })
+                                }
+                            }
+                        })
+                    }
+                }
+                if (sourcePage) item {
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(topic == null, { topic = null }, label = { Text("All stories") })
+                        state.visibleSections.filterNot { it.feed }.forEach { section -> FilterChip(topic == section.id, { topic = section.id }, label = { Text(section.title) }) }
+                    }
+                }
+                if (selected.isEmpty() && !state.loading) item {
+                    Column(Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(if (destination == "Saved") "No saved stories yet." else if (local.settings.hideRead) "No unread stories here." else "No stories here yet.", style = MaterialTheme.typography.headlineSmall)
+                        Text(if (destination == "Saved") "Bookmarks from FreshRSS and FlipRSS appear here, including read stories." else if (destination == "FlipRSS") "Find RSS feeds in Search or refresh your local feeds." else "Add server feeds with + or refresh FreshRSS.")
+                    }
+                }
+                selected.firstOrNull()?.let { article -> item(key = "story:${article.id}") { StoryCard(article, true, state, model) { open(article) } } }
+                items(rows.size, key = { "story-row:${rows[it].first().id}" }) { index ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        rows[index].forEach { article -> Box(Modifier.weight(1f)) { StoryCard(article, false, state, model) { open(article) } } }
+                        if (rows[index].size == 1) Spacer(Modifier.weight(1f))
+                    }
+                }
+                if (state.continuation != null) item {
+                    OutlinedButton(onClick = { if (destination == "Saved") model.freshLibrary.loadMore() else library.loadMore() }, enabled = !state.loadingMore) { Text(if (state.loadingMore) "Loading…" else "Load more stories") }
+                }
+            }
+        }
     }
+    if (settingsOpen) SettingsDialog(local.copy(account = fresh.account, sessionExpired = fresh.sessionExpired), model.localLibrary, onAccount = { settingsOpen = false; accountOpen = true },
+        onClose = { settingsOpen = false }, onSettings = model::updateSettings)
+    if (accountOpen) AccountDialog(fresh, model.freshLibrary) { accountOpen = false }
+    if (feedOpen) AddFeedDialog(if (feedToServer) fresh else local, if (feedToServer) model.freshLibrary else model.localLibrary,
+        onAccount = { feedOpen = false; accountOpen = true }, onClose = { feedOpen = false }, initialUrl = feedInitialUrl)
+    markTarget?.let { target -> AlertDialog(onDismissRequest = { markTarget = null }, title = { Text("Mark all read?") },
+        text = { Text("Mark all stories in ${target.title} as read in $destination? Newer stories stay unread.") },
+        confirmButton = { TextButton(onClick = { markTarget = null; library.markAllRead(target) }) { Text("Mark read") } },
+        dismissButton = { TextButton(onClick = { markTarget = null }) { Text("Cancel") } }) }
+    viewFeed?.let { feed -> AlertDialog(onDismissRequest = { viewFeed = null }, title = { Text(feed.title) }, text = {
+        androidx.compose.foundation.text.selection.SelectionContainer { Text(feed.url) }
+    }, confirmButton = { TextButton(onClick = { runCatching { uriHandler.openUri(feed.url) } }) { Text("Open feed") } },
+        dismissButton = { TextButton(onClick = { viewFeed = null }) { Text("Close") } }) }
+    if (!accountOpen) transferFeed?.let { feed -> AlertDialog(onDismissRequest = { if (!fresh.addingFeed) transferFeed = null }, title = { Text("Add to FreshRSS?") },
+        text = { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Subscribe to ${feed.title} as ${fresh.account?.username ?: "a connected FreshRSS account"}. The local feed and saved stories stay intact.")
+            Text(feed.url, style = MaterialTheme.typography.bodySmall)
+            fresh.feedError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            if (fresh.addingFeed) LinearProgressIndicator(Modifier.fillMaxWidth())
+        } }, confirmButton = {
+            if (fresh.demo || fresh.sessionExpired) TextButton(onClick = { accountOpen = true }, enabled = !fresh.restoring) { Text("Connect FreshRSS") }
+            else Button(enabled = !fresh.addingFeed, onClick = { model.freshLibrary.addFeed(feed.url) }) { Text("Subscribe") }
+        }, dismissButton = { TextButton(enabled = !fresh.addingFeed, onClick = { transferFeed = null }) { Text("Cancel") } }) }
 }
 
 @Composable private fun Masthead(onSettings: () -> Unit, onAddFeed: () -> Unit, onRefresh: () -> Unit,
-    refreshEnabled: Boolean, addEnabled: Boolean) {
+    refreshEnabled: Boolean, addEnabled: Boolean, showAdd: Boolean = true) {
     Column {
         Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("F", Modifier.clip(RoundedCornerShape(4.dp)).background(Red).padding(horizontal = 9.dp, vertical = 2.dp),
                 color = Color.White, fontWeight = FontWeight.Black, fontSize = 25.sp)
             Text("FlipRSS", Modifier.weight(1f).padding(start = 8.dp), fontSize = 24.sp, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp)
-            IconButton(onClick = onAddFeed, enabled = addEnabled) { Icon(Icons.Outlined.Add, "Add feed") }
+            if (showAdd) IconButton(onClick = onAddFeed, enabled = addEnabled) { Icon(Icons.Outlined.Add, "Add feed") }
             IconButton(onClick = onRefresh, enabled = refreshEnabled) { Icon(Icons.Outlined.Refresh, "Refresh feeds") }
             IconButton(onClick = onSettings) { Icon(Icons.Outlined.Settings, "App settings") }
         }
@@ -306,7 +309,7 @@ private val Red = Color(0xFFB83224)
         }
     }
 }
-@Composable private fun StoryCard(article: Article, hero: Boolean, state: LibraryState, library: LibraryController, onOpen: () -> Unit) {
+@Composable private fun StoryCard(article: Article, hero: Boolean, state: LibraryState, library: LibraryViewModel, onOpen: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (state.settings.showImages) Box(Modifier.fillMaxWidth().height(if (hero) 230.dp else 145.dp).clip(RoundedCornerShape(10.dp))) {
             Cover(article, Modifier.fillMaxSize().clickable(onClickLabel = "Read ${article.title}", onClick = onOpen))
@@ -329,21 +332,21 @@ private val Red = Color(0xFFB83224)
             Text(article.title, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Medium,
                 fontSize = if (hero) 30.sp else 22.sp, lineHeight = if (hero) 34.sp else 26.sp, maxLines = 4, overflow = TextOverflow.Ellipsis)
             if (hero) Text(article.summary, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text("${article.source} · ${article.minutes} MIN READ", fontSize = 9.sp, lineHeight = 14.sp, letterSpacing = .4.sp,
+            Text("${if (article.local || article.demo) "FlipRSS" else "FreshRSS"} · ${article.source} · ${article.minutes} MIN READ", fontSize = 9.sp, lineHeight = 14.sp, letterSpacing = .4.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
-@Composable private fun SaveButton(article: Article, state: LibraryState, library: LibraryController) {
+@Composable private fun SaveButton(article: Article, state: LibraryState, library: LibraryViewModel) {
     val saved = article.id in state.savedIds
-    IconToggleButton(checked = saved, onCheckedChange = { library.toggleSaved(article.id) },
+    IconToggleButton(checked = saved, onCheckedChange = { library.owner(article).toggleSaved(article.id) },
         enabled = !state.markingAll && MutationKey(article.id, false) !in state.pending) {
         Icon(if (saved) Icons.Outlined.Bookmark else Icons.Outlined.BookmarkBorder,
             if (saved) "Unsave ${article.title}" else "Save ${article.title}",
             tint = if (saved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
     }
 }
-@Composable private fun Reader(articles: List<Article>, initialPage: Int, state: LibraryState, library: LibraryController, onClose: () -> Unit) {
+@Composable private fun Reader(articles: List<Article>, initialPage: Int, state: LibraryState, library: LibraryViewModel, onClose: () -> Unit) {
     BackHandler(onBack = onClose)
     val pager = rememberPagerState(initialPage = initialPage.coerceIn(articles.indices)) { articles.size }
     val scope = rememberCoroutineScope()
@@ -351,7 +354,7 @@ private val Red = Color(0xFFB83224)
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     LaunchedEffect(pager, state.settings.autoMarkRead, state.markingAll) {
-        if (state.settings.autoMarkRead && !state.markingAll) snapshotFlow { pager.settledPage }.distinctUntilChanged().collect { library.setRead(articles[it].id, true) }
+        if (state.settings.autoMarkRead && !state.markingAll) snapshotFlow { pager.settledPage }.distinctUntilChanged().collect { library.owner(articles[it]).setRead(articles[it].id, true) }
     }
     Scaffold(topBar = {
         val current = articles[pager.currentPage]
@@ -359,7 +362,7 @@ private val Red = Color(0xFFB83224)
             IconButton(onClick = onClose) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back to stories") }
             Text("READER", Modifier.weight(1f), fontSize = 11.sp, letterSpacing = 1.sp)
             TextButton(enabled = !state.markingAll && MutationKey(current.id, true) !in state.pending,
-                onClick = { library.setRead(current.id, current.id !in state.readIds) }) {
+                onClick = { library.owner(current).setRead(current.id, current.id !in state.readIds) }) {
                 Text(if (current.id in state.readIds) "Mark unread" else "Mark read")
             }
             SaveButton(current, state, library)
@@ -383,7 +386,7 @@ private val Red = Color(0xFFB83224)
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(articles[pager.currentPage], speech) }
-            state.error?.let { ProblemBanner(it, library::dismissError) }
+            state.error?.let { ProblemBanner(it, { library.localLibrary.dismissError(); library.freshLibrary.dismissError() }) }
             HorizontalPager(state = pager, key = { articles[it].id }, modifier = Modifier.weight(1f)) { page ->
                 val article = articles[page]
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {

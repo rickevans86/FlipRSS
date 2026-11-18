@@ -65,7 +65,7 @@ internal object LocalFeedParser {
                 alternate = original?.let { listOf(Link(it)) },
                 enclosure = enclosure?.let { listOf(Link(it.attr("url"), it.attr("type"))) },
                 origin = Origin(feed.id, feed.title, baseUrl)), mapOf(feed.id to subscription), baseUrl)
-            mapped?.copy(topic = feed.title)?.let { LocalEntry(it, nowMicros) }
+            mapped?.copy(topic = feed.title, local = true)?.let { LocalEntry(it, nowMicros) }
         }.distinctBy { it.article.id }
         return feed to entries
     }
@@ -145,6 +145,7 @@ class LocalFeedRepository(private val store: LocalFeedStore,
         val (feed, entries) = fetch(normalized)
         commit(merged(data!!, feed, entries)); feed.id
     }
+    internal suspend fun subscriptions(): List<LocalFeed> = access { data!!.feeds.toList() }
     override suspend fun catalogue(): Catalogue = access {
         val value = data!!
         val sections = value.feeds.flatMap { feed ->
@@ -162,7 +163,7 @@ class LocalFeedRepository(private val store: LocalFeedStore,
         val value = data!!
         val selected = value.entries.filter { matching(it, stream, value) && (!unreadOnly || it.article.id !in value.read) }
         // Local cache is bounded and delivered as a snapshot, avoiding offset skips after read changes.
-        ArticlePage(selected.map { it.article.copy(initiallyRead = it.article.id in value.read, initiallyStarred = it.article.id in value.saved) }, null)
+        ArticlePage(selected.map { it.article.copy(local = true, initiallyRead = it.article.id in value.read, initiallyStarred = it.article.id in value.saved) }, null)
     }
     override suspend fun setRead(id: String, read: Boolean) { access { val old = data!!; commit(old.copy(read = if (read) old.read + id else old.read - id)) } }
     override suspend fun setStarred(id: String, starred: Boolean) { access { val old = data!!; commit(old.copy(saved = if (starred) old.saved + id else old.saved - id)) } }

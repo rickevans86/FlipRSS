@@ -185,3 +185,22 @@ reorder earlier entries._
 - Publish installable review APK as v0.7.0-preview with standard FlipRSS.apk and
   native checksum/metadata. Leave source PR for Rick's merge; after review/merge
   create matching regular v0.7.0 tag using same verified version-7 signed artifact.
+
+## 2026-11-18 — Independent sources and live discovery (#21, Codex)
+
+- Keep local and FreshRSS controllers concurrently, same persisted UI settings;
+  account/source stores remain separate. Combined Saved includes read bookmarks
+  and routes writes by article origin. Preserve existing local file/token.
+- FreshRSS/FlipRSS/Search/Saved tabs; remove Topics, retain source category chips.
+  + only FreshRSS. Search always adds local. Local feed menus expose URL/copy and
+  explicit account-confirmed server add without moving/deleting local data.
+- Default-off scroll read observes actual rendered cards and marks only on forward
+  scroll past viewport top; not Saved/Search or unseen jumped items.
+- Import actual public Feeder table/add-feed URLs and Feedspot data-site/RSS links,
+  bounded/unauthenticated requests. Atomic cache per source, daily foreground and
+  manual refresh, failed-source retention, normalized dedup/bundled fallback.
+- Website discovery validates RSS/Atom from direct URL, alternate/RSS/icon links
+  and common paths, including when home page blocked. Bound size/time/redirects/
+  candidates; no Basic credentials or FreshRSS auth forwarded, no silent subscribe.
+- Rick explicitly authorizes merging/publishing #21. Use hosted publisher with
+  immutable signed artifact for regular v0.8.0 and preserve source provenance.

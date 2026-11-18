@@ -65,3 +65,26 @@ Downloaded native APK verified: 13,250,779 bytes; SHA-256
 a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18.
 https://github.com/rickevans86/FlipRSS/releases/tag/v0.7.0-preview
 Artifact 68fc7e2 / codex/19-discovery-download (never merge).
+
+## Next update #21 — source tabs, Saved, scroll read and live discovery
+
+Rick explicitly authorized implementing on main, building and publishing. Codex
+merged foundation #20 at 0bd0077. New source 7dc9763 / codex/21-source-tabs adds
+simultaneous local/FreshRSS controllers, FreshRSS/FlipRSS/Search/Saved (no Topics),
+combined bookmarks with owner-routed read/star, + only FreshRSS, Search-to-local,
+local URL menus/confirmed server subscription, optional default-off scroll read.
+Directory has daily/manual per-source cache/import from supplied Feeder/Feedspot
+pages, and bounded site/direct-feed discovery via XML/HTML links/common paths.
+OLED and Search-disable preserved. Existing files/session/data retained.
+
+64 JVM tests pass per debug/release variant, both builds/lint pass (0 errors,
+1 existing warning); instrumentation compiles. Five publisher tests/actionlint
+pass. Real-page parsers extracted 114/454 source links; both URLs returned HTTP
+200 using production request headers. No phone/installer/audio/account writes
+performed. App source awaits authorized feature PR merge/publication.
+
+v0.8.0 APK code 8, Android 8+, signed release/non-debuggable, same signer as v0.6.
+Artifact 04a95a4 / codex/21-release-download, 13,283,547 bytes, SHA-256
+39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6.
+Native publication pending after main merge/hosted action. Production signer
+unconfigured, binary branches never merge. No independent review claimed.
