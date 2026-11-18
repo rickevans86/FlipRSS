@@ -2,5 +2,4 @@
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-
-#29 implementation complete. #30 sequential follow-up by Codex; verify live claims.
+| app article loader/reader/settings/tests/version, README.md, .release/**, .ai/** | #30 fuller public article text | Codex | codex/30-full-articles |
