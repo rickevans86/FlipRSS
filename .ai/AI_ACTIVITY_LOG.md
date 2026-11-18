@@ -173,3 +173,13 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   v0.6.0 confirmed regular/latest, native assets still empty; download link
   verified. Recorded outstanding runner/phone/independent review requirements.
   Source/artifact/release records synchronized; no main merge.
+
+- 2026-11-18 — **ChatGPT Codex** — #16, Rick explicitly authorized all merges
+  and native asset publication. Merged PR #7→#9→#11→#13→#15 into main using
+  merge commits and retargeting; main 41548fc. Preserved history/binary separation.
+  Main app/workflow/README matched tested final feature branch. No app change or
+  independent self-review claimed. Direct upload still HTTP 401; moved publisher
+  only to GitHub-hosted Ubuntu (public repo) on codex/16-publish-assets. Five Node
+  tests and actionlint pass; prior 49 tests/variant remain applicable to unchanged
+  app. Files: publication workflow, README and six .ai records. Native asset
+  upload not yet complete; follow-up PR/action required.

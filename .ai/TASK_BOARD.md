@@ -22,3 +22,11 @@ upload is blocked by HTTP 401; Windows publishing action queued. Main unchanged.
 
 #14 publishes regular v0.6.0; native attachments need SelfHosted job execution.
 Source review follows #13/#11/#9/#7. Main unmerged.
+
+## Live merge/publication update (2026-11-18, Codex)
+
+#7/#9/#11/#13/#15 are now merged at Rick's explicit instruction. Their Issues
+#6/#8/#10/#12/#14 remain open review pending record/status reconciliation and
+release attachment completion. #4 remains open review. New #16 is ai:codex,
+status:in-progress: merge done, publish assets through hosted follow-up. Main
+contains all features; previous "unmerged" branch notes above are superseded.
