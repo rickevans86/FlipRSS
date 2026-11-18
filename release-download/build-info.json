@@ -1,0 +1,31 @@
+{
+  "version": "0.6.0",
+  "version_code": 6,
+  "source_commit": "de926519c5f44c3c8f3f19553bcab78ffafb98fd",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Existing prototype test identity preserved for updates; production signing not configured",
+  "sha256": "ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4",
+  "size_bytes": 13234395,
+  "unit_tests_each_variant": 49,
+  "publisher_tests": 5,
+  "lint": {
+    "debug": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "release": {
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "device_installer_audio_and_real_account_tests": "Not run; instrumentation APK compiled",
+  "ai": "ChatGPT Codex",
+  "task": "#14",
+  "depends_on_prs": [
+    7,
+    9,
+    11,
+    13
+  ]
+}
