@@ -45,6 +45,9 @@ import kotlin.math.roundToInt
             SettingsToggle("Hide categories with no unread articles", "Hide empty categories and feeds on source pages.", settings.hideEmptyCategories) {
                 onSettings(settings.copy(hideEmptyCategories = it))
             }
+            SettingsToggle("Confirm mark all read", "When off, both Mark all read buttons apply immediately to the current source/category, including unloaded stories.", settings.confirmMarkAllRead) {
+                onSettings(settings.copy(confirmMarkAllRead = it))
+            }
             SettingsToggle("Mark as read on scroll", "Mark cards read after they scroll past the top of a source page.", settings.markReadOnScroll) {
                 onSettings(settings.copy(markReadOnScroll = it))
             }

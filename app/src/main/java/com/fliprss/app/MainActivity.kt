@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -116,6 +117,9 @@ private val Red = Color(0xFFB83224)
         local.copy(articles = model.localLibrary.bookmarkedArticles()), fresh.copy(articles = model.freshLibrary.bookmarkedArticles()))
         else source.copy(settings = local.settings)
     val sourcePage = destination == "FreshRSS" || destination == "FlipRSS"
+    val canMarkAllRead = sourcePage && !state.loading && !state.loadingMore && !state.restoring &&
+        !state.markingAll && !state.addingFeed && !state.connecting && !state.sessionExpired && state.pending.isEmpty() &&
+        state.scope.sectionId == topic && !state.scope.savedOnly && state.scope.unreadOnly == local.settings.hideRead
     val selected = state.visibleArticles
     val readerArticles = readerIds.mapNotNull(model::findArticle)
     val scroll = rememberLazyListState()
@@ -186,7 +190,7 @@ private val Red = Color(0xFFB83224)
             }
         }
     }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), state = scroll,
+        LazyColumn(Modifier.fillMaxSize().padding(padding).testTag("story-list"), state = scroll,
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             item {
                 Masthead(onSettings = { settingsOpen = true }, onAddFeed = {
@@ -202,7 +206,7 @@ private val Red = Color(0xFFB83224)
                         Switch(local.settings.hideRead, null); Text("Hide read", Modifier.padding(start = 6.dp))
                     }
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = { markTarget = library.markReadTarget() }, enabled = !state.loading && !state.markingAll && !state.addingFeed && state.pending.isEmpty()) { Text("Mark all read") }
+                    TextButton(onClick = { markTarget = library.requestMarkAllRead() }, enabled = canMarkAllRead) { Text("Mark all read") }
                 }
             }
             if (destination == "Search") {
@@ -256,6 +260,14 @@ private val Red = Color(0xFFB83224)
                 }
                 if (state.continuation != null) item {
                     OutlinedButton(onClick = { if (destination == "Saved") model.freshLibrary.loadMore() else library.loadMore() }, enabled = !state.loadingMore) { Text(if (state.loadingMore) "Loading…" else "Load more stories") }
+                }
+                if (sourcePage) item(key = "mark-all-read-footer") {
+                    OutlinedButton(onClick = { markTarget = library.requestMarkAllRead() }, enabled = canMarkAllRead,
+                        modifier = Modifier.fillMaxWidth().testTag("mark-all-read-footer")) {
+                        Icon(Icons.Outlined.DoneAll, null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(if (state.markingAll) "Marking…" else "Mark all read")
+                    }
                 }
             }
         }
