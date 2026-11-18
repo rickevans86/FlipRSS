@@ -1,0 +1,25 @@
+{
+  "version": "0.3.0-controls-preview",
+  "version_code": 3,
+  "source_commit": "302a1808cdd0e342ec55e54f35b79c473be4beec",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Existing prototype test identity; production signing not configured",
+  "sha256": "15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69",
+  "size_bytes": 13197475,
+  "unit_tests_each_variant": 28,
+  "lint": {
+    "debug": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "release": {
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "device_and_real_account_tests": "Not run; instrumentation APK compiled",
+  "ai": "ChatGPT Codex",
+  "task": "#8",
+  "depends_on_pr": 7
+}
