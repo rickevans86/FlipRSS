@@ -19,13 +19,20 @@ internal interface GReaderApi {
     suspend fun counts(@Header("Authorization") auth: String): Response<CountList>
     @GET("reader/api/0/stream/contents/{stream}?output=json")
     suspend fun contents(@Header("Authorization") auth: String, @Path(value = "stream", encoded = true) stream: String,
-        @Query("c") continuation: String?, @Query("n") count: Int = 50): Response<ItemList>
+        @Query("c") continuation: String?, @Query("xt") exclude: String? = null, @Query("n") count: Int = 50): Response<ItemList>
     @GET("reader/api/0/token")
     suspend fun token(@Header("Authorization") auth: String): Response<ResponseBody>
     @FormUrlEncoded @POST("reader/api/0/edit-tag")
     suspend fun edit(@Header("Authorization") auth: String, @Field("T") token: String,
         @Field("i") id: String, @Field("a") add: String?, @Field("r") remove: String?): Response<ResponseBody>
+    @FormUrlEncoded @POST("reader/api/0/subscription/quickadd")
+    suspend fun addFeed(@Header("Authorization") auth: String, @Field("T") token: String,
+        @Field("quickadd") url: String): Response<QuickAddResult>
+    @FormUrlEncoded @POST("reader/api/0/mark-all-as-read")
+    suspend fun markAllRead(@Header("Authorization") auth: String, @Field("T") token: String,
+        @Field("s") stream: String, @Field("ts") cutoffMicros: String): Response<ResponseBody>
 }
+internal data class QuickAddResult(val numResults: Int? = null, val streamId: String? = null)
 internal data class SubscriptionList(val subscriptions: List<Subscription>? = null)
 internal data class Subscription(val id: String? = null, val title: String? = null,
     val htmlUrl: String? = null, val categories: List<Tag>? = null)

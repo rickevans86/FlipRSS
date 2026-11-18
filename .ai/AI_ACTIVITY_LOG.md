@@ -93,3 +93,21 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   `ai:codex` / `status:review`. Preserved all release log/decision entries from
   PR #5 and closed that duplicate records-only PR as superseded; #4 now tracks
   records in PR #7. Preview/download verified; no main merge or new release.
+
+- 2026-11-18 — **ChatGPT Codex** — #8: implemented Rick’s Add Feed, persistent
+  top hide-read, confirmed/scoped mark-all-read including unloaded server items,
+  and settings (theme/system bars, reader size, auto-read, images). Uses existing
+  auth/write tokens, unread query filtering, cutoff/account/scope guards and
+  confirmed-success refresh/error paths. Source 302a180, stacked on #6 / PR #7.
+  Files: app/**, README/AGENTS project details and all six .ai/ files. All 28 JVM
+  tests passed per debug/release variant; lint 0 errors/1 warning each; build and
+  instrumentation APK compilation passed. No device/real-server execution.
+  Preview v0.3 test-signed/non-debuggable; 13,197,475 bytes, SHA-256
+  `15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69`.
+  Artifact commit 1bdaf3d downloaded and checksum verified. No main merge or new
+  release; follow-up PR must be retargeted after PR #7 merges.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #9 for #8, base codex/6-freshrss
+  (PR #7). Confirmed issue status review and recorded preview/checks. Main and
+  published releases unchanged. Merge #7 first, retarget #9 to main and sync
+  records before merging; Rick selects the independent reviewer.

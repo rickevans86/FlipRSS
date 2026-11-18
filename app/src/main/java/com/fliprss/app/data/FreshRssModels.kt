@@ -13,7 +13,7 @@ data class Account(val endpoint: String, val username: String, val allowHttp: Bo
 data class Section(val id: String, val title: String, val feed: Boolean = false, val unread: Int? = null)
 data class Catalogue(val sections: List<Section>, val unread: Int?)
 data class ArticlePage(val articles: List<Article>, val continuation: String?)
-data class LibraryScope(val sectionId: String? = null, val savedOnly: Boolean = false) {
+data class LibraryScope(val sectionId: String? = null, val savedOnly: Boolean = false, val unreadOnly: Boolean = false) {
     val stream: String get() = if (savedOnly) STARRED else sectionId ?: READING_LIST
 }
 
@@ -24,9 +24,11 @@ interface FreshRssConnector {
 }
 interface FreshRssRepository {
     suspend fun catalogue(): Catalogue
-    suspend fun page(stream: String, continuation: String?): ArticlePage
+    suspend fun page(stream: String, continuation: String?, unreadOnly: Boolean = false): ArticlePage
     suspend fun setRead(id: String, read: Boolean)
     suspend fun setStarred(id: String, starred: Boolean)
+    suspend fun addFeed(url: String): String
+    suspend fun markAllRead(stream: String, cutoffMicros: Long)
 }
 interface SessionStore {
     suspend fun read(): FreshRssSession?

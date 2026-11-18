@@ -77,3 +77,22 @@ reorder earlier entries._
   links are supported. Rich inline layout/images remain future work.
 - Deliver versionCode 2 / 0.2.0-freshrss-preview as a test-signed preview download;
   no new release/main merge is implied by the implementation request.
+
+## 2026-11-18 — Feed and reading controls, Issue #8 (Codex)
+
+- Stack on unmerged FreshRSS PR #7, with a separate follow-up PR for review.
+- Subscribe through GReader subscription/quickadd; validate HTTP(S) URL, use
+  write token and require numResults=1/streamId before claiming success. Default
+  server folder only. Do not echo raw server diagnostics or persist feed URL.
+- Hide-read is one global preference, uses server xt=read on every page and local
+  visible filtering so read changes disappear immediately while reader queue
+  stays stable. Keep it across account changes and restarts.
+- Bulk read uses server mark-all-as-read with confirmed scope and microsecond
+  cutoff captured at confirmation opening. Includes unloaded items, not a loaded
+  card loop. Snapshot account/known IDs, block conflicting writes and refresh
+  authoritative counts after success; report failures without claiming success.
+- Persist nonsensitive UI preferences in separate SharedPreferences: theme,
+  reader size, auto-read, images, hide-read. Token storage remains encrypted and
+  untouched. Reset defaults changes preferences only. Theme updates system bars.
+- Deliver versionCode 3 / 0.3.0-controls-preview with existing test identity on a
+  separate download branch. No main merge/new release implied by feature request.

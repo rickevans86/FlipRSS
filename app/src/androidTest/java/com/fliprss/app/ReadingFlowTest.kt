@@ -4,9 +4,15 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import org.junit.Rule
 import org.junit.Test
+import org.junit.Before
+import androidx.lifecycle.ViewModelProvider
+import com.fliprss.app.data.AppSettings
 
 class ReadingFlowTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
+    @Before fun resetSettings() { compose.runOnIdle {
+        ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library.updateSettings(AppSettings())
+    } }
 
     @Test fun openStoryTurnPageAndReturnToLibrary() {
         val first = DemoLibrary.articles.first()
@@ -46,6 +52,37 @@ class ReadingFlowTest {
         compose.onNodeWithText("Sign in").assertIsEnabled()
         compose.onNodeWithText("Continue demo").performClick()
         compose.onNodeWithText("Your daily perspective.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun settingsThemeCanBeChangedAndDefaultsRestored() {
+        compose.onNodeWithContentDescription("App settings").performScrollTo().performClick()
+        compose.onNodeWithText("Dark").performClick()
+        compose.onNodeWithText("Done").performClick()
+        compose.onNodeWithContentDescription("App settings").performClick()
+        compose.onNodeWithText("Dark").assertIsSelected()
+        compose.onNodeWithText("Reset defaults").performScrollTo().performClick()
+        compose.onNodeWithText("Done").performClick()
+    }
+
+    @Test fun hideReadAndConfirmedMarkAllEmptyDemoWithoutMovingReaderQueue() {
+        compose.onNodeWithText("Hide read").performScrollTo().performClick()
+        compose.onNodeWithText("Mark all read").performClick()
+        compose.onNodeWithText("Mark all read?").assertIsDisplayed()
+        compose.onNodeWithText("Mark read").performClick()
+        compose.onNodeWithText("No unread stories here.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Hide read").performScrollTo().performClick()
+        compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun manualReadingModeDoesNotAutomaticallyMarkStoryRead() {
+        compose.runOnIdle {
+            val library = ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library
+            library.updateSettings(AppSettings(autoMarkRead = false))
+            library.setRead(DemoLibrary.articles.first().id, false)
+        }
+        compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().performClick()
+        compose.onNodeWithText("Mark read").assertIsDisplayed().performClick()
+        compose.onNodeWithText("Mark unread").assertIsDisplayed()
     }
 
 }

@@ -1,58 +1,56 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #6 — FreshRSS integration, authorized by Rick on 2026-11-18.
+**Task:** #8 — Rick requested Add Feed, top hide-read toggle, mark all read and
+settings for app changes, on top of the working FreshRSS preview.
 
-**Completed:** GReader login, encrypted token restoration/sign-out, subscriptions,
-folders/tags, unread counts, stream pagination and refresh/load more. Live stories
-integrated into magazine/topics/feed/saved/reader screens. Read/unread and starred
-writes use CSRF write tokens (renew once on 403), optimistic state with rollback,
-and account/request-generation guards. Demo data/preferences stay separate.
-Safe text extraction and cover loading; original HTTP(S) links open in browser.
-API password is not retained; auth token uses Keystore-backed encrypted prefs
-excluded from backup. HTTPS default, explicit HTTP opt-in, no redirect credential
-replay and no API auth on image requests. Article parsing runs off the UI thread.
+**Completed:** Add Feed posts a validated URL to FreshRSS subscription/quickadd
+with auth/write token, rejects unsuccessful JSON results and refreshes catalogue
+on confirmed success. Top hide-read is persistent, requests unread-only pages via
+xt=read, and hides newly read items immediately without changing reader queue.
+Mark all read confirms/captures the current all/folder/feed/saved stream and a
+microsecond cutoff; server endpoint includes unloaded stories. Busy/account/scope
+checks prevent cross-account or widened operations. Errors do not claim success.
+Settings gear persists system/light/dark theme (including system bars), reader
+text size 16–26, auto-mark-read, cover images and the same hide-read preference.
+Account entry/reset-defaults preserve credentials, bookmarks and subscriptions.
 
-**Branch/PR:** codex/6-freshrss, implementation source commit `edcac9836b8981b3e678962350cd77a32869bd79`.
-[PR #7](https://github.com/rickevans86/FlipRSS/pull/7) is open; #6 is `ai:codex`,
-`status:review`. Do not merge or publish a new release without Rick’s instruction.
-PR #5’s release facts and append-only logs are preserved here; PR #5 was closed
-as superseded to avoid conflicting shared-memory updates.
+**Branch/PR:** codex/8-reading-controls, source implementation `302a1808cdd0e342ec55e54f35b79c473be4beec`.
+[PR #9](https://github.com/rickevans86/FlipRSS/pull/9) is open; #8 is `ai:codex`,
+`status:review`. BASE IS codex/6-freshrss (PR #7), not main. Merge #7 first,
+then retarget this follow-up to main and sync records before merging. No other
+agent changes discarded; no main merge or new published release performed.
 
-**Preview APK:** Version 0.2.0-freshrss-preview (versionCode 2), 13,164,707 bytes,
-release variant, debuggable=false, existing prototype test signing identity.
-https://github.com/rickevans86/FlipRSS/blob/6f6673b766c8e000406ec582f3c61596dfe0261f/preview/FlipRSS-v0.2.0-freshrss-preview.apk?raw=true
-SHA-256: `048a009c790c3c1960450dce2deae53966d669d847b6b48c7de67d83428b07ae`.
-Artifact-only branch codex/6-freshrss-download must not be merged into main.
-APK bytes retrieved through GitHub blob API and checksum verified.
+**Preview:** 0.3.0-controls-preview (versionCode 3), Android 8.0+, release variant,
+non-debuggable, same prototype test signing identity. No production key published.
+https://github.com/rickevans86/FlipRSS/blob/1bdaf3d143dc9701a3d3663901644d7768446db4/preview/FlipRSS-v0.3.0-controls-preview.apk?raw=true
+13,197,475 bytes; SHA-256:
+`15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69`.
+Artifact branch codex/8-controls-download is NOT for merging. Retrieved APK bytes
+from GitHub blob API and checksum verified. Existing published v0.1.0 release
+and older previews remain unchanged.
 
-**Tests:** Debug and release builds/lint passed; all 18 JVM tests passed in EACH
-variant. Debug lint 0 errors/8 warnings, release lint 0 errors/1 warning (dependency
-update notices / KTX suggestion). MockWebServer tests cover login/form/header/URL,
-folder encoding/pagination, write token renewal, exact mutation IDs/tags, rejected
-credentials and password redirect protection. Mapper tests cover HTML removal,
-relative/media/lazy image URLs and malformed IDs. Controller tests cover paging,
-rollback, session expiry, old-account responses, refresh/write races, token-only
-restore, secure-store failure and failed-login/current-write races. Demo tests
-remain passing. Instrumentation APK compiles (demo/account UI + encrypted store
-round trip), but no device/emulator run. No real account/instance test performed.
-APK signatures v2/v3, alignment, package/version/SDK and debuggable=false verified.
+**Tests:** Debug/release builds and lint passed; all 28 JVM tests passed in EACH
+variant. Lint 0 errors/1 warning in each (existing KTX suggestion). Tests add
+subscription forms/results/validation, unread filtering on all pages, scoped bulk
+cutoff/unloaded semantics, failures, stale accounts, demo snapshots and settings
+persistence/clamping. Existing 18 integration tests remain passing. Instrumentation
+APK compiles with settings/theme, hide/bulk demo and manual-read tests, but was
+not executed. No real account/server or device test performed. Signature v2/v3,
+alignment, version/SDK and debuggable=false verified. Diff check passed.
 
-**In progress:** Awaiting Rick’s device/account validation and independent review.
-**Blockers/limits:** No implementation/build blocker. Live articles are in memory;
-no Room/offline queue/background sync. Reader extracts text, not rich interactive
-HTML/inline images. security-crypto APIs are deprecated but follow the recorded
-EncryptedSharedPreferences architecture; no plaintext fallback. Device crypto
-behavior is covered by compiled instrumentation tests, not execution here.
+**In progress:** Independent review and Rick’s real-device/account validation.
+**Blockers/limits:** No build blocker. Prior live-cache/text-reader/test-signing
+limits remain. Bulk cutoff uses the device clock in microseconds. Add Feed uses
+FreshRSS default folder; folder management is not implemented. No offline queue.
+Existing Windows emulator action is skipped; remote CI success is not claimed.
 
-**Previous release:** v0.1.0-prototype remains published and unchanged, pointing to
-main `92613d6`; it is the OLD OFFLINE-ONLY version. APK on separate branch
-codex/4-release-download. Release-asset uploads returned HTTP 401; verified Git
-branch links are used. This feature preview is not a new published release.
-
-**Next action:** Rick installs preview, enables FreshRSS API access, sets an API
-password in FreshRSS profile, then uses Connect FreshRSS in the app. Rick selects
-an independent reviewer; code must not be reviewed independently by its author.
-**Shared records updated:** Yes — all six files; previous release log/decisions retained.
-**Remote synchronization:** main fetched/ancestry verified; source/download commits
-pushed and retrieved APK checksum confirmed. No main merge performed for #6.
+**Previous work:** PR #7 / #6 contains base FreshRSS integration and preserved
+published-release records for #4 (former PR #5 closed as superseded). Source main
+still holds the offline prototype; do not confuse branch previews with releases.
+**Next action:** Rick installs preview and selects independent reviewer. After
+base PR #7 merges, retarget follow-up to main before merging it. The author does
+not provide independent review of its own code.
+**Shared records updated:** Yes, all six files; append-only history retained.
+**Remote synchronization:** main/base fetched, ancestry checked, source/artifact
+branches pushed and download verified. No #8 main merge/new release publication.
