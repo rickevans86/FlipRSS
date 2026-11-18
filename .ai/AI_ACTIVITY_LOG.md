@@ -111,3 +111,15 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   (PR #7). Confirmed issue status review and recorded preview/checks. Main and
   published releases unchanged. Merge #7 first, retarget #9 to main and sync
   records before merging; Rick selects the independent reviewer.
+
+- 2026-11-18 — **ChatGPT Codex** — Implemented #10 article speech on
+  codex/10-article-speech, source 4b0dd285. Added Android TTS controller, reader
+  controls, lifecycle/audio-focus cleanup, long-text chunking, voice errors/retry,
+  package visibility, version 4 and text tests; updated README and six .ai files.
+  31 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
+  1 existing KTX warning each); instrumentation compiled, not executed. No actual
+  audio/device/live-server tests. Preview artifact b639c9e, 13,217,955 bytes,
+  SHA-256 81bf3914680dc07e028a1800da819b8ad561a4538f8f2ab9544a2740b494ee8d;
+  test-signed release variant, signature/alignment/version/SDK checks pass.
+  Stacked on PR #9 / #7; Rick selects reviewer and merges. No main merge or
+  published release performed.

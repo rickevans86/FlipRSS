@@ -96,3 +96,18 @@ reorder earlier entries._
   untouched. Reset defaults changes preferences only. Theme updates system bars.
 - Deliver versionCode 3 / 0.3.0-controls-preview with existing test identity on a
   separate download branch. No main merge/new release implied by feature request.
+
+## 2026-11-18 — Article speech (#10, ChatGPT Codex)
+
+- Use Android TextToSpeech with foreground play/pause/resume/stop controls. Read
+  title and supplied body, summary only when body is empty; no external scraping.
+- Split text below engine input limit at word boundaries where possible and never
+  bisect UTF-16 surrogate pairs. Resume from range callbacks when supplied;
+  otherwise restart current chunk. Generation IDs reject stale engine callbacks.
+- Pause on audio focus loss/background; stop on page change/reader exit and shut
+  down engine on disposal. No background service or automatic next article.
+- Device language/configured engine; prefer installed voice, expose voice settings
+  and retry for setup errors. Engine may use network when offline voice unavailable.
+  Add TTS service query for Android 11+, no microphone permission or own cloud API.
+- VersionCode 4 preview uses existing test identity and separate binary download
+  branch. Keep #10 stacked on #9 / #7; no main merge/new release implied.

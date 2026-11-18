@@ -28,3 +28,19 @@ production-signing limitations remain. Add Feed uses default server folder.
 
 Merge PR #7 first, then retarget the controls follow-up to main before merging.
 No new published release or main merge performed for these controls.
+
+## Article speech — #10, stacked on PR #9 (not merged)
+
+AI: ChatGPT Codex. codex/10-article-speech, source 4b0dd285. Reader play/pause/
+resume/stop uses Android TextToSpeech and device language, prefers installed voice,
+handles voice setup errors, chunks long text and protects against stale callbacks.
+Audio focus/background pauses; page change/reader exit stops and releases engine.
+No background service, microphone permission or automatic next article. Some
+configured engines need network; resume precision depends on range callbacks.
+
+Preview 0.4.0-speech-preview, versionCode 4, test-signed release APK at artifact
+commit b639c9e (codex/10-speech-download; never merge). All 31 JVM tests pass in
+each variant, debug/release build/lint pass (0 errors, existing 1 KTX warning),
+instrumentation compiles. Audio/device/live-account execution remains unverified.
+Merge PR #7, then retarget/merge #9, then retarget the speech PR to main and sync
+shared records. No main merge or new release publication for this feature.

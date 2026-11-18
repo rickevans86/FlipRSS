@@ -1,56 +1,48 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #8 — Rick requested Add Feed, top hide-read toggle, mark all read and
-settings for app changes, on top of the working FreshRSS preview.
+**Task:** #10 — Rick requested a play button to read the open article aloud.
+**Completed:** Foreground Android TextToSpeech play/pause/resume/stop controls
+above the article. Reads title and available body (summary fallback), splits long
+text within engine input limit without cutting surrogate pairs. Defaults to device
+language, prefers installed voice. Voice setup errors expose Android voice settings
+and retry. Generation-guarded callbacks ignore stopped/switched utterances.
+Audio focus/background pauses; switching article or leaving reader stops playback;
+disposal shuts down engine. Android 11+ TTS service visibility query added.
+No microphone permission, background service or automatic next article.
 
-**Completed:** Add Feed posts a validated URL to FreshRSS subscription/quickadd
-with auth/write token, rejects unsuccessful JSON results and refreshes catalogue
-on confirmed success. Top hide-read is persistent, requests unread-only pages via
-xt=read, and hides newly read items immediately without changing reader queue.
-Mark all read confirms/captures the current all/folder/feed/saved stream and a
-microsecond cutoff; server endpoint includes unloaded stories. Busy/account/scope
-checks prevent cross-account or widened operations. Errors do not claim success.
-Settings gear persists system/light/dark theme (including system bars), reader
-text size 16–26, auto-mark-read, cover images and the same hide-read preference.
-Account entry/reset-defaults preserve credentials, bookmarks and subscriptions.
+**Files:** ArticleSpeech.kt, SpeechControls.kt, SpeechText.kt, MainActivity.kt,
+AndroidManifest.xml, app/build.gradle.kts, SpeechTextTest.kt, README.md and .ai/.
+**Branch/PR:** codex/10-article-speech, source implementation
+4b0dd2852137d5a312121e1de9885175d29da4b8. Speech PR to be opened after this record
+update; base codex/8-reading-controls (PR #9), which depends on PR #7. Merge #7
+first; retarget #9 to main before merging; then retarget speech PR to main and
+sync shared records. Rick merges and selects independent reviewer.
 
-**Branch/PR:** codex/8-reading-controls, source implementation `302a1808cdd0e342ec55e54f35b79c473be4beec`.
-[PR #9](https://github.com/rickevans86/FlipRSS/pull/9) is open; #8 is `ai:codex`,
-`status:review`. BASE IS codex/6-freshrss (PR #7), not main. Merge #7 first,
-then retarget this follow-up to main and sync records before merging. No other
-agent changes discarded; no main merge or new published release performed.
+**Preview:** 0.4.0-speech-preview (versionCode 4), Android 8.0+, release variant,
+non-debuggable, existing prototype test signing identity.
+https://github.com/rickevans86/FlipRSS/blob/b639c9e280123629601784373229c0bd5abab9e9/preview/FlipRSS-v0.4.0-speech-preview.apk?raw=true
+13,217,955 bytes; SHA-256:
+`81bf3914680dc07e028a1800da819b8ad561a4538f8f2ab9544a2740b494ee8d`.
+Artifact branch codex/10-speech-download is not for merging. Signature v2/v3,
+alignment, version/SDK and non-debuggable manifest checks passed.
 
-**Preview:** 0.3.0-controls-preview (versionCode 3), Android 8.0+, release variant,
-non-debuggable, same prototype test signing identity. No production key published.
-https://github.com/rickevans86/FlipRSS/blob/1bdaf3d143dc9701a3d3663901644d7768446db4/preview/FlipRSS-v0.3.0-controls-preview.apk?raw=true
-13,197,475 bytes; SHA-256:
-`15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69`.
-Artifact branch codex/8-controls-download is NOT for merging. Retrieved APK bytes
-from GitHub blob API and checksum verified. Existing published v0.1.0 release
-and older previews remain unchanged.
-
-**Tests:** Debug/release builds and lint passed; all 28 JVM tests passed in EACH
-variant. Lint 0 errors/1 warning in each (existing KTX suggestion). Tests add
-subscription forms/results/validation, unread filtering on all pages, scoped bulk
-cutoff/unloaded semantics, failures, stale accounts, demo snapshots and settings
-persistence/clamping. Existing 18 integration tests remain passing. Instrumentation
-APK compiles with settings/theme, hide/bulk demo and manual-read tests, but was
-not executed. No real account/server or device test performed. Signature v2/v3,
-alignment, version/SDK and debuggable=false verified. Diff check passed.
-
-**In progress:** Independent review and Rick’s real-device/account validation.
-**Blockers/limits:** No build blocker. Prior live-cache/text-reader/test-signing
-limits remain. Bulk cutoff uses the device clock in microseconds. Add Feed uses
-FreshRSS default folder; folder management is not implemented. No offline queue.
-Existing Windows emulator action is skipped; remote CI success is not claimed.
-
-**Previous work:** PR #7 / #6 contains base FreshRSS integration and preserved
-published-release records for #4 (former PR #5 closed as superseded). Source main
-still holds the offline prototype; do not confuse branch previews with releases.
-**Next action:** Rick installs preview and selects independent reviewer. After
-base PR #7 merges, retarget follow-up to main before merging it. The author does
-not provide independent review of its own code.
-**Shared records updated:** Yes, all six files; append-only history retained.
-**Remote synchronization:** main/base fetched, ancestry checked, source/artifact
-branches pushed and download verified. No #8 main merge/new release publication.
+**Tests:** 31 JVM tests pass in EACH debug/release variant. Includes new text
+chunking/title/body/fallback/empty/Unicode tests and all previous integration tests.
+Both builds and lint pass (0 errors, 1 existing KTX warning each). Instrumentation
+APK compiles but was not executed. No actual device/audio/real-account test.
+Diff check passed. No remote CI success claimed.
+**In progress:** Independent review and Rick's phone validation.
+**Blockers/limits:** No build blocker. Engines without range callbacks resume at
+current chunk start. Voice follows device language; some engines need network.
+Only content FreshRSS provides is read. Existing cache/renderer/test-signing
+limitations remain. Verify play/pause/resume/stop, swiping, backgrounding and
+audio interruptions on a phone; this environment has no device/emulator.
+**Previous work:** All visible feature work by Codex. #6 / PR #7 and #8 / PR #9
+remain open for review. #4 published offline v0.1.0 records are preserved in PR #7.
+Main remains 92613d6 offline prototype; no main merge/new release performed.
+**Next action:** Rick installs preview and selects independent reviewer, then
+handles merge order above. Do not merge binary download branches.
+**Shared records updated:** Yes; append-only history preserved.
+**Remote synchronization:** origin/main and bases fetched, main ancestry checked,
+source/artifact branches pushed. Download verification recorded after completion.
