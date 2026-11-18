@@ -61,3 +61,30 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   Emulator action skips Windows. actionlint/diff checks passed. Local APK
   packaging, 3 rerun unit tests and lint previously passed this session; no new
   remote success/device execution claimed. Windows update will trigger a new run.
+
+- 2026-11-18 — **ChatGPT Codex** — #4, authorized by Rick: built and published
+  v0.1.0-prototype GitHub prerelease from main `92613d6`. Release build, all 3
+  release unit tests and lint passed (0 errors/1 warning; 57 tasks executed).
+  APK non-debuggable, signed with existing prototype test identity (no production
+  key configured/published), v2/v3 and alignment verified. APK 11,496,577 bytes;
+  SHA-256 `8c392db42fd0640797faa33ef611506dd9d44cf2c5ea34527bb4c46f6cfddceb`.
+  Release-asset upload returned HTTP 401; APK/checksum/metadata hosted separately
+  at artifact commit `0b94348`, downloaded through GitHub blob API and verified.
+  Published release/tag confirmed at https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype .
+  Updated all six shared .ai/ files on records branch codex/4-prototype-release.
+  No application source changes or device tests; Windows run was cancelled.
+
+- 2026-11-18 — **ChatGPT Codex** — #6, authorized by Rick: implemented FreshRSS
+  login, secure token persistence, catalogue/counts, paged live stories, feeds/
+  topics/saved/reader UI and read/unread/star writes with token renewal, rollback
+  and stale-account/request guards. Demo state remains separate. Jsoup text/cover
+  extraction off UI thread, Coil images, HTTPS default/explicit HTTP, redirects
+  disabled and no credential logging or API auth on images. Source `edcac98`.
+  Files: app/**, README.md, AGENTS.md project details and all six .ai/ files.
+  All 18 unit tests passed in each debug/release variant; lint/build passed and
+  instrumentation APK compiled. No device/real-account tests. Preview APK v2
+  test-signed and verified; 13,164,707 bytes, SHA-256
+  `048a009c790c3c1960450dce2deae53966d669d847b6b48c7de67d83428b07ae`.
+  Download branch codex/6-freshrss-download, immutable commit `6f6673b`; retrieved
+  APK bytes verified. Preserved prior release log/decisions from PR #5, whose
+  duplicate shared-record PR will be superseded. No #6 main merge or new release.

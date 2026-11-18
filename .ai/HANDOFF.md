@@ -1,40 +1,57 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #2 — APK rebuild, main publication and Windows Actions build.
+**Task:** #6 — FreshRSS integration, authorized by Rick on 2026-11-18.
 
-**Authorization:** On 2026-11-18 Rick explicitly asked Codex to push to main and
-run Actions, superseding his earlier Rick-only merge instruction for this work.
-Rick then confirmed the `SelfHosted` runner is a Windows machine.
+**Completed:** GReader login, encrypted token restoration/sign-out, subscriptions,
+folders/tags, unread counts, stream pagination and refresh/load more. Live stories
+integrated into magazine/topics/feed/saved/reader screens. Read/unread and starred
+writes use CSRF write tokens (renew once on 403), optimistic state with rollback,
+and account/request-generation guards. Demo data/preferences stay separate.
+Safe text extraction and cover loading; original HTTP(S) links open in browser.
+API password is not retained; auth token uses Keystore-backed encrypted prefs
+excluded from backup. HTTPS default, explicit HTTP opt-in, no redirect credential
+replay and no API auth on image requests. Article parsing runs off the UI thread.
 
-**Completed:** PR #3 merged into main as `1195fd8379311a372e9d592c32c846ddb8304493`.
-Issue #2 closed by merge. Local APK freshly packaged; 3 unit tests rerun and passed;
-lint passed with 0 errors/7 warnings; APK signature verified. No application code
-changed since the prototype. Earlier APK download remains on `codex/2-apk-build`.
+**Branch/PR:** codex/6-freshrss, implementation source commit `edcac9836b8981b3e678962350cd77a32869bd79`.
+Feature PR pending creation; do not merge or publish a new release without Rick’s
+instruction. PR #5’s release facts and append-only logs are preserved here; it
+will be superseded by this feature PR to avoid conflicting shared-memory updates.
 
-**In progress:** Adapted the build job to `[SelfHosted, Windows]`, built-in Windows
-PowerShell and `gradlew.bat`. Runner metadata output uses explicit UTF-8 for
-Windows PowerShell compatibility. No Bash or PowerShell Core installation needed
-for the workflow's own run steps. Existing emulator action skips Windows.
-This workflow change will trigger a replacement main build when pushed.
+**Preview APK:** Version 0.2.0-freshrss-preview (versionCode 2), 13,164,707 bytes,
+release variant, debuggable=false, existing prototype test signing identity.
+https://github.com/rickevans86/FlipRSS/blob/6f6673b766c8e000406ec582f3c61596dfe0261f/preview/FlipRSS-v0.2.0-freshrss-preview.apk?raw=true
+SHA-256: `048a009c790c3c1960450dce2deae53966d669d847b6b48c7de67d83428b07ae`.
+Artifact-only branch codex/6-freshrss-download must not be merged into main.
+APK bytes retrieved through GitHub blob API and checksum verified.
 
-**Branch/PR:** main; PR #3 merged with Rick’s explicit authorization.
-**Tests:** Local Gradle build/unit/lint checks passed. Workflow actionlint and
-`git diff --check` passed. Remote Windows job results pending; no emulator/device
-execution claimed. App source unchanged; no repeat local app tests for CI-only edit.
+**Tests:** Debug and release builds/lint passed; all 18 JVM tests passed in EACH
+variant. Debug lint 0 errors/8 warnings, release lint 0 errors/1 warning (dependency
+update notices / KTX suggestion). MockWebServer tests cover login/form/header/URL,
+folder encoding/pagination, write token renewal, exact mutation IDs/tags, rejected
+credentials and password redirect protection. Mapper tests cover HTML removal,
+relative/media/lazy image URLs and malformed IDs. Controller tests cover paging,
+rollback, session expiry, old-account responses, refresh/write races, token-only
+restore, secure-store failure and failed-login/current-write races. Demo tests
+remain passing. Instrumentation APK compiles (demo/account UI + encrypted store
+round trip), but no device/emulator run. No real account/instance test performed.
+APK signatures v2/v3, alignment, package/version/SDK and debuggable=false verified.
 
-**Blockers:** First main run 44223942127 queued for `SelfHosted`, without an
-assigned runner at observation. New Windows-specific run supersedes it. Runner
-must be online with labels `SelfHosted` and default `Windows`. The build should
-upload FlipRSS-debug containing app-debug.apk if successful. GitHub runner-list
-permission is unavailable; job execution/queue endpoints remain accessible.
+**In progress:** Awaiting Rick’s device/account validation and independent review.
+**Blockers/limits:** No implementation/build blocker. Live articles are in memory;
+no Room/offline queue/background sync. Reader extracts text, not rich interactive
+HTML/inline images. security-crypto APIs are deprecated but follow the recorded
+EncryptedSharedPreferences architecture; no plaintext fallback. Device crypto
+behavior is covered by compiled instrumentation tests, not execution here.
 
-**Next action:** Observe newest main run, inspect Windows logs if it fails.
-Instrumented tests require a separate supported emulator/device setup; the current
-emulator action is intentionally skipped on Windows. FreshRSS login/sync remains
-unimplemented; all current stories are sample content.
+**Previous release:** v0.1.0-prototype remains published and unchanged, pointing to
+main `92613d6`; it is the OLD OFFLINE-ONLY version. APK on separate branch
+codex/4-release-download. Release-asset uploads returned HTTP 401; verified Git
+branch links are used. This feature preview is not a new published release.
 
-**Shared records updated:** Yes — handoff, state, task board, ownership and activity.
-**Remote synchronization:** PR merge and main SHA confirmed via GitHub; latest
-main integrated locally. Windows workflow/records prepared for direct main push
-under Rick’s current authorization. Check GitHub for final run outcome.
+**Next action:** Rick installs preview, enables FreshRSS API access, sets an API
+password in FreshRSS profile, then uses Connect FreshRSS in the app. Rick selects
+an independent reviewer; code must not be reviewed independently by its author.
+**Shared records updated:** Yes — all six files; previous release log/decisions retained.
+**Remote synchronization:** main fetched/ancestry verified; source/download commits
+pushed and retrieved APK checksum confirmed. No main merge performed for #6.
