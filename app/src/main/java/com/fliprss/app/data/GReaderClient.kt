@@ -2,6 +2,8 @@ package com.fliprss.app.data
 
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
@@ -83,8 +85,11 @@ internal class GReaderRepository(private val api: GReaderApi, private val sessio
 
     override suspend fun page(stream: String, continuation: String?): ArticlePage {
         val response = api.contents(auth, FreshRssEndpoint.streamPath(stream), continuation).data()
-        return ArticlePage(response.items.orEmpty().mapNotNull { ArticleMapper.map(it, subscriptions, session.endpoint) }
-            .distinctBy { it.id }, response.continuation?.takeIf(String::isNotBlank))
+        val feeds = subscriptions
+        return withContext(Dispatchers.Default) {
+            ArticlePage(response.items.orEmpty().mapNotNull { ArticleMapper.map(it, feeds, session.endpoint) }
+                .distinctBy { it.id }, response.continuation?.takeIf(String::isNotBlank))
+        }
     }
 
     override suspend fun setRead(id: String, read: Boolean) = edit(id, READ, read)
