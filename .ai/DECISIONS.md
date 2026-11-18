@@ -249,3 +249,10 @@ reorder earlier entries._
 - Online voice selection remains explicit opt-in, quality engine-rated and preview
   user-controlled. Do not describe unit/build success as audible naturalness or
   claim a separate paid cloud AI provider was integrated.
+
+## 2026-11-18 — Bulk-read shortcuts (#29, Codex)
+
+- Top and footer share one controller request policy. Confirmation defaults on;
+  disabling it immediately calls the same guarded bulk operation with captured
+  source/category/cutoff. The footer follows Load more and is absent from Saved/Search.
+- Complete #30 separately, then ship both in one native release.

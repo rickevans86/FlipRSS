@@ -281,3 +281,7 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   preview/tuning with explicit online opt-in shipped, no cloud key/account.
   Closed tasks, README/six records updated, no claims, binary/signing separation
   preserved. Final records-only merge continues authorized publication workflow.
+
+- 2026-11-18 — **ChatGPT Codex** — ChatGPT Codex implemented #29: source-list bottom Mark all read, shared top/footer confirmation policy, persistent Confirm mark all read default on, source/category/cutoff and busy guards retained. Saved/Search excluded. Intermediate 0.9.1/code 11 is not separately published; #30 adds fuller public article text before one combined release. No other AI changes found in live issues/PRs/main since v0.9.0. Continuing Rick-authorized main/build/publish workflow; no independent self-review. Physical device/account tests not run.
+
+- #29 validation: 76 JVM tests each debug/release pass, lint 0 errors / 1 existing warning, instrumentation compilation passed. Source c300c18.

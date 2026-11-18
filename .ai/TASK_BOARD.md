@@ -1,8 +1,10 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex.
+Rebuilt from live GitHub Issues 2026-11-18 by ChatGPT Codex.
 
-No open Issues. #24/#25 closed after correction/speech merges #26/#27 and verified
-regular v0.9.0 publication. Prior tasks remain closed. Final records-only follow-up
-has no app changes. Actual device/audio/naturalness/installer/account validation
-not run. Nine releases have verified native APK/checksum/build metadata assets.
+| Issue | Task | AI | Status |
+|---|---|---|---|
+| #29 | End-of-list bulk read / optional confirmation | Codex | Implemented; validation/PR |
+| #30 | Fuller public article text in reader | Codex | Assigned; sequential follow-up |
+
+No other open issues or competing PRs. Previous #24/#25 closed.
