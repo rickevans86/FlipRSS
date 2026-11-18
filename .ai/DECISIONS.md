@@ -161,3 +161,12 @@ reorder earlier entries._
 - Run upload-only publication on GitHub-hosted Ubuntu, independent of queued
   SelfHosted hardware. Repo is public. Retrieve immutable signed artifacts, verify
   hashes and upload with scoped GITHUB_TOKEN; never transfer signing keystore.
+
+## 2026-11-18 — Native release assets are canonical (#16, Codex)
+
+- Hosted publication succeeded: use native releases/download/<tag>/FlipRSS.apk
+  and matching release build metadata for installations and in-app updates.
+  Immutable repository artifact links remain provenance/fallback, with no retag
+  or APK rebuild when merged app tree matches the tested signed source.
+- Attach APK/checksum/build metadata to every manifest release and verify GitHub
+  APK digests plus a downloaded native latest APK before claiming publication.

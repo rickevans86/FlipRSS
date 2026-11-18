@@ -183,3 +183,17 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   tests and actionlint pass; prior 49 tests/variant remain applicable to unchanged
   app. Files: publication workflow, README and six .ai records. Native asset
   upload not yet complete; follow-up PR/action required.
+
+- 2026-11-18 — **ChatGPT Codex** — Completed #16 at Rick's explicit merge-all/
+  publish-assets instruction. PRs #7/#9/#11/#13/#15 merged sequentially; hosted
+  publisher PR #17 merged at 12b2587. Main app tree equals tested de926519 source.
+  Native asset publishing action 44254047153 SUCCESS; all six releases have
+  FlipRSS.apk, SHA256SUMS.txt and build-info.json. Every APK asset digest matches
+  manifest; downloaded v0.6.0 native bytes (13,234,395) and SHA-256
+  ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4 verified.
+  Closed #4/#6/#8/#10/#12/#14/#16. Files: publishing workflow, README and all
+  six shared records. Five publisher tests/actionlint pass; unchanged app's prior
+  49 tests per debug/release and build/lint remain applicable. No actual phone/
+  installer/audio/live-account tests or independent review claimed; Windows build
+  CI still queued. Binary history/signing key preserved separately. Publication
+  blocker resolved using GitHub-hosted GITHUB_TOKEN, direct session still HTTP 401.
