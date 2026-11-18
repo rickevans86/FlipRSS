@@ -370,6 +370,13 @@ private val Red = Color(0xFFB83224)
     val pager = rememberPagerState(initialPage = initialPage.coerceIn(articles.indices)) { articles.size }
     val scope = rememberCoroutineScope()
     val speech = rememberArticleSpeech(articles[pager.currentPage].id, state.settings.speech)
+    val articleContent by library.articleContent.state.collectAsStateWithLifecycle()
+    val currentArticle = articleContent.display(articles[pager.currentPage])
+    LaunchedEffect(articles[pager.currentPage].contentKey(), state.settings.autoLoadFullArticles) {
+        library.articleContent.open(articles[pager.currentPage], state.settings.autoLoadFullArticles)
+    }
+    DisposableEffect(library.articleContent) { onDispose { library.articleContent.close() } }
+    LaunchedEffect(currentArticle.contentKey(), speech) { speech.stop() }
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     LaunchedEffect(pager, state.settings.autoMarkRead, state.markingAll) {
@@ -404,10 +411,11 @@ private val Red = Color(0xFFB83224)
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(articles[pager.currentPage], speech, onSpeechSettings) }
+            Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(currentArticle, speech, onSpeechSettings) }
             state.error?.let { ProblemBanner(it, { library.localLibrary.dismissError(); library.freshLibrary.dismissError() }) }
             HorizontalPager(state = pager, key = { articles[it].id }, modifier = Modifier.weight(1f)) { page ->
-                val article = articles[page]
+                val original = articles[page]
+                val article = articleContent.display(original)
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                     if (state.settings.showImages) Cover(article, Modifier.fillMaxWidth().height(260.dp))
                     Column(Modifier.widthIn(max = 720.dp).align(Alignment.CenterHorizontally).padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -417,6 +425,22 @@ private val Red = Color(0xFFB83224)
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text("${if (article.demo) "DEMO EDITORIAL" else article.source} · ${article.minutes} MIN READ", fontSize = 10.sp, letterSpacing = 1.sp)
                         HorizontalDivider()
+                        if (!article.demo && article.originalUrl != null && page == pager.currentPage) {
+                            val matched = articleContent.key == original.contentKey()
+                            when {
+                                matched && articleContent.loading -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                                    Text("Loading full article…", style = MaterialTheme.typography.bodySmall)
+                                }
+                                matched && articleContent.expanded != null -> Text("Fuller article text loaded", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                                else -> Column {
+                                    if (matched && articleContent.attempted) Text("No extra text available. Showing the feed version.", style = MaterialTheme.typography.bodySmall)
+                                    TextButton(onClick = { library.articleContent.load() }, enabled = matched) {
+                                        Text(if (matched && articleContent.attempted) "Retry full article" else "Load full article")
+                                    }
+                                }
+                            }
+                        }
                         article.paragraphs.ifEmpty { listOf("This feed includes only a headline. Open the original article to read more.") }.forEach {
                             Text(it, fontFamily = FontFamily.Serif, fontSize = state.settings.readerTextSize.sp,
                                 lineHeight = (state.settings.readerTextSize * 1.55f).sp)

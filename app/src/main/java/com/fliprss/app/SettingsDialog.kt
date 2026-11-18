@@ -54,6 +54,9 @@ import kotlin.math.roundToInt
             SettingsToggle("Automatic mark read", "Mark an article read when its reader page settles.", settings.autoMarkRead) {
                 onSettings(settings.copy(autoMarkRead = it))
             }
+            SettingsToggle("Load full articles", "Fetch public article text from the publisher when you open a story. Feed text remains available if loading fails.", settings.autoLoadFullArticles) {
+                onSettings(settings.copy(autoLoadFullArticles = it))
+            }
             SettingsToggle("Show article images", "Display cover photos in cards and the reader.", settings.showImages) {
                 onSettings(settings.copy(showImages = it))
             }

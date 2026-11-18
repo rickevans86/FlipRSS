@@ -368,3 +368,28 @@ stories, using the same captured scope, arrival cutoff and busy guards as the to
 button. Saved and Search do not offer bulk read. Settings → **Confirm mark all
 read** defaults on; switch it off to apply either button immediately. The choice
 persists across restarts.
+
+## Fuller articles inside the reader (#30)
+
+Opening a FreshRSS, local or Saved story automatically fetches its public webpage
+and extracts longer article paragraphs when available. The feed text stays visible
+while loading and remains the fallback for errors, restricted pages, JavaScript-only
+sites or pages without useful extra text. The reader shows loading/result status
+and **Load full article / Retry full article**. Settings → **Load full articles**
+turns automatic fetching off; manual loading still works. Read aloud uses the
+currently displayed paragraphs and stops if the loaded text changes.
+
+Only the open story is fetched. Requests go directly to the publisher, without
+FreshRSS credentials, cookies or JavaScript. Existing HTTP size/time/redirect
+limits apply. Hidden/script/advert/navigation/comment blocks are removed;
+explicitly restricted article metadata is rejected. This does not bypass logins or
+paywalls, and extraction cannot guarantee complete text for every publisher.
+Successful text is cached in memory for up to 20 stories, not saved permanently
+or synced to FreshRSS; the original feed content/read/bookmark state is preserved.
+
+Verified against the public TechCrunch Snapchat/Lenses story from Rick's screenshot:
+144-character feed excerpt expands to 2,573 characters across nine blocks (three
+minutes). Regression tests cover extraction filtering, longer-feed preservation,
+restricted/landing pages, nesting, manual/cache behavior, speech input, retry,
+late response rejection and demo/no-fetch. This is HTML/JVM validation, not a
+physical phone or audible playback test.

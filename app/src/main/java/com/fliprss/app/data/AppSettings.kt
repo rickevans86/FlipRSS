@@ -12,6 +12,7 @@ data class AppSettings(
     val showFeedSearch: Boolean = true,
     val markReadOnScroll: Boolean = false,
     val confirmMarkAllRead: Boolean = true,
+    val autoLoadFullArticles: Boolean = true,
     val speech: SpeechOptions = SpeechOptions(),
 ) {
     fun normalized() = copy(readerTextSize = readerTextSize.coerceIn(16, 26), speech = speech.normalized())
