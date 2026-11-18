@@ -1,0 +1,34 @@
+{
+  "version": "0.9.0",
+  "version_code": 10,
+  "source_commit": "b1fb05fda496fb8de60b0cc861706483f4b1cbd4",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Existing test identity retained for upgrades; production signing unconfigured",
+  "sha256": "823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4",
+  "size_bytes": 13299931,
+  "unit_tests_each_variant": 73,
+  "publisher_tests": 5,
+  "lint": {
+    "debug": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "release": {
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "feedspot_regression": {
+    "urls": 453,
+    "distinct_titles": 449,
+    "nbc_news": 1,
+    "wordpress_title": "The WordPress Blog"
+  },
+  "device_audio_and_real_account_tests": "Not run; instrumentation compiled",
+  "ai": "ChatGPT Codex",
+  "tasks": [
+    "#24",
+    "#25"
+  ]
+}
