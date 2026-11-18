@@ -61,3 +61,20 @@ pass, instrumentation compiles. Existing subscriptions/Saved untouched.
 requested natural speech options; one combined regular APK release planned.
 No physical-device/audio check performed. Current published v0.8.0 remains until
 combined successor, no native patch asset claimed yet.
+
+## Combined correction/speech update #24/#25
+
+Search fix #26 merged at 2b9525c: strict row/name matching, schema-2 cache clear,
+20-result explicit paging. Source b1fb05f / codex/25-natural-speech adds installed
+Android engine/voice selection, best-quality available voice selection, explicit
+network opt-in default off, rate/pitch and preview, Settings and reader Voice
+button, persisted choices. No provider API key; optional cloud preference had no
+answer, announced Android path used. Voice quality remains engine/device-dependent.
+
+73 JVM tests pass per debug/release, both builds/lint pass (0 errors, 1 existing
+warning), instrumentation compiles. Five publisher tests/actionlint pass. Search
+production parser: 453 URLs/449 names, one NBC News, WordPress correct. No actual
+phone/audio/naturalness/account-write tests. Ready for correction main merge and
+regular v0.9.0 publication, code 10. APK 13,299,931 bytes, same test signer, SHA-256
+823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4.
+Artifact a166595 / codex/25-release-download, never merge binary branch.

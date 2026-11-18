@@ -225,3 +225,17 @@ reorder earlier entries._
   immediately, regardless of daily timer. Local subscriptions and Saved unaffected.
 - Limit displayed catalogue to 20 per explicit Load more and reset on criteria/
   dataset change; preserve distinct feeds with legitimately identical publishers.
+
+## 2026-11-18 — Quality-ranked configurable Android speech (#25, Codex)
+
+- Use installed Android engines/voices with preview and persistent speaker/rate/
+  pitch controls. Optional cloud/provider question unanswered; announced Android
+  path avoids requiring a new account/key. No claim of audible human-like quality.
+- Rank locale/engine quality, respect manual speaker, exclude uninstalled and
+  network-required voices unless explicit online opt-in. Do not silently fall
+  back to a network-only default when offline voice absent. Explain text sharing.
+- Recreate engine only for engine/speaker/network policy changes; tuning updates
+  stop current playback and update rate/pitch without repeated engine churn.
+  Lifecycle/focus/generation safety and user preview remain.
+- Ship Search cache/title/paging correction together with speech as regular
+  v0.9.0/code 10; intermediate 0.8.1/code 9 was not separately published.

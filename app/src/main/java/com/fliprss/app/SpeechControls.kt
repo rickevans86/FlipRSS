@@ -1,6 +1,7 @@
 package com.fliprss.app
 
 import android.content.Intent
+import com.fliprss.app.data.SpeechOptions
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -17,11 +18,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 
-@Composable internal fun rememberArticleSpeech(articleId: String): ArticleSpeech {
+@Composable internal fun rememberArticleSpeech(articleId: String, options: SpeechOptions = SpeechOptions()): ArticleSpeech {
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
-    val speech = remember(context, owner) { ArticleSpeech(context) }
-    LaunchedEffect(articleId) { speech.stop() }
+    val speech = remember(context, owner, options.engine, options.voice, options.allowOnline) { ArticleSpeech(context, options) }
+    LaunchedEffect(articleId, speech) { speech.stop() }
+    LaunchedEffect(speech, options.ratePercent, options.pitchPercent) { speech.setPlayback(options.ratePercent, options.pitchPercent) }
     DisposableEffect(speech, owner) {
         val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_PAUSE) speech.pause() }
         owner.lifecycle.addObserver(observer)
@@ -30,7 +32,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
     return speech
 }
 
-@Composable internal fun SpeechControls(article: Article, speech: ArticleSpeech) {
+@Composable internal fun SpeechControls(article: Article, speech: ArticleSpeech, onSettings: () -> Unit = {}) {
     val context = LocalContext.current
     Column(Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -39,6 +41,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
                 Spacer(Modifier.width(6.dp))
                 Text(if (speech.playing) "Pause reading" else if (speech.paused) "Resume reading" else "Read aloud")
             }
+            TextButton(onClick = { speech.stop(); onSettings() }) { Text("Voice") }
             if (speech.playing || speech.paused) IconButton(onClick = speech::stop) { Icon(Icons.Filled.Stop, "Stop reading") }
         }
         if (!speech.ready && speech.error == null) Text("Preparing speech…", style = MaterialTheme.typography.bodySmall)

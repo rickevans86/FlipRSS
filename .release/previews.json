@@ -73,5 +73,15 @@
     "sha256": "39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6",
     "prerelease": false,
     "description": "FreshRSS and FlipRSS now have independent source tabs; Saved combines bookmarks from both, including read stories. Topics is removed, with category filters retained. The + icon is only on FreshRSS. Search always adds locally, and local feed menus offer URL view/copy and confirmed Add to FreshRSS without moving data.\n\nOptional Mark as read on scroll defaults off and marks observed cards only after they pass the top. Search updates Feeder/Feedspot lists daily/on demand with offline cache and deduplication; website/feed URL discovery checks XML, alternate/RSS links and common paths. OLED and Search-disable settings remain.\n\nAI: ChatGPT Codex, #21. Both builds/lint and 64 unit tests per debug/release variant pass; instrumentation compiled, not executed. Actual phone/installer/audio/real-account-write testing not run. Parser checks extracted 114 Feeder and 454 Feedspot public links; feed availability is publisher-controlled. Existing test signing identity retained for upgrades, production signing unconfigured."
+  },
+  {
+    "tag": "v0.9.0",
+    "artifact_commit": "a166595bcf925c277f83892b22f794903c1070ad",
+    "directory": "release-download",
+    "source_commit": "b1fb05fda496fb8de60b0cc861706483f4b1cbd4",
+    "apk": "FlipRSS.apk",
+    "sha256": "823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4",
+    "prerelease": false,
+    "description": "Fixes repeated NBC News labels by matching Feedspot rows to their own headings. Incorrect old directory cache is replaced automatically, preserving subscriptions/Saved. Search now shows 20 results at a time with explicit Load more.\n\nNew Speech and voices from Settings or Voice in reader: installed engine/speaker choice, automatic engine-rated best quality, preview, reading speed and pitch. Online voices require explicit opt-in and may send text over the internet via the chosen Android engine. Install voice packs through Android settings and Refresh voices; audible quality depends on engine/device.\n\nAI: ChatGPT Codex, #24/#25. Both builds/lint and 73 JVM tests per debug/release variant pass; instrumentation compiled, not run. Five publisher tests/actionlint pass. Actual phone/audio/naturalness/account-write testing not run. Existing test signer retained for updates; production signing unconfigured. No new service account/API key required for Android voice engine path."
   }
 ]

@@ -12,9 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.util.Locale
+import com.fliprss.app.data.*
 
 /** Foreground reader speech. No background service; all engine callbacks are serialized on main. */
-class ArticleSpeech(context: Context) {
+class ArticleSpeech(context: Context, options: SpeechOptions = SpeechOptions()) {
+    private val options = options.normalized()
+    private var ratePercent = this.options.ratePercent
+    private var pitchPercent = this.options.pitchPercent
     private val appContext = context.applicationContext
     private var initialization = 0
     private val handler = Handler(Looper.getMainLooper())
@@ -32,6 +36,9 @@ class ArticleSpeech(context: Context) {
     private var offset = 0
     private var chunks = emptyList<String>()
     private var focused = false
+    internal var voices by mutableStateOf<List<SpeechVoice>>(emptyList()); private set
+    internal var engines by mutableStateOf<List<SpeechEngine>>(emptyList()); private set
+    internal var selectedVoice by mutableStateOf<SpeechVoice?>(null); private set
     var ready by mutableStateOf(false); private set
     var playing by mutableStateOf(false); private set
     var paused by mutableStateOf(false); private set
@@ -42,31 +49,50 @@ class ArticleSpeech(context: Context) {
     private fun startEngine() {
         val attempt = ++initialization
         try {
-            engine = TextToSpeech(appContext) { status -> handler.post {
+            val listener = TextToSpeech.OnInitListener { status -> handler.post {
                 if (!closed && attempt == initialization) initialize(status)
             } }
+            engine = if (options.engine.isBlank()) TextToSpeech(appContext, listener)
+                else TextToSpeech(appContext, listener, options.engine)
         } catch (_: Exception) { error = "Text-to-speech is unavailable. Check Android voice settings." }
     }
 
     fun retryVoice() {
-        if (closed || ready) return
-        engine?.shutdown()
+        if (closed) return
+        stop(); ready = false; voices = emptyList(); selectedVoice = null
+        engine?.shutdown(); engine = null
         error = null
         startEngine()
     }
 
     private fun initialize(status: Int) {
         val tts = engine ?: return
+        engines = runCatching { tts.engines.map { SpeechEngine(it.name, it.label) }.sortedBy { it.label } }.getOrDefault(emptyList())
         if (status != TextToSpeech.SUCCESS) { error = "Could not start text-to-speech. Check Android voice settings."; return }
         try {
             val language = Locale.getDefault()
             val supported = tts.setLanguage(language)
-            if (supported == TextToSpeech.LANG_MISSING_DATA || supported == TextToSpeech.LANG_NOT_SUPPORTED) {
+            if (options.engine.isNotBlank() && engines.none { it.name == options.engine }) {
+                error = "The selected speech engine is unavailable. Choose System default in Speech settings."; return
+            }
+            val installed = tts.voices.orEmpty().filterNot { TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED in it.features.orEmpty() }
+            val catalog = installed.map { SpeechVoice(it.name, it.locale.toLanguageTag(), it.isNetworkConnectionRequired, it.quality, it.latency) }
+            voices = availableSpeechVoices(catalog, options, language)
+            selectedVoice = selectSpeechVoice(catalog, options, language)
+            val selected = selectedVoice
+            if (selected == null && (supported == TextToSpeech.LANG_MISSING_DATA || supported == TextToSpeech.LANG_NOT_SUPPORTED)) {
                 error = "Install a speech voice for your device language in Android voice settings."; return
             }
-            // Prefer an installed voice; some configured engines otherwise use network synthesis.
-            tts.voices?.filter { it.locale.language == language.language && !it.isNetworkConnectionRequired }
-                ?.maxByOrNull { (if (it.locale == language) 1000 else 0) + it.quality }?.let { tts.voice = it }
+            if (selected == null && !options.allowOnline) {
+                error = "No on-device voice is available for your language. Install a voice, choose another engine, or allow online voices in Speech settings."; return
+            }
+            selected?.let { voice ->
+                if (tts.setVoice(installed.first { it.name == voice.name }) != TextToSpeech.SUCCESS) {
+                    error = "Could not select this voice. Choose another voice in Speech settings."; return
+                }
+            }
+            tts.setSpeechRate(ratePercent / 100f)
+            tts.setPitch(pitchPercent / 100f)
             tts.setAudioAttributes(attributes)
             tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onStart(id: String?) = Unit
@@ -83,6 +109,14 @@ class ArticleSpeech(context: Context) {
             })
             ready = true
         } catch (_: Exception) { error = "Could not load a speech voice. Check Android voice settings." }
+    }
+    fun setPlayback(rate: Int, pitch: Int) {
+        val nextRate = rate.coerceIn(60, 140); val nextPitch = pitch.coerceIn(80, 120)
+        if (nextRate != ratePercent || nextPitch != pitchPercent) {
+            if (playing || paused) stop()
+            ratePercent = nextRate; pitchPercent = nextPitch
+            if (ready) { engine?.setSpeechRate(ratePercent / 100f); engine?.setPitch(pitchPercent / 100f) }
+        }
     }
     private var utteranceOffset = 0
     private fun callback(id: String?, action: () -> Unit) {
@@ -118,7 +152,7 @@ class ArticleSpeech(context: Context) {
         generation++; playing = false; paused = false
         engine?.stop(); releaseFocus(); chunks = emptyList(); chunkIndex = 0; offset = 0; if (ready) error = null
     }
-    private fun fail() { stop(); error = "Speech playback failed. Try again or check Android voice settings." }
+    private fun fail() { stop(); error = if (selectedVoice?.network == true) "Online voice playback failed. Check your connection or choose an on-device voice." else "Speech playback failed. Try again or check Android voice settings." }
     private fun releaseFocus() { if (focused) { audio.abandonAudioFocusRequest(focus); focused = false } }
     fun close() { stop(); closed = true; engine?.shutdown(); engine = null }
 }

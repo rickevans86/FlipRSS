@@ -11,8 +11,8 @@ android {
         applicationId = "com.fliprss.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 9
-        versionName = "0.8.1"
+        versionCode = 10
+        versionName = "0.9.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true }
