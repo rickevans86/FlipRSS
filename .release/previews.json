@@ -34,5 +34,14 @@
     "apk": "FlipRSS-v0.4.0-speech-preview.apk",
     "sha256": "81bf3914680dc07e028a1800da819b8ad561a4538f8f2ab9544a2740b494ee8d",
     "description": "Article speech preview, PR #11, awaiting review."
+  },
+  {
+    "tag": "v0.5.0-local-preview",
+    "artifact_commit": "1ff1e6676473f3aa4a33df8a586244714059912d",
+    "directory": "preview",
+    "source_commit": "63f47b52e3c80b5264bef766a7f12009c779dcf2",
+    "apk": "FlipRSS-v0.5.0-local-preview.apk",
+    "sha256": "1a21f4bab30d7aebb731556e63e949affc74853be84eb0d1850bb104f0f00f6c",
+    "description": "Standalone local RSS/Atom, optional FreshRSS and hide-empty-category setting. Issue #12, awaiting review."
   }
 ]

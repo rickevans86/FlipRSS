@@ -11,6 +11,7 @@ function fixture() {
     getReleaseByTag: async () => { throw {status:404}; },
     createRelease: async (data) => {created.push(data);return {data:{id:1}};},
     listReleaseAssets: async () => ({data:assets}),
+    updateRelease: async () => ({data:{id:1}}),
     uploadReleaseAsset: async ({name,data}) => {assets.push({name,size:data.length,digest:'sha256:'+crypto.createHash('sha256').update(data).digest('hex')});}
   },git:{getBlob: async ({file_sha}) => ({data:{content:(file_sha==='apk'?bytes:Buffer.from('{}')).toString('base64')}})}}};
   return {github,context:{repo:{owner:'test',repo:'repo'}},core:{info:()=>{}},manifest:[item],assets,created};

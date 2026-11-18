@@ -129,3 +129,18 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   preview APK through GitHub blob API and verified bytes/SHA-256. Updated handoff,
   project state and task board from live Issues. Merge chain: #7 then retarget #9,
   then retarget #11; Rick selects independent reviewer. Main/release unchanged.
+
+- 2026-11-18 — **ChatGPT Codex** — #12, explicitly authorized by Rick:
+  implemented standalone local RSS/Atom, optional FreshRSS source switching and
+  hide-empty-category preference. APK source 63f47b52, version 5. Files: app/**,
+  README/AGENTS, release workflow/script/tests/manifest, Android CI, six .ai files.
+  All 42 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
+  1 existing warning each), instrumentation compiled. Four publisher tests and
+  actionlint pass. No actual device/audio/real-account testing. Test-signed APK
+  artifact 1ff1e66, 13,234,339 bytes, SHA-256
+  1a21f4bab30d7aebb731556e63e949affc74853be84eb0d1850bb104f0f00f6c; signature/
+  alignment/version/SDK and downloaded blob checksum verified. Published v0.2,
+  v0.3, v0.4 and v0.5 GitHub prerelease pages with APK links; prior v0.1 retained.
+  Direct asset upload returned HTTP 401. Triggered Windows SelfHosted publisher
+  run 44247234997, queued; no asset-upload success claimed. Stacked on #11/#9/#7;
+  Rick selects reviewer/merges; no main merge performed.

@@ -36,5 +36,8 @@ module.exports = async ({github, context, core, manifest}) => {
         data: bytes, headers: {'content-type': name.endsWith('.apk') ? 'application/vnd.android.package-archive' : 'application/octet-stream', 'content-length': bytes.length}});
       core.info(`Uploaded: ${item.tag}/${name}`);
     }
+    const note = 'APK, checksum and build metadata are attached below. Published by GitHub Actions after checksum verification.';
+    const body = (release.body ?? '').replace(/Direct release-asset upload[\s\S]*$/, '').trim();
+    if (!body.includes(note)) await github.rest.repos.updateRelease({owner, repo, release_id: release.id, body: body + '\n\n' + note});
   }
 };
