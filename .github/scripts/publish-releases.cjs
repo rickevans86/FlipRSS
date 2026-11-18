@@ -6,7 +6,7 @@ module.exports = async ({github, context, core, manifest}) => {
   const previews = manifest ?? JSON.parse(fs.readFileSync('.release/previews.json', 'utf8'));
   for (const item of previews) {
     if (!/^[a-f0-9]{40}$/.test(item.artifact_commit) || !/^[a-f0-9]{40}$/.test(item.source_commit) ||
-        !/^[a-f0-9]{64}$/.test(item.sha256) || !['preview', 'release-download'].includes(item.directory) || !/^FlipRSS-[\w.-]+\.apk$/.test(item.apk) || !/^v[\w.-]+$/.test(item.tag)) {
+        !/^[a-f0-9]{64}$/.test(item.sha256) || !['preview', 'release-download'].includes(item.directory) || !/^FlipRSS(?:-[\w.-]+)?\.apk$/.test(item.apk) || !/^v[\w.-]+$/.test(item.tag)) {
       throw new Error('Invalid release manifest');
     }
     const download = async (name) => {
@@ -21,11 +21,11 @@ module.exports = async ({github, context, core, manifest}) => {
     catch (error) {
       if (error.status !== 404) throw error;
       release = (await github.rest.repos.createRelease({owner, repo, tag_name: item.tag,
-        target_commitish: item.source_commit, name: `FlipRSS ${item.tag}`, prerelease: true, make_latest: 'false',
+        target_commitish: item.source_commit, name: `FlipRSS ${item.tag}`, prerelease: item.prerelease !== false, make_latest: item.prerelease === false ? 'true' : 'false',
         body: `${item.description}\n\nAndroid 8.0+. Prototype test signing identity. AI: ChatGPT Codex.\nSource: ${item.source_commit}\nSHA-256: ${item.sha256}\n\n[Download APK](https://github.com/${owner}/${repo}/blob/${item.artifact_commit}/${item.directory}/${item.apk}?raw=true)`})).data;
     }
     const assets = (await github.rest.repos.listReleaseAssets({owner, repo, release_id: release.id, per_page: 100})).data;
-    for (const [name, bytes] of [[item.apk, apk], ['SHA256SUMS.txt', Buffer.from(`${item.sha256}  ${item.apk}\n`)], ['build-info.json', await download('build-info.json')]]) {
+    for (const [name, bytes] of [['FlipRSS.apk', apk], ['SHA256SUMS.txt', Buffer.from(`${item.sha256}  FlipRSS.apk\n`)], ['build-info.json', await download('build-info.json')]]) {
       const expected = 'sha256:' + crypto.createHash('sha256').update(bytes).digest('hex');
       const existing = assets.find(asset => asset.name === name);
       if (existing) {
@@ -38,6 +38,8 @@ module.exports = async ({github, context, core, manifest}) => {
     }
     const note = 'APK, checksum and build metadata are attached below. Published by GitHub Actions after checksum verification.';
     const body = (release.body ?? '').replace(/Direct release-asset upload[\s\S]*$/, '').trim();
-    if (!body.includes(note)) await github.rest.repos.updateRelease({owner, repo, release_id: release.id, body: body + '\n\n' + note});
+    await github.rest.repos.updateRelease({owner, repo, release_id: release.id,
+      ...(item.prerelease === false ? {prerelease: false, make_latest: 'true'} : {}),
+      body: body.includes(note) ? body : body + '\n\n' + note});
   }
 };
