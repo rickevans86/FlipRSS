@@ -11,9 +11,9 @@ import com.fliprss.app.data.LibraryController
 import com.fliprss.app.data.LibraryState
 
 @Composable internal fun AddFeedDialog(state: LibraryState, library: LibraryController,
-    onAccount: () -> Unit, onClose: () -> Unit) {
+    onAccount: () -> Unit, onClose: () -> Unit, initialUrl: String = "") {
     // Feed URLs can contain private query tokens; do not put them in saved state.
-    var url by remember { mutableStateOf("") }
+    var url by remember { mutableStateOf(initialUrl) }
     val initialRevision = remember { state.feedAddedRevision }
     LaunchedEffect(state.feedAddedRevision) { if (state.feedAddedRevision > initialRevision) onClose() }
     AlertDialog(onDismissRequest = { if (!state.addingFeed) onClose() }, title = { Text("Add feed") }, text = {

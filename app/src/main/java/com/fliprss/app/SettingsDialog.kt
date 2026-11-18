@@ -17,16 +17,17 @@ import androidx.compose.ui.unit.sp
 import com.fliprss.app.data.*
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable internal fun SettingsDialog(state: LibraryState, library: LibraryController,
     onAccount: () -> Unit, onClose: () -> Unit) {
     val settings = state.settings
     AlertDialog(onDismissRequest = onClose, title = { Text("Settings") }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Appearance", style = MaterialTheme.typography.titleSmall)
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 AppTheme.entries.forEach { theme ->
                     FilterChip(selected = settings.theme == theme, onClick = { library.updateSettings(settings.copy(theme = theme)) },
-                        label = { Text(when (theme) { AppTheme.SYSTEM -> "System"; AppTheme.LIGHT -> "Light"; AppTheme.DARK -> "Dark" }) })
+                        label = { Text(when (theme) { AppTheme.SYSTEM -> "System"; AppTheme.LIGHT -> "Light"; AppTheme.DARK -> "Dark"; AppTheme.OLED -> "OLED" }) })
                 }
             }
             Text("Reader text size: ${settings.readerTextSize}")
@@ -35,6 +36,9 @@ import kotlin.math.roundToInt
             Text("A quieter reading experience.", fontFamily = FontFamily.Serif,
                 fontSize = settings.readerTextSize.sp, lineHeight = (settings.readerTextSize * 1.55f).sp)
             HorizontalDivider()
+            SettingsToggle("Show feed search", "Browse and search popular RSS feeds from the Search tab.", settings.showFeedSearch) {
+                library.updateSettings(settings.copy(showFeedSearch = it))
+            }
             SettingsToggle("Hide read stories", "Applies to Today; Saved always includes read stories.", settings.hideRead) {
                 library.updateSettings(settings.copy(hideRead = it))
             }

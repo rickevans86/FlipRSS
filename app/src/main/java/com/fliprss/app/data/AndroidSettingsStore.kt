@@ -13,6 +13,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
         hideRead = preferences.getBoolean("hide-read", false),
         hideEmptyCategories = preferences.getBoolean("hide-empty-categories", false),
         useLocalFeeds = preferences.getBoolean("use-local-feeds", false),
+        showFeedSearch = preferences.getBoolean("show-feed-search", true),
     ).normalized()
     override fun save(settings: AppSettings) {
         val value = settings.normalized()
@@ -22,6 +23,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
             putBoolean("hide-read", value.hideRead)
             putBoolean("hide-empty-categories", value.hideEmptyCategories)
             putBoolean("use-local-feeds", value.useLocalFeeds)
+            putBoolean("show-feed-search", value.showFeedSearch)
         }
     }
 }
