@@ -170,3 +170,18 @@ reorder earlier entries._
   or APK rebuild when merged app tree matches the tested signed source.
 - Attach APK/checksum/build metadata to every manifest release and verify GitHub
   APK digests plus a downloaded native latest APK before claiming publication.
+
+## 2026-11-18 — OLED and optional feed directory (#19, Codex)
+
+- Add OLED separately from Dark: all neutral app surfaces/background #000000,
+  transparent elevation tint and no navigation contrast scrim; retain readable
+  text/controls/selection accents and existing theme choices. Persist enum by name.
+- Bundle curated well-known feed URLs and search/filter locally by words/topic.
+  No API keys, external query service or whole-web scraping. Reuse existing Add
+  feed validation/confirmation and active local/FreshRSS backend; preserve selected
+  URL across required source selection. New subscriptions require confirmation.
+- Show feed search defaults on; disabling removes nav tab and returns active Search
+  to Today, without touching subscriptions/account or other page preferences.
+- Publish installable review APK as v0.7.0-preview with standard FlipRSS.apk and
+  native checksum/metadata. Leave source PR for Rick's merge; after review/merge
+  create matching regular v0.7.0 tag using same verified version-7 signed artifact.

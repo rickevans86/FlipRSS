@@ -197,3 +197,23 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   installer/audio/live-account tests or independent review claimed; Windows build
   CI still queued. Binary history/signing key preserved separately. Publication
   blocker resolved using GitHub-hosted GITHUB_TOKEN, direct session still HTTP 401.
+
+- 2026-11-18 — **ChatGPT Codex** — #19, authorized by Rick: implemented pure-
+  black OLED neutral surfaces/system bars and persistent optional popular RSS
+  Search tab, curated 15-feed directory/topic filtering and prefilled active-
+  source add confirmation. App source 6f0ba16. Files: app theme/settings/nav/feed
+  dialogs/directory/tests, README, release manifest and six .ai files. All 54 JVM
+  tests pass per debug/release variant, both builds/lint pass (0 errors, 1 existing
+  warning), instrumentation compiles; no actual phone/OLED/UI/account writes.
+  All 15 included feed URLs returned HTTP 200/XML in read-only checks. Five
+  publisher tests/actionlint pass. Hosted action 44256865471 SUCCESS, published
+  v0.7.0-preview native FlipRSS.apk/checksum/metadata. Signature/alignment/version/
+  SDK/signer equality and native downloaded hash verified. APK 13,250,779 bytes,
+  SHA-256 a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18,
+  artifact 68fc7e2. Source awaits Rick-selected independent review/main merge; no
+  new main merge performed or independent self-review claimed.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #20 for #19 (base main) and
+  confirmed review status. Native v0.7.0-preview APK bytes/hash and hosted
+  publisher success verified. Updated handoff/project/task board with PR refs.
+  No new main merge; Rick selects independent reviewer and validates on phone.

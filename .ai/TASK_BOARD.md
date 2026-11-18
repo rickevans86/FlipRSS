@@ -1,11 +1,11 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex. GitHub is authoritative.
+Rebuilt from live GitHub open Issues on 2026-11-18 by ChatGPT Codex.
 
-No open Issues. #4/#6/#8/#10/#12/#14/#16 are closed after Rick-authorized feature
-merges and verified native release publication. Feature PRs #7/#9/#11/#13/#15 and
-publisher PR #17 are merged into main. Final records follow-up contains no app
-changes. Physical-device validation remains not run; no independent review claimed.
+| Issue | Title | Responsible AI | Status | Branch / PR |
+|---|---|---|---|---|
+| #19 | Add pure-black OLED theme and optional popular-feed search page | Codex (ai:codex) | Review (status:review); implementation/build/APK done | codex/19-oled-feed-search; PR #20, base main |
 
-Latest regular release: v0.6.0. All v0.1–v0.6 releases have FlipRSS.apk, checksum
-and build metadata assets. GitHub-hosted publisher action 44254047153 succeeded.
+Prior tasks #4/#6/#8/#10/#12/#14/#16 remain closed; feature merges/publication
+completed on main. #19 is new work awaiting review/main merge. Review prerelease
+v0.7.0-preview has native assets; stable main/release remains v0.6.0.

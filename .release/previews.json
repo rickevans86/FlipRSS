@@ -53,5 +53,15 @@
     "sha256": "ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4",
     "prerelease": false,
     "description": "Regular release: verified GitHub updates, always-visible read bookmarks and cleaner library pages. AI: ChatGPT Codex, #14."
+  },
+  {
+    "tag": "v0.7.0-preview",
+    "artifact_commit": "68fc7e2fc1b7b9a06f8adc2f97a862c4b7e6bffb",
+    "directory": "release-download",
+    "source_commit": "6f0ba16692077e2e93d0a218d8524b8128d6d524",
+    "apk": "FlipRSS.apk",
+    "sha256": "a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18",
+    "prerelease": true,
+    "description": "Review build for #19: pure-black OLED theme, 15 popular RSS feeds with search/topic filtering and active-source add confirmation, and Show feed search setting. Source branch awaits Rick-selected review/main merge. Both builds and 54 unit tests per variant pass; actual phone tests pending."
   }
 ]

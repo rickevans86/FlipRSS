@@ -241,3 +241,26 @@ Publication succeeded in GitHub Actions run 44254047153. All six APK asset hashe
 match the manifest, and the v0.6.0 native download was retrieved and SHA-256 checked.
 The in-app updater now has native APK/build metadata assets to use. AI: ChatGPT
 Codex, #16; Rick explicitly authorized merging feature and publishing follow-ups.
+
+## OLED theme and popular feed search (#19)
+
+Settings → Appearance → **OLED** uses pure black (#000000) for the page, navigation,
+reader, cards and dialog surfaces. Dark mode remains available separately. OLED
+also disables Material elevation tinting and the system navigation contrast scrim;
+text, controls, images and selection accents remain visible. Theme choice persists.
+
+The **Search** tab browses a bundled directory of 15 well-known RSS/Atom feeds in
+News, Technology, Science and Culture. Search titles/descriptions/topics and filter
+by topic. **Add [publisher]** opens the existing Add feed confirmation with its URL
+filled in, targeting the active local library or FreshRSS account. Demo/expired
+sessions first ask you to choose/connect a source, then preserve the selected feed.
+The + button still accepts other feed URLs. Search does not send queries anywhere;
+it searches this curated list, not the whole web. Feed availability/content remains
+under each publisher's control. No subscriptions are added without confirmation.
+
+Settings → **Show feed search** removes the Search tab. Turning it off while Search
+is open returns to Today; re-enable it in Settings. Existing subscriptions and the
+local/FreshRSS connection are preserved. Reset defaults re-enables feed search.
+
+AI: ChatGPT Codex, #19. Implementation: AppAppearance.kt, FeedSearchPage.kt,
+data/FeedDirectory.kt, settings persistence, navigation and feed-URL prefill.

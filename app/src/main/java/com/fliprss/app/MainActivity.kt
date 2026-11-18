@@ -59,29 +59,26 @@ class MainActivity : ComponentActivity() {
             val model: LibraryViewModel = viewModel()
             val state by model.library.state.collectAsStateWithLifecycle()
             val dark = useDarkTheme(state.settings.theme)
-            LaunchedEffect(dark) {
+            val oled = state.settings.theme == AppTheme.OLED
+            LaunchedEffect(dark, oled) {
                 enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT) { dark },
-                    navigationBarStyle = SystemBarStyle.auto(0xE6FFFFFF.toInt(), 0x801B1B1B.toInt()) { dark },
+                    statusBarStyle = if (oled) SystemBarStyle.dark(android.graphics.Color.BLACK) else SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT) { dark },
+                    navigationBarStyle = if (oled) SystemBarStyle.dark(android.graphics.Color.BLACK) else SystemBarStyle.auto(0xE6FFFFFF.toInt(), 0x801B1B1B.toInt()) { dark },
                 )
+                if (android.os.Build.VERSION.SDK_INT >= 29) window.isNavigationBarContrastEnforced = !oled
             }
             FlipTheme(state.settings.theme) { FlipApp(model) }
         }
     }
 }
-private val Ink = Color(0xFF242820)
-private val Paper = Color(0xFFF7F5EF)
 private val Red = Color(0xFFB83224)
 
 @Composable private fun useDarkTheme(theme: AppTheme): Boolean =
-    when (theme) { AppTheme.SYSTEM -> isSystemInDarkTheme(); AppTheme.LIGHT -> false; AppTheme.DARK -> true }
+    when (theme) { AppTheme.SYSTEM -> isSystemInDarkTheme(); AppTheme.LIGHT -> false; AppTheme.DARK, AppTheme.OLED -> true }
 
 @Composable private fun FlipTheme(theme: AppTheme, content: @Composable () -> Unit) {
     val dark = useDarkTheme(theme)
-    val colors = if (dark) darkColorScheme(primary = Color(0xFFFFB4A8), background = Color(0xFF191C18),
-        surface = Color(0xFF191C18), surfaceVariant = Color(0xFF2B3029))
-    else lightColorScheme(primary = Red, background = Paper, surface = Paper,
-        onSurface = Ink, onBackground = Ink, surfaceVariant = Color(0xFFEAE8E0))
+    val colors = appColors(theme, dark)
     MaterialTheme(colorScheme = colors, content = content)
 }
 
@@ -95,6 +92,10 @@ private val Red = Color(0xFFB83224)
     var accountOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
     var feedOpen by rememberSaveable { mutableStateOf(false) }
+    var feedInitialUrl by remember { mutableStateOf("") }
+    var pendingFeedUrl by remember { mutableStateOf<String?>(null) }
+    var feedQuery by rememberSaveable { mutableStateOf("") }
+    var feedCategory by rememberSaveable { mutableStateOf("All topics") }
     var markTarget by remember { mutableStateOf<MarkReadTarget?>(null) }
     var seenAccountRevision by rememberSaveable { mutableIntStateOf(state.accountRevision) }
     val libraryScroll = rememberLazyListState()
@@ -104,9 +105,19 @@ private val Red = Color(0xFFB83224)
             feedOpen = false; markTarget = null
         }
     }
+    LaunchedEffect(state.settings.showFeedSearch) {
+        destination = availableDestination(destination, state.settings.showFeedSearch)
+    }
+    LaunchedEffect(state.accountRevision, pendingFeedUrl, state.sessionExpired, state.connecting) {
+        val pending = pendingFeedUrl
+        if (pending != null && !state.demo && !state.sessionExpired && !state.connecting && !state.restoring) {
+            feedInitialUrl = pending; pendingFeedUrl = null
+            library.clearFeedError(); feedOpen = true; accountOpen = false
+        }
+    }
     LaunchedEffect(destination, topic) {
         libraryScroll.scrollToItem(0)
-        library.selectScope(LibraryScope(topic, destination == "Saved"))
+        if (destination != "Search") library.selectScope(LibraryScope(topic, destination == "Saved"))
     }
     LaunchedEffect(state.settings.hideEmptyCategories, state.visibleSections, state.loading, topic) {
         if (state.settings.hideEmptyCategories && !state.loading && !state.restoring && topic != null &&
@@ -124,9 +135,10 @@ private val Red = Color(0xFFB83224)
     } else {
         Scaffold(bottomBar = {
             NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                listOf("Today", "Topics", "Saved").forEach { item ->
+                libraryDestinations(state.settings.showFeedSearch).forEach { item ->
                     NavigationBarItem(selected = destination == item, onClick = { destination = item; topic = null },
                         icon = { Icon(when (item) {
+                            "Search" -> Icons.Outlined.Search
                             "Topics" -> Icons.Outlined.GridView
                             "Saved" -> Icons.Outlined.BookmarkBorder
                             else -> Icons.Outlined.ViewDay
@@ -140,13 +152,14 @@ private val Red = Color(0xFFB83224)
                 verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 item {
                     Masthead(onSettings = { settingsOpen = true }, onAddFeed = {
+                        feedInitialUrl = ""; pendingFeedUrl = null
                         if (state.demo || state.sessionExpired) accountOpen = true
                         else { library.clearFeedError(); feedOpen = true }
                     }, onRefresh = library::refresh,
-                        refreshEnabled = !state.demo && !state.loading && !state.restoring,
+                        refreshEnabled = destination != "Search" && !state.demo && !state.loading && !state.restoring,
                         addEnabled = !state.addingFeed && !state.markingAll && !state.connecting)
                     if (state.loading || state.restoring || state.markingAll) LinearProgressIndicator(Modifier.fillMaxWidth())
-                    Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (destination != "Search") Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                         if (destination != "Saved") Row(Modifier.toggleable(value = state.settings.hideRead, role = Role.Switch,
                             onValueChange = { library.updateSettings(state.settings.copy(hideRead = it)) }),
                             verticalAlignment = Alignment.CenterVertically) {
@@ -170,7 +183,12 @@ private val Red = Color(0xFFB83224)
                     }
                 } }
                 state.error?.let { problem -> item { ProblemBanner(problem, library::dismissError) { library.refresh() } } }
-                if (destination == "Topics") {
+                if (destination == "Search" && state.settings.showFeedSearch) {
+                    feedSearchPage(feedQuery, feedCategory, { feedQuery = it }, { feedCategory = it },
+                        canAdd = !state.addingFeed && !state.markingAll && !state.connecting && !state.restoring,
+                        source = if (state.local) "Adds to this device" else if (state.demo) "Choose local feeds or FreshRSS to add" else "Adds to FreshRSS",
+                        onAdd = { feed -> pendingFeedUrl = feed.url; if (state.demo || state.sessionExpired) accountOpen = true })
+                } else if (destination == "Topics") {
                     val topics = state.visibleSections.filterNot { it.feed }
                     items(topics, key = { it.id }) { section ->
                         Box(Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(12.dp))
@@ -241,11 +259,16 @@ private val Red = Color(0xFFB83224)
             }
         }
     }
-    if (accountOpen) AccountDialog(state, library) { accountOpen = false }
+    if (accountOpen) AccountDialog(state, library) {
+        accountOpen = false
+        val current = library.state.value
+        if (current.demo || current.sessionExpired) pendingFeedUrl = null
+    }
     if (settingsOpen) SettingsDialog(state, library,
         onAccount = { settingsOpen = false; accountOpen = true }, onClose = { settingsOpen = false })
     if (feedOpen) AddFeedDialog(state, library,
-        onAccount = { feedOpen = false; accountOpen = true }, onClose = { feedOpen = false })
+        onAccount = { pendingFeedUrl = feedInitialUrl; feedOpen = false; accountOpen = true },
+        onClose = { feedOpen = false }, initialUrl = feedInitialUrl)
     markTarget?.let { target ->
         AlertDialog(onDismissRequest = { markTarget = null }, title = { Text("Mark all read?") },
             text = { Text("Mark all stories in “${target.title}” as read${if (state.demo) "" else " on FreshRSS, including stories not loaded yet"}? A timestamp cutoff keeps newer stories unread.") },

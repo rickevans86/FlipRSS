@@ -1,6 +1,6 @@
 package com.fliprss.app.data
 
-enum class AppTheme { SYSTEM, LIGHT, DARK }
+enum class AppTheme { SYSTEM, LIGHT, DARK, OLED }
 data class AppSettings(
     val theme: AppTheme = AppTheme.SYSTEM,
     val readerTextSize: Int = 19,
@@ -9,6 +9,7 @@ data class AppSettings(
     val hideRead: Boolean = false,
     val hideEmptyCategories: Boolean = false,
     val useLocalFeeds: Boolean = false,
+    val showFeedSearch: Boolean = true,
 ) {
     fun normalized() = copy(readerTextSize = readerTextSize.coerceIn(16, 26))
 }
