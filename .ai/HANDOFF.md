@@ -14,9 +14,10 @@ excluded from backup. HTTPS default, explicit HTTP opt-in, no redirect credentia
 replay and no API auth on image requests. Article parsing runs off the UI thread.
 
 **Branch/PR:** codex/6-freshrss, implementation source commit `edcac9836b8981b3e678962350cd77a32869bd79`.
-Feature PR pending creation; do not merge or publish a new release without Rick’s
-instruction. PR #5’s release facts and append-only logs are preserved here; it
-will be superseded by this feature PR to avoid conflicting shared-memory updates.
+[PR #7](https://github.com/rickevans86/FlipRSS/pull/7) is open; #6 is `ai:codex`,
+`status:review`. Do not merge or publish a new release without Rick’s instruction.
+PR #5’s release facts and append-only logs are preserved here; PR #5 was closed
+as superseded to avoid conflicting shared-memory updates.
 
 **Preview APK:** Version 0.2.0-freshrss-preview (versionCode 2), 13,164,707 bytes,
 release variant, debuggable=false, existing prototype test signing identity.

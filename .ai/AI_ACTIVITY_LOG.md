@@ -88,3 +88,8 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   Download branch codex/6-freshrss-download, immutable commit `6f6673b`; retrieved
   APK bytes verified. Preserved prior release log/decisions from PR #5, whose
   duplicate shared-record PR will be superseded. No #6 main merge or new release.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened FreshRSS PR #7 for #6; confirmed
+  `ai:codex` / `status:review`. Preserved all release log/decision entries from
+  PR #5 and closed that duplicate records-only PR as superseded; #4 now tracks
+  records in PR #7. Preview/download verified; no main merge or new release.

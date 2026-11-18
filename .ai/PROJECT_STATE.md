@@ -8,7 +8,7 @@ https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype
 It remains offline-only, test-signed, with verified APK/checksum hosted on
 codex/4-release-download because release-asset uploads returned HTTP 401.
 
-## FreshRSS feature — #6, codex/6-freshrss (not merged)
+## FreshRSS feature — #6 / PR #7, codex/6-freshrss (not merged)
 
 Version 0.2.0-freshrss-preview adds account login using API password, Keystore-backed
 encrypted token session, sign-out/forget, subscriptions/folders/tags/unread counts,
@@ -30,4 +30,4 @@ checksum verified. No actual device/real-instance tests; Rick must validate with
 his account. Live cache is memory-only, no offline queue/background sync; article
 reader is extracted text rather than rich HTML. Production signing remains
 unconfigured. Independent review is pending. Prior release records PR #5 facts
-are preserved here and its duplicate record updates will be superseded.
+are preserved here; PR #5 was closed as superseded by PR #7.
