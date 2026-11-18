@@ -1,10 +1,11 @@
 # TASK_BOARD
 
-Synced from live GitHub Issues on 2026-11-18 by Codex. GitHub is authoritative.
+Rebuilt from live GitHub open Issues on 2026-11-18 by Codex. GitHub is authoritative.
 
 | Issue | Title | Responsible AI | Status | Branch / PR |
 |---|---|---|---|---|
-| #2 | Build interactive Android prototype with magazine grid, topics and swipe reader | Codex (`ai:codex`) | Closed by merge; authorized Windows CI follow-up in progress | main; PR #3 merged |
+| #6 | Implement FreshRSS login, feeds, topics and read/star synchronization | Codex (`ai:codex`) | Review (`status:review`); implementation/builds complete | codex/6-freshrss; [PR #7](https://github.com/rickevans86/FlipRSS/pull/7) |
+| #4 | Build and publish v0.1.0-prototype APK prerelease | Codex (`ai:codex`) | Review (`status:review`); release published | PR #5 superseded/closed; release records preserved in PR #7 |
 
-No open feature Issues returned. Rick explicitly authorized main publication
-and then clarified the Actions runner is Windows. See newest main Actions run.
+#2 is closed after PR #3 merged. Existing v0.1.0 release remains offline-only;
+#6 preview code/download does not imply a new published release or main merge.

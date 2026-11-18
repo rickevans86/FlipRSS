@@ -42,3 +42,38 @@ reorder earlier entries._
 - Use Compose HorizontalPager with a stable captured story queue and accessible
   previous/next controls; unsaving a story does not change reader position.
   A 3D flip/page-curl effect is deferred pending prototype feedback.
+
+## 2026-11-18 — Prototype prerelease distribution, Issue #4 (Codex)
+
+- Rick authorized building and publishing a release. Existing version is
+  0.1.0-prototype and FreshRSS integration is absent, so publish a prerelease.
+- Build release variant and sign with the existing prototype test identity;
+  explicitly disclose test signing and non-production status. No production
+  signing configuration or private keys added to Git.
+- Release-asset uploads reject connected credentials (HTTP 401). Publish the
+  release with immutable links to a separate artifact branch; tag still points
+  to actual source main commit. Verify retrieved APK bytes against SHA-256.
+- Keep artifact branch separate from record-only PR to avoid merging APKs into
+  main. Production signing and live account integration remain future tasks.
+
+## 2026-11-18 — FreshRSS online integration, Issue #6 (Codex)
+
+- Use Retrofit/OkHttp directly against GReader, Jsoup for text/cover extraction
+  and Coil for images. Preserve folders/tags/feed IDs and opaque continuation/item
+  IDs without numeric narrowing. Resolve subdirectory roots/API endpoint URLs.
+- HTTPS by default; explicit trusted-local HTTP opt-in. Reject URL credentials,
+  query/fragment in instance URL. Do not follow API redirects; no credential
+  replay. Image requests are separate and never inherit API auth headers.
+- Store auth token (not password), username, endpoint and HTTP setting with
+  Android Keystore-backed EncryptedSharedPreferences per the recorded plan;
+  security-crypto 1.1 APIs are deprecated and future migration can be separate.
+  Exclude session from backup/transfer; explicit forget can reset damaged storage.
+- Pure StateFlow controller owns account boundaries, pagination and optimistic
+  read/star operations with rollback/errors. Separate auth-attempt and active-
+  account generations preserve valid writes after failed reauthentication.
+- Keep live articles in memory for this milestone; no Room/offline mutation
+  queue/background sync. Preserve explicit offline demo and separate preferences.
+- Render extracted text without WebView/active HTML; cover images and open-original
+  links are supported. Rich inline layout/images remain future work.
+- Deliver versionCode 2 / 0.2.0-freshrss-preview as a test-signed preview download;
+  no new release/main merge is implied by the implementation request.

@@ -15,10 +15,10 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
   a magazine card grid, a full-screen swipe/flip article reader, and content
   grouped into topic sections (FreshRSS folders/tags).
 - **Stack:** Kotlin, Jetpack Compose (Material 3), Android (min SDK 26, compile/target SDK 35 for the prototype).
-- **Key libraries (planned):** Retrofit + OkHttp (FreshRSS Google Reader API),
+- **Key libraries:** Retrofit + OkHttp (FreshRSS Google Reader API),
   Kotlin Coroutines/Flow, Coil (image loading), Jsoup (extract cover images from
-  item HTML), Jetpack DataStore + EncryptedSharedPreferences (credentials/token),
-  Room (offline cache), optional Hilt (DI).
+  item HTML), EncryptedSharedPreferences (auth token), DataStore (deferred preferences),
+  Room (offline cache, planned), optional Hilt (DI, deferred).
 - **Backend API:** FreshRSS "GReader" API at `<instance>/api/greader.php` —
   `ClientLogin` for the auth token, `subscription/list`, `tag/list`,
   `stream/contents/{streamId}`, `unread-count`, `edit-tag` (mark read/starred).
@@ -30,9 +30,10 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 - **Test:** `./gradlew test` (unit) and `./gradlew connectedAndroidTest` (instrumented).
 - **Lint / format:** `./gradlew lint`; code style via ktlint/detekt if added.
 
-> Status: Issue #2 adds the offline Compose prototype and Gradle project.
-> Networking, authentication and offline feed caching remain planned. Build with
-> JDK 17+ and Android SDK 35. See README.md for prototype use and CI checks.
+> Status: #2 added the offline prototype; #6 adds FreshRSS authentication,
+> catalogue/article loading, pagination and read/star synchronization. Live article
+> caching remains in memory; Room and background sync are not implemented. Build
+> with JDK 17+ and Android SDK 35. See README.md for setup and validation.
 
 ---
 
