@@ -116,7 +116,7 @@ private val Red = Color(0xFFB83224)
     val readerArticles = readerIds.mapNotNull(library::findArticle)
     val sectionTitle = state.sections.find { it.id == topic }?.title
     val scopeMatchesView = state.scope.sectionId == topic && state.scope.savedOnly == (destination == "Saved") &&
-        state.scope.unreadOnly == state.settings.hideRead
+        state.scope.unreadOnly == (state.settings.hideRead && destination != "Saved")
     fun open(article: Article) { initialPage = selected.indexOf(article); readerIds = selected.map { it.id } }
 
     if (readerArticles.isNotEmpty()) {
@@ -147,7 +147,7 @@ private val Red = Color(0xFFB83224)
                         addEnabled = !state.addingFeed && !state.markingAll && !state.connecting)
                     if (state.loading || state.restoring || state.markingAll) LinearProgressIndicator(Modifier.fillMaxWidth())
                     Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Row(Modifier.toggleable(value = state.settings.hideRead, role = Role.Switch,
+                        if (destination != "Saved") Row(Modifier.toggleable(value = state.settings.hideRead, role = Role.Switch,
                             onValueChange = { library.updateSettings(state.settings.copy(hideRead = it)) }),
                             verticalAlignment = Alignment.CenterVertically) {
                             Switch(state.settings.hideRead, onCheckedChange = null)
@@ -158,28 +158,6 @@ private val Red = Color(0xFFB83224)
                             enabled = destination != "Topics" && scopeMatchesView && !state.loading && !state.loadingMore && !state.restoring &&
                                 !state.markingAll && !state.addingFeed && !state.connecting && !state.sessionExpired && state.pending.isEmpty()) {
                             Text(if (state.markingAll) "Marking…" else "Mark all read")
-                        }
-                    }
-                }
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Eyebrow(if (destination == "Saved") "YOUR PERSONAL COLLECTION" else "A LITTLE CURIOSITY, EVERY DAY")
-                        Text(when (destination) { "Topics" -> "Follow your curiosity."; "Saved" -> "For a slower moment."; else -> "Your daily perspective." },
-                            fontFamily = FontFamily.Serif, fontSize = 36.sp, lineHeight = 39.sp)
-                        Text(when (destination) { "Topics" -> "Find a new angle in your favourite subjects."; "Saved" -> "Good stories, kept close."; else -> "Stories to open your world. Take your time." },
-                            color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-                item {
-                    Surface(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
-                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Eyebrow(if (state.demo) "DEMO · SAMPLE STORIES" else if (state.local) "LOCAL · FEEDS ON THIS DEVICE" else "FRESHRSS · ${state.account?.username.orEmpty()}")
-                            Text(if (state.demo) "Try the reading room, or connect your own feeds." else
-                                if (state.local) "${state.unread ?: 0} unread · Add feeds directly; FreshRSS is optional." else if (state.sessionExpired) "Your saved session needs a new sign-in." else "${state.unread?.let { "$it unread · " }.orEmpty()}Read and saved changes sync to your account.",
-                                style = MaterialTheme.typography.bodySmall)
-                            TextButton(onClick = { accountOpen = true }) {
-                                Text(if (state.demo || state.local) "Connect FreshRSS (optional)" else if (state.sessionExpired) "Sign in again" else "Account")
-                            }
                         }
                     }
                 }
@@ -227,8 +205,8 @@ private val Red = Color(0xFFB83224)
                         Column(Modifier.fillMaxWidth().padding(vertical = 24.dp), horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Icon(if (destination == "Saved") Icons.Outlined.BookmarkBorder else Icons.Outlined.RssFeed, null, Modifier.size(36.dp))
-                            Text(if (state.settings.hideRead) "No unread stories here." else if (destination == "Saved") "A little space for a good story." else "No stories here yet.", fontFamily = FontFamily.Serif, fontSize = 24.sp)
-                            Text(if (state.settings.hideRead) "Turn off Hide read to include read stories." else if (destination == "Saved") "Bookmark stories to find them here." else "Refresh your feeds or choose another section.",
+                            Text(if (state.settings.hideRead && destination != "Saved") "No unread stories here." else if (destination == "Saved") "A little space for a good story." else "No stories here yet.", fontFamily = FontFamily.Serif, fontSize = 24.sp)
+                            Text(if (state.settings.hideRead && destination != "Saved") "Turn off Hide read to include read stories." else if (destination == "Saved") "Bookmark stories to find them here." else "Refresh your feeds or choose another section.",
                                 style = MaterialTheme.typography.bodyMedium)
                             if (destination == "Saved") TextButton(onClick = { destination = "Today"; topic = null }) { Text("Explore stories") }
                         }

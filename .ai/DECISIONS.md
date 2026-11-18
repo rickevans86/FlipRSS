@@ -130,3 +130,23 @@ reorder earlier entries._
   leave main unmerged. Use Windows Actions token for asset uploads because this
   session's uploads.github.com authentication returns HTTP 401. Verify hashes and
   refuse mismatched existing assets; no signing keys or binaries in source PR.
+
+## 2026-11-18 — Regular APK releases, updater and Saved (#14, Codex)
+
+- Rick explicitly requested regular release: use v0.6.0 (versionCode 6), regular/
+  latest GitHub Release, FlipRSS.apk asset filename for all versions. Preserve
+  older immutable versioned binaries/history; alias identical signed bytes in
+  native release assets. Keep existing test signer for upgrade compatibility.
+- Publisher can run on any SelfHosted runner; Node script has no OS dependency.
+  Replace superseded queued publisher jobs. Use GITHUB_TOKEN for native uploads
+  because session uploads.github.com authentication still returns HTTP 401.
+- Update checks are manual from Settings and use latest regular release metadata.
+  Require exact APK filename/repository URL, valid newer versionCode and bounded
+  size/SHA-256. Download from allowlisted GitHub HTTPS hosts without account auth.
+  Before installation require same Android package and signing certificate and
+  matching newer version. Share private cache APK read-only through FileProvider,
+  request Android unknown-source permission and use system installer confirmation.
+  Missing native assets show pending publication instead of claiming update success.
+- Saved scope ignores global hide-read in server paging and local visibility.
+  Remove Hide read on Saved; retain global setting on Today. Remove page perspective
+  heading/subtitle and account banner; account remains available via Settings.

@@ -340,4 +340,30 @@ class LibraryControllerTest {
             assertTrue(settings.load().hideEmptyCategories)
         } finally { jobs.cancel() }
     }
+    @Test fun savedScopeAlwaysFetchesReadStoriesWhileTodayRemainsUnreadOnly() = runTest {
+        val client = FakeRepository(story.copy(initiallyRead = true, initiallyStarred = true))
+        val sessions = SavedSession().apply { session = FreshRssSession("https://example.org/", "rick", "test-token", false) }
+        val settings = MemorySettingsStore().apply { save(AppSettings(hideRead = true)) }
+        val controller = LibraryController(this, Connector(mapOf("rick" to client)), sessions, DemoPrefs(), settings)
+        advanceUntilIdle()
+        assertEquals(true, client.unreadFilters.last())
+        client.pageCall = { cursor -> ArticlePage(listOf(story.copy(initiallyRead = true, initiallyStarred = true)), if (cursor == null) "saved-next" else null) }
+        controller.selectScope(LibraryScope(savedOnly = true)); advanceUntilIdle()
+        controller.loadMore(); advanceUntilIdle()
+        assertEquals(listOf(false, false), client.unreadFilters.takeLast(2))
+        assertEquals(listOf(story.id), controller.state.value.visibleArticles.map { it.id })
+        controller.updateSettings(controller.state.value.settings.copy(hideRead = false)); advanceUntilIdle()
+        controller.updateSettings(controller.state.value.settings.copy(hideRead = true)); advanceUntilIdle()
+        assertEquals(listOf(story.id), controller.state.value.visibleArticles.map { it.id })
+        controller.selectScope(LibraryScope()); advanceUntilIdle()
+        assertEquals(true, client.unreadFilters.last())
+    }
+    @Test fun savedDemoStoriesRemainVisibleAfterBeingRead() = runTest {
+        val controller = LibraryController(this, Connector(emptyMap()), SavedSession(), DemoPrefs())
+        advanceUntilIdle()
+        val id = DemoLibrary.articles.first().id
+        controller.toggleSaved(id); controller.setRead(id, true)
+        controller.updateSettings(AppSettings(hideRead = true)); controller.selectScope(LibraryScope(savedOnly = true))
+        assertEquals(listOf(id), controller.state.value.visibleArticles.map { it.id })
+    }
 }

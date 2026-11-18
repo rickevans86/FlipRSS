@@ -1,5 +1,9 @@
 # PROJECT_STATE
 
+Latest regular release: v0.6.0 (#14, Codex), source de926519 on an unmerged
+review branch. FlipRSS.apk download link is live; native assets await the queued
+SelfHosted publisher because direct asset upload returns HTTP 401.
+
 ## Main / released
 
 main 92613d6 and published v0.1.0-prototype contain the offline-only app.
@@ -71,3 +75,30 @@ Latest: https://github.com/rickevans86/FlipRSS/releases/tag/v0.5.0-local-preview
 Artifact 1ff1e66 / codex/12-local-download (never merge). Main remains 92613d6.
 Merge #7, retarget/merge #9, retarget/merge #11, then retarget #12's PR and sync
 shared records. Rick controls merging and selects independent reviewer.
+
+## Regular release, updater and Saved cleanup — #14 / PR #15 (base PR #13)
+
+Source codex/14-release-updates / de926519. Saved excludes global unread filtering
+from server/local queries and visible stories, and hides its top Hide read switch.
+Page perspective heading/subtitle and account banner removed; account in Settings.
+Settings updater queries latest regular GitHub release, downloads FlipRSS.apk over
+GitHub HTTPS without FreshRSS auth, checks size/SHA-256/package/newer version/same
+signer, then invokes Android installer with explicit unknown-source permission
+flow. Scoped FileProvider exposes only verified update cache, read-only.
+
+49 JVM tests pass per debug/release variant; both build/lint pass (0 errors,
+1 existing warning each), instrumentation compiles. Five publisher tests and
+actionlint pass. No actual phone/permission/installer/audio/live-account execution.
+APK signature/alignment/version/SDK/download hash and v0.5 signer equality checked.
+Artifact 3cd57a6 / codex/14-release-download, file release-download/FlipRSS.apk.
+SHA-256 ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4.
+
+v0.6.0 is confirmed regular/latest, NOT a prerelease. Existing test signing
+identity retained for upgrades; production signing remains unconfigured. Publisher
+attaches standard FlipRSS.apk to all releases, verifies hashes, promotes explicit
+regular versions only, and targets any SelfHosted runner. Cancelled superseded
+runs 44247234997/44247783494/44251809984. Final manifest including v0.6
+triggered run 44252735121, queued. No native assets attached yet.
+Latest URL: https://github.com/rickevans86/FlipRSS/releases/tag/v0.6.0
+Main remains 92613d6. Merge #7, retarget #9, then #11, then #13, then #14 PR;
+Rick selects independent reviewer and merges.

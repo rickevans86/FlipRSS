@@ -1,4 +1,4 @@
-name: Publish APK previews
+name: Publish APK releases
 on:
   push:
     tags: ['publish-previews-*']
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    runs-on: [SelfHosted, Windows]
+    runs-on: SelfHosted
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4

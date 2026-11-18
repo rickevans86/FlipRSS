@@ -189,3 +189,42 @@ verified artifact to the manifest and trigger publishing.
 
 AI: **ChatGPT Codex**, #12. Local implementation: `data/LocalFeeds.kt`, controller,
 settings/account/feed UI; publication: `.github/scripts/publish-releases.cjs`.
+
+## Regular releases and app updates (#14)
+
+Regular release builds use the filename **FlipRSS.apk** on GitHub Releases.
+Historical previews keep their versioned source artifacts; the publisher attaches
+the same signed bytes as FlipRSS.apk to each release. SHA256SUMS.txt names that
+standard asset. Regular versions are marked as releases and made latest; previous
+previews remain prereleases. Existing test signing identity is preserved for
+upgrades; production signing is still not configured.
+
+In **Settings → App updates**, tap **Check for updates** to query the latest
+regular GitHub release. **Download update** retrieves FlipRSS.apk; the app checks
+its exact size and SHA-256 against release metadata, then checks its Android
+package, newer versionCode and signing certificate against the installed app.
+**Install update** opens Android's installer. Android may first ask you to allow
+updates from FlipRSS; return and tap Install update again. Installation always
+requires Android's confirmation. Downloads use GitHub HTTPS hosts without any
+FreshRSS authentication. Prereleases, incomplete releases, untrusted redirects,
+checksum/signature/version mismatches and request failures are reported without
+installing. The settings link also opens GitHub Releases manually.
+
+The updater uses GitHub's public API (rate limits apply); no automatic background
+checks or silent installs. A downloaded update is kept in app-private cache and
+shared read-only with Android's installer through a scoped FileProvider. APKs
+with a different signing identity cannot update this installation. Actual
+permission/installer/voice/device flows still need phone verification.
+
+Saved always includes read bookmarks, regardless of global Hide read. The Saved
+page has no Hide read switch, and FreshRSS saved queries omit the unread-only
+filter on every page. Today retains Hide read. The large heading/subtitle and
+account banner are removed from all library pages; account controls live in Settings.
+
+Publication uses any runner labelled SelfHosted (the script works on Windows or
+Linux). Older queued publishing runs are superseded by the standard-filename job.
+If no matching runner accepts it, APK links in release notes remain available,
+while attaching APK assets waits for runner execution. No signing key is committed.
+
+AI: **ChatGPT Codex**, #14. Updater: `data/GitHubUpdates.kt`, `AppUpdater.kt`,
+`UpdateControls.kt`; reader filtering: `LibraryController.kt`, `MainActivity.kt`.

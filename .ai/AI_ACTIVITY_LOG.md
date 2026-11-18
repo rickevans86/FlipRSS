@@ -151,3 +151,25 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   Triggered latest publishing run 44247783494 (pending behind queued backfill
   44247234997). No assets attached yet; HTTP 401/session limitation documented.
   Shared records updated, source/artifact branches synchronized. No main merge.
+
+- 2026-11-18 — **ChatGPT Codex** — #14, authorized by Rick: implemented regular
+  release naming FlipRSS.apk, verified foreground GitHub updater/Android installer,
+  always-visible Saved/read bookmarks and page heading/account-banner cleanup.
+  Source de926519. Files: app updater/network/UI/controller/manifest/provider/tests,
+  publisher/workflow/manifest/tests, README and six .ai files. 49 JVM tests pass per
+  debug/release variant, both builds/lint pass (0 errors, 1 existing warning each),
+  instrumentation compiles, 5 publisher tests and actionlint pass. No actual phone/
+  installer/permission/audio/live-account testing. APK 13,234,395 bytes, SHA-256
+  ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4, artifact
+  3cd57a6. Signature/alignment/version/SDK/download hash and v0.5 signer equality
+  verified. Published regular/latest v0.6.0. Direct asset upload again HTTP 401;
+  changed publisher to any SelfHosted runner and standard filenames. Cancelled
+  superseded runs 44247234997/44247783494; run 44251809984 queued. No main merge
+  or native-asset completion claimed. Rick selects independent reviewer.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #15 for #14, base PR #13, and
+  confirmed issue review status from live GitHub. Cancelled superseded publisher
+  run 44251809984 and triggered final six-build manifest run 44252735121 (queued).
+  v0.6.0 confirmed regular/latest, native assets still empty; download link
+  verified. Recorded outstanding runner/phone/independent review requirements.
+  Source/artifact/release records synchronized; no main merge.

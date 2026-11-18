@@ -3,7 +3,7 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-No active implementation claims. #6 / PR #7, #8 / PR #9, #10 / PR #11 and #12
-local feeds are completed on stacked Codex branches awaiting independent review.
-Check open PRs before claiming app/shared records. Binary download branches must
-never be merged. #12 release-asset publishing action is queued on Windows runner.
+No active implementation claims. Codex #6/#8/#10/#12/#14 are completed on stacked
+review branches. Check PRs #7/#9/#11/#13 and #14 follow-up before claiming app or
+shared records. Never merge binary download branches. Native release attachment
+publishing remains queued on SelfHosted; no other AI ownership claims found.

@@ -27,11 +27,19 @@ test('checksum mismatch blocks publication', async () => {
   await assert.rejects(publish(f),/checksum mismatch/);assert.equal(f.created.length,0);assert.equal(f.assets.length,0);
 });
 test('does not overwrite an existing mismatched APK', async () => {
-  const f=fixture();f.assets.push({name:'FlipRSS-test.apk',size:1});
+  const f=fixture();f.assets.push({name:'FlipRSS.apk',size:1});
   f.github.rest.repos.getReleaseByTag=async()=>({data:{id:1}});
   await assert.rejects(publish(f),/Existing asset mismatch/);assert.equal(f.assets.length,1);
 });
 test('rejects artifact path traversal', async () => {
   const f=fixture();f.manifest[0].directory='../private';
   await assert.rejects(publish(f),/Invalid release manifest/);assert.equal(f.created.length,0);
+});
+
+test('regular release publishes the standard filename and becomes latest', async () => {
+  const f=fixture();f.manifest[0].prerelease=false;let updated;
+  f.github.rest.repos.updateRelease=async(data)=>{updated=data;return {data:{id:1}};};
+  await publish(f);
+  assert.equal(f.created[0].prerelease,false);assert.equal(f.created[0].make_latest,'true');
+  assert.equal(f.assets[0].name,'FlipRSS.apk');assert.equal(updated.prerelease,false);assert.equal(updated.make_latest,'true');
 });
