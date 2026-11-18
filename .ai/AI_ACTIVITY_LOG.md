@@ -166,3 +166,10 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   changed publisher to any SelfHosted runner and standard filenames. Cancelled
   superseded runs 44247234997/44247783494; run 44251809984 queued. No main merge
   or native-asset completion claimed. Rick selects independent reviewer.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #15 for #14, base PR #13, and
+  confirmed issue review status from live GitHub. Cancelled superseded publisher
+  run 44251809984 and triggered final six-build manifest run 44252735121 (queued).
+  v0.6.0 confirmed regular/latest, native assets still empty; download link
+  verified. Recorded outstanding runner/phone/independent review requirements.
+  Source/artifact/release records synchronized; no main merge.

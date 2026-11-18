@@ -18,7 +18,7 @@ SettingsDialog, LibraryController, manifest/update_paths.xml, app version, updat
 Saved JVM and instrumentation tests, release publisher/workflow/tests/manifest,
 README and all six .ai records.
 **Branch/PR:** codex/14-release-updates; app source
-de926519c5f44c3c8f3f19553bcab78ffafb98fd. PR to open after this record update,
+de926519c5f44c3c8f3f19553bcab78ffafb98fd. [PR #15](https://github.com/rickevans86/FlipRSS/pull/15) open; #14 status:review,
 BASE codex/12-local-feeds (PR #13), dependent on #11/#9/#7. Merge #7 first and
 retarget each later PR to main before merging; sync shared records. Rick selects
 independent reviewer and merges. Author does not self-review.
@@ -40,8 +40,8 @@ verified release-note download links work. Changed publisher to attach FlipRSS.a
 plus checksum/build metadata for all six builds and promote explicit regular
 versions. Publisher now needs only SelfHosted label, not Windows (Node works on
 both). Cancelled superseded publishing runs 44247234997 and 44247783494. Standard
-filename run 44251809984 queued; final manifest includes v0.6 and will supersede
-that run after this update. No runner execution/native attachment success claimed.
+filename run 44251809984 cancelled as superseded; final manifest including v0.6
+triggered run 44252735121, queued. No runner execution/native attachment success claimed.
 Asked Rick asynchronously whether runner is online; no answer at record creation.
 In-app downloads need native assets attached; missing assets show a clear pending
 message and GitHub Releases link.

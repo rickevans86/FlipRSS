@@ -76,7 +76,7 @@ Artifact 1ff1e66 / codex/12-local-download (never merge). Main remains 92613d6.
 Merge #7, retarget/merge #9, retarget/merge #11, then retarget #12's PR and sync
 shared records. Rick controls merging and selects independent reviewer.
 
-## Regular release, updater and Saved cleanup — #14 (base PR #13)
+## Regular release, updater and Saved cleanup — #14 / PR #15 (base PR #13)
 
 Source codex/14-release-updates / de926519. Saved excludes global unread filtering
 from server/local queries and visible stories, and hides its top Hide read switch.
@@ -97,8 +97,8 @@ v0.6.0 is confirmed regular/latest, NOT a prerelease. Existing test signing
 identity retained for upgrades; production signing remains unconfigured. Publisher
 attaches standard FlipRSS.apk to all releases, verifies hashes, promotes explicit
 regular versions only, and targets any SelfHosted runner. Cancelled superseded
-runs 44247234997/44247783494; standard-name run 44251809984 queued and will be
-superseded by final manifest including v0.6. No native assets attached yet.
+runs 44247234997/44247783494/44251809984. Final manifest including v0.6
+triggered run 44252735121, queued. No native assets attached yet.
 Latest URL: https://github.com/rickevans86/FlipRSS/releases/tag/v0.6.0
 Main remains 92613d6. Merge #7, retarget #9, then #11, then #13, then #14 PR;
 Rick selects independent reviewer and merges.
