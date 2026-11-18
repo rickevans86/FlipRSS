@@ -269,3 +269,11 @@ reorder earlier entries._
 - Automatic loading defaults on per request with persistent off switch/manual
   retry and feed fallback. No permanent full-article cache or paywall bypass.
 - Ship #29/#30 together as regular v0.10.0/code 12; code 11 remains intermediate.
+
+## 2026-11-18 — Combined v0.10.0 publication verified (#29/#30, Codex)
+
+- Publish one regular code-12 update for bulk-read controls and public article
+  expansion, retain prior signing identity, verify actual native bytes and all
+  ten release digests. Intermediate code11 was not separately released.
+- Keep publisher-specific extraction limits explicit. Build/JVM/public HTML
+  validation does not establish phone UI/audio/account-write behavior.

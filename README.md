@@ -354,7 +354,7 @@ This release also corrects #24's repeated Feedspot names, clears only the old
 public directory cache, and shows 20 search results per explicit Load more.
 Subscriptions, saved stories and the FreshRSS account are preserved.
 
-Regular v0.9.0 is on main. Native APK:
+Speech controls were introduced in v0.9.0. Previous native APK:
 https://github.com/rickevans86/FlipRSS/releases/download/v0.9.0/FlipRSS.apk
 Both builds/lint and 73 unit tests per variant passed. Hosted publication
 44300897612 succeeded; downloaded native APK and all nine release APK hashes
@@ -399,4 +399,7 @@ Combined regular release: **v0.10.0**, code 12, Android 8+.
 [FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.10.0/FlipRSS.apk).
 85 JVM tests each debug/release, both builds/lint, five publisher tests/actionlint
 pass; instrumentation compiled only. Same existing test signer for updates.
-Publication links become available after the verified hosted publisher runs.
+Hosted publisher 44400302581 succeeded. All ten release APK digests and the
+latest native download were verified. Native APK: 13,316,315 bytes; SHA-256
+`636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5`.
+No physical phone/audio/account-write validation or independent review claimed.

@@ -3,4 +3,5 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-#29/#30 implementation complete; combined publication pending. No active implementation claims. Never merge artifact branches.
+No active implementation claims. #29/#30 completed, #31/#32 merged, native
+v0.10.0 verified. Check live GitHub before new work; never merge artifact branches.

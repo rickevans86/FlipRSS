@@ -289,3 +289,15 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
 - 2026-11-18 — **ChatGPT Codex** — #29 merged #31; #30 source 57db2bc implements public article text loading/retry/settings/cache/speech. Exact TechCrunch HTML smoke: 144 → 2,573 characters/9 blocks. 85 tests per debug/release pass; packaging/lint publication pending. No device validation or independent review claimed.
 
 - #30 validation complete: 85 JVM tests each debug/release, builds/lint (0 errors/1 existing warning), instrumentation compile, five publisher tests/actionlint pass. Signed native v0.10.0 code12 artifact 6590f2e, 13,316,315 bytes, SHA-256 636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5. Signature/alignment/package/SDK/non-debuggable/signer equality verified; external metadata links source57db2bc because AGP worktree VCS unsupported. PR/main/publication follows; no independent review/device tests claimed.
+
+- 2026-11-18 — **ChatGPT Codex** — Completed #29/#30. #31 merged2001f09,
+  #32 merged74669a0, main app tree equals source57db2bc. Hosted publisher
+  44400302581 SUCCESS; regular/latest v0.10.0 native FlipRSS.apk/checksum/build-info
+  attached. All ten APK digests match manifest; latest downloaded13,316,315 bytes,
+  SHA256636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5.
+  85 JVM tests per debug/release, both builds/lint (0 errors/1 existing warning),
+  instrumentation compile, five publisher tests/actionlint pass. Exact TechCrunch
+  public HTML smoke144→2573chars/9blocks. Signature/alignment/version/SDK/signer
+  equality verified; prototype test signer retained, no key published. Closed
+  issues, README/six records updated, no claims. Device/audio/account-write tests
+  and independent review not claimed. Final records-only PR follows.
