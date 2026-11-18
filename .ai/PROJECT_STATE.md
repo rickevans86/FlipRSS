@@ -1,33 +1,30 @@
 # PROJECT_STATE
 
-## On main / published
+## Main / released
 
-main `92613d6` contains the offline prototype from PR #3. Codex published
-v0.1.0-prototype on 2026-11-18 at Rick’s request:
-https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype
-It remains offline-only, test-signed, with verified APK/checksum hosted on
-codex/4-release-download because release-asset uploads returned HTTP 401.
+main 92613d6 and published v0.1.0-prototype contain the offline-only app.
+Release: https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype
+Release assets use verified download-branch links due upload HTTP 401.
 
-## FreshRSS feature — #6 / PR #7, codex/6-freshrss (not merged)
+## Feature PR #7 — #6 (not merged)
 
-Version 0.2.0-freshrss-preview adds account login using API password, Keystore-backed
-encrypted token session, sign-out/forget, subscriptions/folders/tags/unread counts,
-paginated streams, refresh/load more, live cards/reader, server starred view and
-read/unread/star synchronization. Write failures roll back with visible errors;
-account/request guards prevent stale data leaks. Demo state remains separate.
-HTTPS default/HTTP opt-in; redirects disabled; API token not sent to image hosts.
-Text/cover parsing with Jsoup runs off the UI thread; Coil loads covers.
+codex/6-freshrss adds login/encrypted token, catalogue/counts, paginated feeds/
+topics/saved reader, read/star sync and separate demo mode. Source edcac98;
+0.2.0 preview on codex/6-freshrss-download. Its 18 tests pass in both variants.
 
-Implementation commit edcac98; preview APK at immutable download commit 6f6673b
-on codex/6-freshrss-download (artifact branch, do not merge). See handoff for link
-and checksum. This preview is not a published release and does not change v0.1.0.
+## Reading controls — #8, stacked on PR #7 (not merged)
 
-## Verification / next
+codex/8-reading-controls, source 302a180: Add Feed subscribes on FreshRSS; top
+hide-read persists and filters server pages; confirmed mark-all-read scopes to
+current all/folder/feed/saved stream with timestamp cutoff and includes unloaded
+items. Gear settings persist theme/system bars, reader size, auto-read and images.
 
-18 JVM tests pass in each debug/release variant; build/lint and instrumentation
-APK compilation pass. Preview signature/alignment/SDK/version and downloaded
-checksum verified. No actual device/real-instance tests; Rick must validate with
-his account. Live cache is memory-only, no offline queue/background sync; article
-reader is extracted text rather than rich HTML. Production signing remains
-unconfigured. Independent review is pending. Prior release records PR #5 facts
-are preserved here; PR #5 was closed as superseded by PR #7.
+Preview 0.3.0-controls-preview / versionCode 3, test-signed release APK at artifact
+commit 1bdaf3d (codex/8-controls-download; do not merge). See handoff for download
+and checksum. 28 JVM tests pass per debug/release variant; both lint/build pass,
+instrumentation APK compiles, signatures/alignment/download checksum verified.
+No actual device/server execution claimed. Base live-cache/offline/renderer and
+production-signing limitations remain. Add Feed uses default server folder.
+
+Merge PR #7 first, then retarget the controls follow-up to main before merging.
+No new published release or main merge performed for these controls.
