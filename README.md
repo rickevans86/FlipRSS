@@ -415,4 +415,6 @@ Screen-awake patch release: **v0.10.1**, code 13, Android 8+.
 [FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.10.1/FlipRSS.apk).
 85 JVM tests per debug/release, builds/lint and publisher checks pass; new screen
 lifecycle tests compile only. Actual phone screen-timeout/audio checks pending.
-Native publication will be verified after the hosted publisher completes.
+Hosted publisher 44411187965 succeeded. All eleven release native APK digests
+and latest downloaded bytes were verified. APK SHA256:
+`92b640a5fafb48d85996fed1417e4de97392c6a5e2aa8e46386c5a52d47822ee`.
