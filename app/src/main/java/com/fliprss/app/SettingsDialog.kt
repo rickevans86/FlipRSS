@@ -19,45 +19,47 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable internal fun SettingsDialog(state: LibraryState, library: LibraryController,
-    onAccount: () -> Unit, onClose: () -> Unit) {
+    onAccount: () -> Unit, onClose: () -> Unit, onSettings: (AppSettings) -> Unit = library::updateSettings) {
     val settings = state.settings
     AlertDialog(onDismissRequest = onClose, title = { Text("Settings") }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Appearance", style = MaterialTheme.typography.titleSmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 AppTheme.entries.forEach { theme ->
-                    FilterChip(selected = settings.theme == theme, onClick = { library.updateSettings(settings.copy(theme = theme)) },
+                    FilterChip(selected = settings.theme == theme, onClick = { onSettings(settings.copy(theme = theme)) },
                         label = { Text(when (theme) { AppTheme.SYSTEM -> "System"; AppTheme.LIGHT -> "Light"; AppTheme.DARK -> "Dark"; AppTheme.OLED -> "OLED" }) })
                 }
             }
             Text("Reader text size: ${settings.readerTextSize}")
-            Slider(value = settings.readerTextSize.toFloat(), onValueChange = { library.updateSettings(settings.copy(readerTextSize = it.roundToInt())) },
+            Slider(value = settings.readerTextSize.toFloat(), onValueChange = { onSettings(settings.copy(readerTextSize = it.roundToInt())) },
                 valueRange = 16f..26f, steps = 9, modifier = Modifier.semantics { contentDescription = "Reader text size" })
             Text("A quieter reading experience.", fontFamily = FontFamily.Serif,
                 fontSize = settings.readerTextSize.sp, lineHeight = (settings.readerTextSize * 1.55f).sp)
             HorizontalDivider()
             SettingsToggle("Show feed search", "Browse and search popular RSS feeds from the Search tab.", settings.showFeedSearch) {
-                library.updateSettings(settings.copy(showFeedSearch = it))
+                onSettings(settings.copy(showFeedSearch = it))
             }
-            SettingsToggle("Hide read stories", "Applies to Today; Saved always includes read stories.", settings.hideRead) {
-                library.updateSettings(settings.copy(hideRead = it))
+            SettingsToggle("Hide read stories", "Applies to FreshRSS and FlipRSS; Saved always includes read stories.", settings.hideRead) {
+                onSettings(settings.copy(hideRead = it))
             }
-            SettingsToggle("Hide categories with no unread articles", "Hide empty categories and feeds in Today and Topics.", settings.hideEmptyCategories) {
-                library.updateSettings(settings.copy(hideEmptyCategories = it))
+            SettingsToggle("Hide categories with no unread articles", "Hide empty categories and feeds on source pages.", settings.hideEmptyCategories) {
+                onSettings(settings.copy(hideEmptyCategories = it))
+            }
+            SettingsToggle("Mark as read on scroll", "Mark cards read after they scroll past the top of a source page.", settings.markReadOnScroll) {
+                onSettings(settings.copy(markReadOnScroll = it))
             }
             SettingsToggle("Automatic mark read", "Mark an article read when its reader page settles.", settings.autoMarkRead) {
-                library.updateSettings(settings.copy(autoMarkRead = it))
+                onSettings(settings.copy(autoMarkRead = it))
             }
             SettingsToggle("Show article images", "Display cover photos in cards and the reader.", settings.showImages) {
-                library.updateSettings(settings.copy(showImages = it))
+                onSettings(settings.copy(showImages = it))
             }
             HorizontalDivider()
             Text(state.account?.let { "Connected as ${it.username}" } ?: if (state.local) "Local feeds on this device" else "Using demo stories")
-            TextButton(onClick = onAccount) { Text(if (state.demo || state.local) "Connect FreshRSS (optional)" else "FreshRSS account") }
-            if (!state.local) TextButton(onClick = { library.useLocalFeeds(); onClose() }) { Text("Use local feeds") }
+            TextButton(onClick = onAccount) { Text(if (state.account == null) "Connect FreshRSS (optional)" else "FreshRSS account") }
             HorizontalDivider()
             UpdateControls()
-            TextButton(onClick = { library.updateSettings(AppSettings(useLocalFeeds = settings.useLocalFeeds)) }) { Text("Reset defaults") }
+            TextButton(onClick = { onSettings(AppSettings(useLocalFeeds = settings.useLocalFeeds)) }) { Text("Reset defaults") }
         }
     }, confirmButton = { TextButton(onClick = onClose) { Text("Done") } })
 }

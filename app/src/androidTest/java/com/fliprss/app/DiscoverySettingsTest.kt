@@ -12,12 +12,11 @@ class DiscoverySettingsTest {
     @Test fun searchFiltersPopularFeedsAndPrefillsLocalSubscription() {
         compose.runOnIdle {
             val library = ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library
-            library.useDemo(); library.updateSettings(AppSettings())
+            library.useLocalFeeds(); library.updateSettings(AppSettings())
         }
         compose.onNodeWithText("Search", useUnmergedTree = true).performClick()
         compose.onNodeWithText("Search popular feeds").performTextInput("NASA")
         compose.onNodeWithText("Add NASA").performScrollTo().performClick()
-        compose.onNodeWithText("Use local feeds without FreshRSS").performScrollTo().performClick()
         compose.onNodeWithText("https://www.nasa.gov/feed/").assertExists()
         compose.onNodeWithText("Add to app").assertIsEnabled()
         compose.onNodeWithText("Cancel").performClick()
@@ -46,7 +45,7 @@ class DiscoverySettingsTest {
             library.updateSettings(library.state.value.settings.copy(showFeedSearch = false))
         }
         compose.onNodeWithText("Search", useUnmergedTree = true).assertDoesNotExist()
-        compose.onNodeWithText("Today").assertIsSelected()
+        compose.onNodeWithText("FlipRSS", useUnmergedTree = true).assertExists()
         compose.onNodeWithText("Find your next feed").assertDoesNotExist()
     }
 }

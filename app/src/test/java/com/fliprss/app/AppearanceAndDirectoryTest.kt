@@ -42,7 +42,7 @@ class AppearanceAndDirectoryTest {
     @Test fun disablingSearchRemovesTabAndReturnsCurrentSearchToToday() {
         assertTrue("Search" in libraryDestinations(true))
         assertFalse("Search" in libraryDestinations(false))
-        assertEquals("Today", availableDestination("Search", false))
+        assertEquals("FlipRSS", availableDestination("Search", false))
         assertEquals("Saved", availableDestination("Saved", false))
         assertEquals("Search", availableDestination("Search", true))
     }

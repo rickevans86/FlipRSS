@@ -10,6 +10,7 @@ data class AppSettings(
     val hideEmptyCategories: Boolean = false,
     val useLocalFeeds: Boolean = false,
     val showFeedSearch: Boolean = true,
+    val markReadOnScroll: Boolean = false,
 ) {
     fun normalized() = copy(readerTextSize = readerTextSize.coerceIn(16, 26))
 }

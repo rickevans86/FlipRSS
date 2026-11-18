@@ -14,6 +14,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
         hideEmptyCategories = preferences.getBoolean("hide-empty-categories", false),
         useLocalFeeds = preferences.getBoolean("use-local-feeds", false),
         showFeedSearch = preferences.getBoolean("show-feed-search", true),
+        markReadOnScroll = preferences.getBoolean("mark-read-on-scroll", false),
     ).normalized()
     override fun save(settings: AppSettings) {
         val value = settings.normalized()
@@ -24,6 +25,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
             putBoolean("hide-empty-categories", value.hideEmptyCategories)
             putBoolean("use-local-feeds", value.useLocalFeeds)
             putBoolean("show-feed-search", value.showFeedSearch)
+            putBoolean("mark-read-on-scroll", value.markReadOnScroll)
         }
     }
 }

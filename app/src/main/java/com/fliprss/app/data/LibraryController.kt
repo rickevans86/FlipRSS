@@ -203,6 +203,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         if (changedFilter) selectScope(mutable.value.scope.copy(unreadOnly = settings.hideRead))
     }
     fun findArticle(id: String): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.id == id } else cache[id]
+    fun bookmarkedArticles(): List<Article> = if (mutable.value.demo) DemoLibrary.articles.filter { it.id in mutable.value.savedIds } else cache.values.filter { it.id in mutable.value.savedIds }
     fun cover(section: Section): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.topic == section.id }
         else cache.values.firstOrNull { it.feedId == section.id || section.id in it.topicIds }
 

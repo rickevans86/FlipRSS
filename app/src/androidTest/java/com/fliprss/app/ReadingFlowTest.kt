@@ -25,7 +25,7 @@ class ReadingFlowTest {
         compose.onNodeWithContentDescription("Next story").performClick()
         compose.onNodeWithText("2 / 6").assertIsDisplayed()
         compose.onNodeWithContentDescription("Back to stories").performClick()
-        compose.onNodeWithText("FlipRSS").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("App settings").performScrollTo().assertIsDisplayed()
     }
     @Test fun bookmarkAppearsInSavedAndCanBeRemoved() {
         val title = DemoLibrary.articles.first().title
@@ -41,9 +41,7 @@ class ReadingFlowTest {
     }
 
     @Test fun topicTileOpensOnlyThatSection() {
-        compose.onNodeWithText("Topics", useUnmergedTree = true).performClick()
         compose.onNodeWithText("Nature").performScrollTo().performClick()
-        compose.onNodeWithText("2 stories").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().assertIsDisplayed()
     }
     @Test fun accountFormCanBeOpenedAndDismissedWithoutReplacingDemo() {
@@ -54,8 +52,8 @@ class ReadingFlowTest {
         compose.onNodeWithText("Username").performTextInput("demo-user")
         compose.onNodeWithText("API password").performTextInput("not-a-real-password")
         compose.onNodeWithText("Sign in").assertIsEnabled()
-        compose.onNodeWithText("Continue demo").performClick()
-        compose.onNodeWithText("FlipRSS").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Close").performClick()
+        compose.onNodeWithContentDescription("App settings").performScrollTo().assertIsDisplayed()
     }
 
     @Test fun settingsThemeCanBeChangedAndDefaultsRestored() {

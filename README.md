@@ -264,3 +264,49 @@ local/FreshRSS connection are preserved. Reset defaults re-enables feed search.
 
 AI: ChatGPT Codex, #19. Implementation: AppAppearance.kt, FeedSearchPage.kt,
 data/FeedDirectory.kt, settings persistence, navigation and feed-URL prefill.
+
+## Source tabs and live feed discovery (0.8.0, #21)
+
+Tabs are **FreshRSS**, **FlipRSS**, **Search** and **Saved**. Topics is removed;
+category filters remain on each source page. FreshRSS keeps the connected server's
+feeds and synchronization, while FlipRSS keeps the independent on-device library.
+Saved combines bookmarks from both, including read stories; server bookmarks are
+paged with Load more and remain subject to server availability. Cached server
+bookmarks in this session can still be shown after a failed refresh; local
+bookmarks survive restart. Read/star actions always target their owning source.
+
+The **+ icon appears only on FreshRSS** and subscribes on that server. Everything
+added through Search goes to local FlipRSS, even when a server is connected. Under
+FlipRSS → **Manage local feeds**, each feed has **View feed URL**, **Copy feed URL**
+and **Add to FreshRSS**. View supports selectable URL and opening the actual feed.
+Server subscription asks for the destination account and confirmation; it does not
+move/delete the local subscription or bookmarks.
+
+Settings → **Mark as read on scroll** defaults off. When enabled on either source
+page, previously visible story cards are marked read after scrolling fully past
+the top. It does not mark unseen stories skipped in a jump, react to backwards
+scroll alone, or act on Search/Saved. The existing reader auto-mark setting remains
+separate. Settings changes apply to both source pages. Saved always stays visible.
+
+Search updates its popular feed catalogue from the exact Feeder/Feedspot pages Rick
+provided, once daily on app open when Search is enabled, plus **Refresh feed lists**.
+Results are cached privately, deduplicated by normalized feed URL, and attributed
+with source links/last update time. Each source refreshes independently: failures
+retain its previous cached feeds and show a message. Bundled feeds remain available
+offline. No background worker or API key is required. Real-page parser validation
+extracted 114 Feeder and 454 Feedspot public feed links; publishers can change their
+format, access policy or feed content. Imported URLs are validated as actual feeds
+when subscribed; no claim that every external feed is always available.
+
+**Website or feed URL → Find feeds** accepts a site or direct RSS/Atom URL. It checks
+feed XML, RSS/Atom alternate links (including relative URLs/base elements), RSS
+links/icons and common /feed, /rss, /rss.xml, /atom.xml and /feed.xml paths. Discovered
+candidates must return RSS/Atom before being offered. No feed found is a normal
+result; some sites publish none or require login/JavaScript. Requests have bounded
+redirects, time/size limits and no embedded credentials/FreshRSS auth; HTTPS
+redirect downgrade is rejected. HTTP sites are unencrypted. No automatic subscribe.
+
+OLED and the setting to hide Search remain. Local data and saved FreshRSS sign-in
+are migrated in place; no library import or deletion occurs. Local mode no longer
+needs to replace the connected server to be viewed. Existing storage/renderer/TTS
+and test-signing limitations remain. AI: ChatGPT Codex, #21.
