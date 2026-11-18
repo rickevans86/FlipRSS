@@ -178,14 +178,12 @@ signing identity; signing keys are never uploaded. Checksums and source provenan
 are included in each release. Main is merged only by Rick.
 
 `.release/previews.json` lists immutable APK artifact commits, source commits and
-SHA-256 hashes. **Publish APK previews** runs on the Windows SelfHosted runner
-when a `publish-previews-*` tag is pushed (or manually after the workflow reaches
-the default branch). It verifies APK bytes before attaching them and checks
-existing assets without overwriting mismatches. This also backfills earlier
-previews. Local session uploads to uploads.github.com returned HTTP 401; the
-workflow uses its scoped GitHub Actions token. Release-note download links remain
-available independently if the runner is offline. Future releases add their
-verified artifact to the manifest and trigger publishing.
+SHA-256 hashes. **Publish APK releases** runs on GitHub-hosted Ubuntu when a
+`publish-previews-*` tag is pushed or the workflow is manually dispatched on main.
+It verifies APK bytes before attaching them and refuses mismatched existing assets.
+It backfills earlier releases as well. Local session uploads returned HTTP 401;
+the hosted workflow successfully uses its scoped GitHub Actions token. Future
+releases add their verified artifact to the manifest and trigger publishing.
 
 AI: **ChatGPT Codex**, #12. Local implementation: `data/LocalFeeds.kt`, controller,
 settings/account/feed UI; publication: `.github/scripts/publish-releases.cjs`.
@@ -221,10 +219,11 @@ page has no Hide read switch, and FreshRSS saved queries omit the unread-only
 filter on every page. Today retains Hide read. The large heading/subtitle and
 account banner are removed from all library pages; account controls live in Settings.
 
-Publication uses any runner labelled SelfHosted (the script works on Windows or
-Linux). Older queued publishing runs are superseded by the standard-filename job.
-If no matching runner accepts it, APK links in release notes remain available,
-while attaching APK assets waits for runner execution. No signing key is committed.
+Publication runs independently of SelfHosted hardware on GitHub-hosted Ubuntu.
+All v0.1–v0.6 releases have native FlipRSS.apk, SHA256SUMS.txt and build-info.json
+assets. Use the direct latest APK link:
+https://github.com/rickevans86/FlipRSS/releases/download/v0.6.0/FlipRSS.apk
+Signing keys remain private; immutable artifact branches retain provenance.
 
 AI: **ChatGPT Codex**, #14. Updater: `data/GitHubUpdates.kt`, `AppUpdater.kt`,
 `UpdateControls.kt`; reader filtering: `LibraryController.kt`, `MainActivity.kt`.
@@ -237,3 +236,8 @@ SelfHosted runner. The publisher only retrieves already-built, signed APKs from
 immutable artifact commits and verifies hashes, so no Android SDK or signing key
 is needed on the publishing runner. Dispatch **Publish APK releases** on main to
 attach FlipRSS.apk/checksum/build metadata for every manifest version.
+
+Publication succeeded in GitHub Actions run 44254047153. All six APK asset hashes
+match the manifest, and the v0.6.0 native download was retrieved and SHA-256 checked.
+The in-app updater now has native APK/build metadata assets to use. AI: ChatGPT
+Codex, #16; Rick explicitly authorized merging feature and publishing follow-ups.

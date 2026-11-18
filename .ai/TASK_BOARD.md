@@ -1,14 +1,11 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-18 by Codex. GitHub is authoritative.
+Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex. GitHub is authoritative.
 
-| Issue | Title | AI | Status / implementation |
-|---|---|---|---|
-| #16 | Merge Rick-approved feature PRs and attach APK assets to Releases | ai:codex | status:in-progress |
-| #14 | Ship regular FlipRSS.apk release, in-app updates and cleaner Saved pages | ai:codex | status:review; feature PR merged, final status reconciliation pending |
-| #12 | Add standalone RSS, hide empty categories and publish APK releases | ai:codex | status:review; feature PR merged, final status reconciliation pending |
-| #10 | Read articles aloud with Android text-to-speech | ai:codex | status:review; feature PR merged, final status reconciliation pending |
+No open Issues. #4/#6/#8/#10/#12/#14/#16 are closed after Rick-authorized feature
+merges and verified native release publication. Feature PRs #7/#9/#11/#13/#15 and
+publisher PR #17 are merged into main. Final records follow-up contains no app
+changes. Physical-device validation remains not run; no independent review claimed.
 
-PRs #7/#9/#11/#13/#15 merged into main at Rick's explicit instruction. #16
-publication follow-up moves upload job to hosted runner. Native release assets
-not yet attached; no device/independent-review success claimed.
+Latest regular release: v0.6.0. All v0.1–v0.6 releases have FlipRSS.apk, checksum
+and build metadata assets. GitHub-hosted publisher action 44254047153 succeeded.
