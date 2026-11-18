@@ -1,0 +1,28 @@
+{
+  "version": "0.10.0",
+  "version_code": 12,
+  "source_commit": "57db2bcd6e5d3417b8bc121c21dc9a18735fe1ac",
+  "sha256": "636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5",
+  "size_bytes": 13316315,
+  "variant": "release",
+  "debuggable": false,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "ai": "ChatGPT Codex",
+  "tasks": [
+    29,
+    30
+  ],
+  "tests": {
+    "jvm_debug": 85,
+    "jvm_release": 85,
+    "lint": "0 errors, 1 existing warning each",
+    "debug_release_builds": "passed",
+    "instrumentation": "compiled only; no device",
+    "publisher_tests": 5,
+    "actionlint": "passed",
+    "real_techcrunch_html": "144 to 2573 characters; 9 blocks"
+  },
+  "signing": "Existing prototype test identity retained for upgrade compatibility; production signing unconfigured",
+  "limits": "Public article extraction is publisher-dependent; no login/paywall bypass; no physical device/audio/account-write validation"
+}
