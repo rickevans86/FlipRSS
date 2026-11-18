@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0-prototype",
+  "source_commit": "92613d6e5271748da6409707e4484e436db85bfb",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Existing prototype test signing identity; not production signing",
+  "sha256": "8c392db42fd0640797faa33ef611506dd9d44cf2c5ea34527bb4c46f6cfddceb",
+  "size_bytes": 11496577,
+  "unit_tests": {
+    "passed": 3,
+    "failed": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1
+  },
+  "device_tests": "Not run",
+  "ai": "ChatGPT Codex",
+  "task": "#4"
+}
