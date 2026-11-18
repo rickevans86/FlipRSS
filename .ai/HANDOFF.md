@@ -1,50 +1,60 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #16 — Rick explicitly requested merging all work into main and publishing
-the APK as an asset. This instruction authorized the merges in this session.
-**Completed:** Merged feature PRs #7/#9/#11/#13/#15 in order, retargeting to main
-and preserving commit ancestry. Merged publisher PR #17. Source/app shared history
-preserved, binary branches unmerged. Moved upload-only publisher to GitHub-hosted
-Ubuntu (public repo), cancelled superseded queued publication, dispatched main.
-Action 44254047153 completed SUCCESS. All six releases now have FlipRSS.apk,
-SHA256SUMS.txt and build-info.json as native release assets. Every APK digest
-verified against manifest; downloaded latest native bytes and checked checksum.
-Closed completed Issues #4/#6/#8/#10/#12/#14/#16. Independent review not claimed;
-Rick explicitly directed merge.
+**Task:** #19 — Rick requested pure-black OLED theme, a popular RSS feed search
+page and setting to disable that page.
+**Completed:** OLED palette uses #000000 for background/all neutral surface roles,
+transparent elevation tint, black/dark system bars and disabled nav contrast scrim.
+Existing System/Light/Dark preserved. Four appearance chips wrap. Persistent Show
+feed search defaults on; hides Search nav item and returns current Search to Today
+when disabled. Does not remove subscriptions or change source. Search is a bundled
+directory of 15 verified well-known RSS/Atom feeds, with word/topic filtering.
+Add publisher opens existing confirmation prefilled with URL for current local/
+FreshRSS source; demo/expired session source choice preserves candidate. No
+subscriptions without confirmation and no third-party search requests.
 
-**Release:** v0.6.0, regular/latest, versionCode 6, Android 8+, non-debuggable.
-https://github.com/rickevans86/FlipRSS/releases/tag/v0.6.0
-https://github.com/rickevans86/FlipRSS/releases/download/v0.6.0/FlipRSS.apk
-13,234,395 bytes; SHA-256:
-`ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4`.
-Existing test signer matches v0.5; production signing remains unconfigured. No
-keystore published. Source app de926519c5f44c3c8f3f19553bcab78ffafb98fd is now an
-ancestor of main; identical app tree 9c47d258bfb8cffd02ad0e8d83f2befe848a847d.
-Artifact 3cd57a66a4672990f0a2a52dc179f7199b3f99e5 remains immutable on binary
-branch codex/14-release-download, which must never be merged.
+**Files:** AppAppearance.kt, FeedSearchPage.kt, data/FeedDirectory.kt, MainActivity,
+SettingsDialog, AddFeedDialog, AppSettings/AndroidSettingsStore, version/tests,
+README, release manifest and all six .ai records.
+**Branch/PR:** codex/19-oled-feed-search from main e090d0a. App implementation
+6f0ba16692077e2e93d0a218d8524b8128d6d524. PR to open after records update, base
+main. Rick selects independent reviewer/merges. Earlier #16 merge authorization
+was completed; no new main merge performed for #19. Main retains all prior v0.6
+features and hosted publisher, no other AI changes/claims found this session.
 
-**Branch/PR:** codex/16-publish-assets, publisher PR #17 merged at 12b2587.
-Final records/README follow-up to main contains no application changes and is
-authorized by Rick's instruction. Files: publishing workflow, README, six .ai
-records. Feature merge commits: #7 33e0df9, #9 efa71ea, #11 e5dcaa9, #13 9d49139,
-#15 41548fc. All feature work is now on main.
+**Review APK:** https://github.com/rickevans86/FlipRSS/releases/tag/v0.7.0-preview
+https://github.com/rickevans86/FlipRSS/releases/download/v0.7.0-preview/FlipRSS.apk
+Version 0.7.0, versionCode 7, Android 8+, release/non-debuggable, same test signing
+identity as v0.6. Production signing unconfigured; no key published.
+13,250,779 bytes; SHA-256:
+`a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18`.
+Immutable artifact 68fc7e2fc1b7b9a06f8adc2f97a862c4b7e6bffb, branch
+codex/19-discovery-download, release-download/FlipRSS.apk. Never merge binary
+branch. Native APK bytes downloaded and checksum verified, signature v2/v3,
+alignment/package/version/SDK/non-debuggable and signer equality verified.
+Hosted publisher run 44256865471 completed SUCCESS; native APK/checksum/build
+metadata attached. This is a prerelease while source awaits merge/review; stable
+app updater excludes it. After review/merge, publish regular v0.7.0 with same
+verified artifact/version, rather than promoting a mismatched tag name.
 
-**Tests:** 49 JVM tests pass per debug/release variant; both builds/lint and
-instrumentation compilation passed on unchanged application source. Main/source
-app tree equality verified. Five publisher tests and actionlint passed. Hosted
-publisher action succeeded; all six native APK digests and latest downloaded SHA
-verified. Actual phone/permission/installer/audio/live-account tests NOT RUN.
-Windows Android CI is still queued; no remote Android success claimed.
-**In progress:** No unfinished merge/publication work. Physical device validation
-and optional independent review remain for Rick.
-**Blockers:** No release attachment blocker remains. Session uploads.github.com
-authentication still HTTP 401, so use hosted publisher for future assets.
-Existing local cache/FreshRSS in-memory/TTS/test-signing limitations remain.
-**Next action:** Install native FlipRSS.apk; validate reader/Saved/source switching
-and Settings updater/permission/installer on phone. Future releases add immutable
-verified artifact/version to manifest and dispatch Publish APK releases on main.
-**Shared records updated:** Yes; append-only activity/decision history preserved,
-live issue board rebuilt, no active implementation claims.
-**Remote synchronization:** Feature/publisher merges confirmed, main fetched,
-all native release assets and latest downloaded bytes verified.
+**Tests:** All 54 JVM tests pass in EACH debug/release variant. Both builds/lint
+pass (0 errors, 1 existing KTX warning); instrumentation APK compiled, not run.
+New tests cover black surfaces/light-dark fallback, directory search/category/URL
+uniqueness, search nav disabling/fallback and settings normalization. Compiled
+Android tests cover setting persistence, search-to-local prefill/source change
+and turning off Search while on it. Five publisher tests/actionlint pass.
+All 15 included publisher feed URLs returned HTTP 200/XML feed roots in read-only
+checks. No real account/server write performed. No actual phone/UI/system-bar/
+OLED display/audio test run. Diff check passed. No remote Android CI success claimed.
+**In progress:** Independent review and Rick's phone validation.
+**Blockers/limits:** No implementation/build/publication blocker. Curated search
+only, not whole-web discovery; list updates require an app release. Publisher
+availability/content may change. Existing local cache/FreshRSS in-memory/TTS/test
+signing limitations remain.
+**Next action:** Rick installs review APK, checks OLED/navigation/dialog black and
+contrast, searches/selects feeds for local/FreshRSS, disables/re-enables Search,
+and selects independent reviewer. After merge publish regular v0.7.0 from same
+verified APK and matching metadata.
+**Shared records updated:** Yes; append-only history preserved.
+**Remote synchronization:** main fetched/ancestry checked, source/artifact pushed,
+GitHub prerelease assets/publication action and native downloaded bytes confirmed.

@@ -40,3 +40,28 @@ phone/installer/audio/live-account execution not run; Windows Android CI still
 queued and no remote Android test success claimed. Existing caching/TTS/signing
 limits remain documented in README. Issues #4/#6/#8/#10/#12/#14/#16 closed after
 Rick-authorized merges and confirmed native publication.
+
+## OLED and feed search — #19 (review branch, not merged)
+
+AI: ChatGPT Codex. codex/19-oled-feed-search from main e090d0a; app source
+6f0ba16692077e2e93d0a218d8524b8128d6d524. Adds persistent OLED palette with pure
+black background/neutral surfaces/system bars and no elevation tint/navigation
+contrast scrim. Light/Dark/System remain. Settings chips wrap for small screens.
+Search tab has 15 curated well-known RSS/Atom feeds, local word/topic filtering
+and active-source add confirmation with prefilled URL. Demo/expired-account source
+selection preserves candidate. Show feed search defaults on; disabling hides tab
+and returns from Search to Today, without changing subscriptions.
+
+54 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
+1 existing warning), instrumentation compiles. All 15 included feed URLs returned
+HTTP 200 with RSS/Atom roots. Five publisher tests/actionlint pass. No actual
+phone/OLED-system-bar/UI/real-account tests.
+
+Review prerelease v0.7.0-preview, APK version 0.7.0 / versionCode 7, existing test
+signer matches v0.6. Source awaits independent reviewer/main merge; main stable
+code remains v0.6. No new merge authorization assumed from completed #16. Hosted
+publication 44256865471 succeeded; FlipRSS.apk, checksum/build-info attached.
+Downloaded native APK verified: 13,250,779 bytes; SHA-256
+a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18.
+https://github.com/rickevans86/FlipRSS/releases/tag/v0.7.0-preview
+Artifact 68fc7e2 / codex/19-discovery-download (never merge).
