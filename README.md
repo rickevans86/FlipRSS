@@ -121,3 +121,22 @@ builds upload the **FlipRSS-debug** artifact.
 AI: **ChatGPT Codex** — prototype (#2), FreshRSS integration (#6) and feed/reading controls (#8).
 Read [AGENTS.md](AGENTS.md) and `.ai/` before contributing. Rick selects the
 independent reviewer and controls merging unless he explicitly instructs otherwise.
+
+## Read articles aloud (#10)
+
+In an article, tap **Read aloud** to hear its title and available article text.
+Use **Pause reading**, **Resume reading**, or **Stop reading** above the article.
+Long articles are split into speech-engine-sized chunks. Resume uses the engine's
+word position when available; engines without position callbacks restart the
+current chunk. Switching articles or leaving the reader stops playback; putting
+the app in the background or losing audio focus pauses it. Background playback
+and automatic next-article playback are not implemented.
+
+Speech uses Android's configured text-to-speech engine and device language. An
+installed voice is preferred; the configured engine may require network access
+when no offline voice is available. No microphone permission is needed. If voice
+setup fails, open **Android voice settings**, install/select a voice, return and
+tap **Retry voice**. This preview needs real-device audio/lifecycle verification.
+
+Implementation: `ArticleSpeech.kt`, `SpeechControls.kt`, `SpeechText.kt`; AI:
+**ChatGPT Codex**, #10. Preview version 0.4.0-speech-preview (versionCode 4).

@@ -342,6 +342,7 @@ private val Red = Color(0xFFB83224)
     BackHandler(onBack = onClose)
     val pager = rememberPagerState(initialPage = initialPage.coerceIn(articles.indices)) { articles.size }
     val scope = rememberCoroutineScope()
+    val speech = rememberArticleSpeech(articles[pager.currentPage].id)
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     LaunchedEffect(pager, state.settings.autoMarkRead, state.markingAll) {
@@ -376,6 +377,7 @@ private val Red = Color(0xFFB83224)
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
+            Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(articles[pager.currentPage], speech) }
             state.error?.let { ProblemBanner(it, library::dismissError) }
             HorizontalPager(state = pager, key = { articles[it].id }, modifier = Modifier.weight(1f)) { page ->
                 val article = articles[page]
