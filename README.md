@@ -353,3 +353,9 @@ this Android-engine path. No audible naturalness/device test has been run here.
 This release also corrects #24's repeated Feedspot names, clears only the old
 public directory cache, and shows 20 search results per explicit Load more.
 Subscriptions, saved stories and the FreshRSS account are preserved.
+
+Regular v0.9.0 is on main. Native APK:
+https://github.com/rickevans86/FlipRSS/releases/download/v0.9.0/FlipRSS.apk
+Both builds/lint and 73 unit tests per variant passed. Hosted publication
+44300897612 succeeded; downloaded native APK and all nine release APK hashes
+verified. Actual phone/audio/naturalness testing remains for Preview voice.

@@ -1,80 +1,46 @@
 # PROJECT_STATE
 
-## Main / current release
+## Current main / regular release
 
-Rick explicitly authorized the agreed next update on main, build and publication.
-ChatGPT Codex merged OLED/search foundation #20 (0bd0077) and source/discovery
-implementation #22 (8a62d3d). Current app source
-7dc97632646dcec2ae6c3ed29a2c41e8eb529991 has identical app tree to main:
-58c84fec2d2045cd16132215f33fa93e263eb61f. No independent review claimed.
+ChatGPT Codex corrected shipped Search (#24/#26) and added requested natural-voice
+controls (#25/#27) under continuing main/build/publish workflow. Main application
+merge 155c680 contains source b1fb05fda496fb8de60b0cc861706483f4b1cbd4, identical
+app tree ea433b702f8c382bff0929926f00de6f780a532f. Final records have no app changes.
 
-Regular/latest v0.8.0, versionCode 8, Android 8+, signed non-debuggable release:
-https://github.com/rickevans86/FlipRSS/releases/tag/v0.8.0
-https://github.com/rickevans86/FlipRSS/releases/download/v0.8.0/FlipRSS.apk
-13,283,547 bytes; SHA-256:
-`39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6`.
-Same test identity as previous builds; production signing remains unconfigured.
-Artifact 04a95a49389528f5c897bc9c8b0d21fad638bbc9 on codex/21-release-download
-remains immutable/separate. Never merge binary branches or upload signing keys.
+Latest regular v0.9.0, code 10, Android 8+, signed release/non-debuggable:
+https://github.com/rickevans86/FlipRSS/releases/tag/v0.9.0
+https://github.com/rickevans86/FlipRSS/releases/download/v0.9.0/FlipRSS.apk
+13,299,931 bytes; SHA-256:
+`823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4`.
+Existing test signer retained for updates, production signing unconfigured.
+Artifact a166595bcf925c277f83892b22f794903c1070ad / codex/25-release-download
+remains immutable; never merge binary branch or publish signing key.
 
-## Current behavior
+## Corrections / speech behavior
 
-FreshRSS and FlipRSS tabs keep independent server/local sources concurrently.
-Saved combines both, includes read bookmarks, and routes writes to their owner.
-Topics removed; category chips retained. + only FreshRSS. Search always adds local.
-Local feed manager supports selectable/open/copy URL and explicit account-confirmed
-Add to FreshRSS, preserving local subscription/read/saved data.
+Feedspot row ID matches its heading, only unambiguous local fallback, no shared
+ancestor title reuse/global fallback. Old directory cache schema resets to 2 and
+refetches immediately; subscriptions, account and Saved untouched. Catalogue shows
+20 per explicit Load more and resets on query/topic/dataset. Actual page check:
+453 feed URLs, 449 names, one NBC News, WordPress correctly named.
 
-Default-off Mark as read on scroll marks previously observed cards passed above
-the top in source pages only. Reader auto-read separate. Search updates Feeder/
-Feedspot public lists daily on foreground opening when enabled plus manual refresh,
-with atomic per-source cache/dedup/failure retention/bundled fallback/attribution.
-Website/feed URL discovery validates direct XML, alternate/RSS/icon links/common
-paths, including blocked-homepage fallback. OLED/Search-disable remain.
+Speech and voices in Settings and Voice in reader provide installed engine/voice
+choice, engine-rated best available quality for device language/region, preview,
+persistent rate/pitch. Online voices default off/explicit consent; user-selected
+engine may send text online. Offline selection excludes network-required and
+uninstalled voices. Missing voice/engine data has install/settings/refresh.
+Tuning does not repeatedly recreate engine, playback cleanup/focus/lifecycle
+retained. Announced Android path used, no new account/API key, audible quality
+depends on device/provider. Cloud preference was optional and unanswered.
 
-## Verification / limits
+## Verification
 
-64 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
-1 existing KTX warning); instrumentation compiles only. Five publisher tests and
-actionlint pass. Compiled production parsers extracted 114 Feeder/454 Feedspot
-public URLs from current pages; both sources HTTP 200 with app headers. Not every
-feed target probed, subscription validates. Actual phone/installer/audio/live-
-account-write tests NOT RUN. Remote Android CI success not claimed.
-
-Hosted publication 44295156332 SUCCESS. All eight releases have native FlipRSS.apk,
-SHA256SUMS.txt and build-info.json; all APK digests match manifest. Downloaded
-v0.8.0 native bytes and verified SHA-256; latest endpoint confirms regular v0.8.0.
-#19/#21 closed, no implementation/publication blocker. Source format/access may
-change; bounded best-effort discovery, no periodic OS worker. Remote cache/Saved
-is in-memory/paged; local cache retains 500/feed plus saved. Existing TTS/renderer/
-signing limitations remain in README. Rick performs phone validation.
-
-## Search regression #24 and speech follow-up #25
-
-Codex reproduced v0.8 Feedspot assigning first common-parent heading NBC News to
-unrelated URLs. Source 72b2956 fixes row/heading ID pairing, row-scoped fallback,
-unmatched-row skip, schema-2 directory cache reset and explicit 20-result paging.
-Actual downloaded page: 453 URLs/449 names, one NBC News, WordPress correctly
-named The WordPress Blog. 68 JVM tests pass per debug/release; both build/lint
-pass, instrumentation compiles. Existing subscriptions/Saved untouched.
-#24 correction will merge under ongoing shipped-update directive, then #25 adds
-requested natural speech options; one combined regular APK release planned.
-No physical-device/audio check performed. Current published v0.8.0 remains until
-combined successor, no native patch asset claimed yet.
-
-## Combined correction/speech update #24/#25
-
-Search fix #26 merged at 2b9525c: strict row/name matching, schema-2 cache clear,
-20-result explicit paging. Source b1fb05f / codex/25-natural-speech adds installed
-Android engine/voice selection, best-quality available voice selection, explicit
-network opt-in default off, rate/pitch and preview, Settings and reader Voice
-button, persisted choices. No provider API key; optional cloud preference had no
-answer, announced Android path used. Voice quality remains engine/device-dependent.
-
-73 JVM tests pass per debug/release, both builds/lint pass (0 errors, 1 existing
-warning), instrumentation compiles. Five publisher tests/actionlint pass. Search
-production parser: 453 URLs/449 names, one NBC News, WordPress correct. No actual
-phone/audio/naturalness/account-write tests. Ready for correction main merge and
-regular v0.9.0 publication, code 10. APK 13,299,931 bytes, same test signer, SHA-256
-823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4.
-Artifact a166595 / codex/25-release-download, never merge binary branch.
+73 JVM tests per debug/release variant passed; both build/lint pass (0 errors,
+1 existing warning), instrumentation compiles only. Five publisher tests/actionlint
+pass. Hosted publisher 44300897612 SUCCESS; all nine releases have native APK/
+checksum/build-info, all APK digests matched and latest native bytes downloaded/
+SHA verified. Latest endpoint confirms regular v0.9.0. No physical phone/audio/
+naturalness/account-write tests or independent review claimed; remote Android
+CI success not claimed. #24/#25 closed, no implementation/publication blocker.
+Prior source tabs/Saved/OLED/discovery/scroll features preserved; existing cache/
+renderer/TTS/signing limits remain in README.

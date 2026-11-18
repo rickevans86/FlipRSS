@@ -3,6 +3,5 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-#24 correction merged (#26); #25 implementation complete on codex/25-natural-speech,
-merge/publication pending. No other implementation claims. Check PR before edits.
-Never merge binary artifact branches.
+No active implementation claims. #24/#25 completed, #26/#27 merged, native v0.9.0
+verified. Check live GitHub before new work; never merge binary artifact branches.
