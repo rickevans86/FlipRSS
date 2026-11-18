@@ -301,3 +301,5 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   equality verified; prototype test signer retained, no key published. Closed
   issues, README/six records updated, no claims. Device/audio/account-write tests
   and independent review not claimed. Final records-only PR follows.
+
+- 2026-11-18 — **ChatGPT Codex** — #34 implemented reader screen-on lifecycle effect and two compiled device tests, source 25630005a5fc8f82a89af4907e8c2229ab5a286c. 85 JVM tests each debug/release, builds/lint (0 errors/1 existing warning), instrumentation compile, five publisher tests/actionlint pass. Disk-full interruption fixed by cleaning older generated outputs; source/keys/artifacts retained. Signed v0.10.1/code13 artifact 1ed3fd5, 13316315 bytes, SHA256 92b640a5fafb48d85996fed1417e4de97392c6a5e2aa8e46386c5a52d47822ee; signer/alignment/version/package/SDK checked. PR/publication pending, no runtime device/audio or independent review claimed.

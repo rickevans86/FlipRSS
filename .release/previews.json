@@ -93,5 +93,15 @@
     "sha256": "636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5",
     "prerelease": false,
     "description": "Opening a story now loads longer public article text inside the reader when available, including Read aloud support. Feed text stays available during loading and on failure; manual retry and a persistent Load full articles setting are included. No login/paywall bypass. Verified on the TechCrunch story from Rick's screenshot: 144-character excerpt expands to 2,573 characters across nine text blocks.\n\nFreshRSS and FlipRSS now have Mark all read at the bottom of their story lists. Settings \u2192 Confirm mark all read defaults on; turn it off to use either bulk-read button immediately for the current source/category, including unloaded stories. Saved/Search are excluded.\n\nAI: ChatGPT Codex, #29/#30. 85 JVM tests per debug/release, both builds/lint (0 errors, 1 existing warning), five publisher tests and actionlint passed. Instrumentation compiled, not executed. Actual phone/audio/account-write tests not run. Existing test signer retained for upgrades; production signing unconfigured."
+  },
+  {
+    "tag": "v0.10.1",
+    "artifact_commit": "1ed3fd5e4010532807429d3a39c38fa22e9e9c4e",
+    "directory": "release-download",
+    "source_commit": "25630005a5fc8f82a89af4907e8c2229ab5a286c",
+    "apk": "FlipRSS.apk",
+    "sha256": "92b640a5fafb48d85996fed1417e4de97392c6a5e2aa8e46386c5a52d47822ee",
+    "prerelease": false,
+    "description": "The article reader now keeps the screen awake while Read aloud actively plays. Normal screen timeout resumes on pause, stop, completion, speech failure, audio focus loss, backgrounding or leaving the reader. A pre-existing screen-on request is preserved. Voice preview is unchanged.\n\nAI: ChatGPT Codex, #34. 85 JVM tests each debug/release, both builds/lint (0 errors, 1 existing warning), five publisher tests/actionlint pass. Two new lifecycle/disposal/preservation device tests compile but were not executed. Physical phone/screen-timeout/audio validation remains pending. Existing prototype test signer retained for upgrades; production signing unconfigured."
   }
 ]

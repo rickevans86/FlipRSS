@@ -410,3 +410,9 @@ Read aloud keeps the reader screen awake while actively playing. Pausing, stoppi
 completion, speech errors, audio focus loss, backgrounding or leaving the reader
 releases the request and restores normal screen timeout. Voice preview does not
 request this behavior. No wake-lock permission or background playback is added.
+
+Screen-awake patch release: **v0.10.1**, code 13, Android 8+.
+[FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.10.1/FlipRSS.apk).
+85 JVM tests per debug/release, builds/lint and publisher checks pass; new screen
+lifecycle tests compile only. Actual phone screen-timeout/audio checks pending.
+Native publication will be verified after the hosted publisher completes.
