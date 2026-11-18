@@ -16,7 +16,8 @@ import java.util.Locale
 
 internal fun LazyListScope.feedSearchPage(state: FeedSearchState, query: String, category: String,
     onQuery: (String) -> Unit, onCategory: (String) -> Unit, website: String, onWebsite: (String) -> Unit,
-    onFind: () -> Unit, onRefresh: () -> Unit, canAdd: Boolean, onAdd: (PopularFeed) -> Unit) {
+    onFind: () -> Unit, onRefresh: () -> Unit, canAdd: Boolean, onAdd: (PopularFeed) -> Unit,
+    pageSize: Int = 20, onLoadMore: () -> Unit = {}) {
     val words = query.trim().lowercase(Locale.ROOT).split(Regex("\\s+")).filter(String::isNotEmpty)
     val results = state.feeds.filter { (category == "All topics" || it.category == category) && words.all { word ->
         "${it.title} ${it.description} ${it.category} ${it.url}".lowercase(Locale.ROOT).contains(word)
@@ -53,11 +54,12 @@ internal fun LazyListScope.feedSearchPage(state: FeedSearchState, query: String,
                     FilterChip(value == category, { onCategory(value) }, label = { Text(value) })
                 }
             }
-            Text("${results.size} feeds · Adds to FlipRSS", style = MaterialTheme.typography.bodySmall)
+            Text("Showing ${minOf(pageSize, results.size)} of ${results.size} feeds · Adds to FlipRSS", style = MaterialTheme.typography.bodySmall)
         }
     }
     if (results.isEmpty()) item { Text("No feeds match. Try another name or topic, or choose All topics.") }
-    feedCards(results, "catalog", canAdd, onAdd)
+    feedCards(results.take(pageSize), "catalog", canAdd, onAdd)
+    if (pageSize < results.size) item { OutlinedButton(onClick = onLoadMore, modifier = Modifier.fillMaxWidth()) { Text("Load more feeds") } }
 }
 private fun LazyListScope.feedCards(feeds: List<PopularFeed>, prefix: String, canAdd: Boolean, onAdd: (PopularFeed) -> Unit) {
     items(feeds, key = { "$prefix:${it.id}" }) { feed ->

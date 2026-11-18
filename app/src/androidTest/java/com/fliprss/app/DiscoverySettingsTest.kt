@@ -16,7 +16,7 @@ class DiscoverySettingsTest {
         }
         compose.onNodeWithText("Search", useUnmergedTree = true).performClick()
         compose.onNodeWithText("Search popular feeds").performTextInput("NASA")
-        compose.onNodeWithText("Add NASA").performScrollTo().performClick()
+        compose.onAllNodesWithText("Add NASA").onFirst().performScrollTo().performClick()
         compose.onNodeWithText("https://www.nasa.gov/feed/").assertExists()
         compose.onNodeWithText("Add to app").assertIsEnabled()
         compose.onNodeWithText("Cancel").performClick()
