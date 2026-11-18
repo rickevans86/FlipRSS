@@ -1,0 +1,22 @@
+name: Publish APK previews
+on:
+  push:
+    tags: ['publish-previews-*']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-apk-previews
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: [SelfHosted, Windows]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish verified APKs to GitHub Releases
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const publish = require('./.github/scripts/publish-releases.cjs');
+            await publish({github, context, core});

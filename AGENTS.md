@@ -34,7 +34,9 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 > Status: #2 added the offline prototype; #6 adds FreshRSS authentication,
 > catalogue/article loading, pagination and read/star synchronization. #8 adds
 > subscriptions, persistent reading/appearance settings and scoped bulk read. Live article
-> caching remains in memory; Room and background sync are not implemented. Build
+> caching remains in memory for FreshRSS. #12 adds a separate on-device RSS/Atom
+> library with atomic JSON persistence and optional FreshRSS connection. Room and
+> background sync are not implemented. Build
 > with JDK 17+ and Android SDK 35. See README.md for setup and validation.
 
 ---

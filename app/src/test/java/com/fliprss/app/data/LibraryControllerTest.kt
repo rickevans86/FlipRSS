@@ -3,6 +3,7 @@ package com.fliprss.app.data
 import com.fliprss.app.Article
 import com.fliprss.app.DemoLibrary
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -308,4 +309,35 @@ class LibraryControllerTest {
         assertNull(controller.state.value.notice)
     }
 
+    @Test fun localModeIsDefaultWithoutAccountAndSwitchingKeepsSourcesSeparate() = runBlocking {
+        val jobs = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+        try {
+            val sessions = SavedSession()
+            val settings = MemorySettingsStore()
+            val local = LocalFeedRepository(object : LocalFeedStore {
+                var json: String? = null
+                override fun read() = json
+                override fun write(json: String) { this.json = json }
+            })
+            val client = FakeRepository(story)
+            val controller = LibraryController(jobs, Connector(mapOf("rick" to client)), sessions, DemoPrefs(),
+                settings, localRepository = local)
+            withTimeout(5000) { controller.state.first { it.local && !it.loading } }
+            assertTrue(controller.state.value.articles.isEmpty())
+            controller.connect("https://example.org", "rick", "dummy", false)
+            withTimeout(5000) { controller.state.first { it.account != null && !it.loading } }
+            assertEquals(listOf(story.id), controller.state.value.articles.map { it.id })
+            controller.useLocalFeeds()
+            withTimeout(5000) { controller.state.first { it.local && !it.loading } }
+            assertTrue(controller.state.value.articles.isEmpty())
+            assertNotNull(sessions.session)
+            assertTrue(settings.load().useLocalFeeds)
+            controller.useSavedFreshRss()
+            withTimeout(5000) { controller.state.first { it.account != null && !it.loading } }
+            assertFalse(settings.load().useLocalFeeds)
+            assertEquals(listOf(story.id), controller.state.value.articles.map { it.id })
+            controller.updateSettings(controller.state.value.settings.copy(hideEmptyCategories = true))
+            assertTrue(settings.load().hideEmptyCategories)
+        } finally { jobs.cancel() }
+    }
 }

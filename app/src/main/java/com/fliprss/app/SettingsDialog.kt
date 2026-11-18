@@ -38,6 +38,9 @@ import kotlin.math.roundToInt
             SettingsToggle("Hide read stories", "Also available at the top of the reading room.", settings.hideRead) {
                 library.updateSettings(settings.copy(hideRead = it))
             }
+            SettingsToggle("Hide categories with no unread articles", "Hide empty categories and feeds in Today and Topics.", settings.hideEmptyCategories) {
+                library.updateSettings(settings.copy(hideEmptyCategories = it))
+            }
             SettingsToggle("Automatic mark read", "Mark an article read when its reader page settles.", settings.autoMarkRead) {
                 library.updateSettings(settings.copy(autoMarkRead = it))
             }
@@ -45,9 +48,10 @@ import kotlin.math.roundToInt
                 library.updateSettings(settings.copy(showImages = it))
             }
             HorizontalDivider()
-            Text(state.account?.let { "Connected as ${it.username}" } ?: "Using demo stories")
-            TextButton(onClick = onAccount) { Text(if (state.demo) "Connect FreshRSS" else "FreshRSS account") }
-            TextButton(onClick = { library.updateSettings(AppSettings()) }) { Text("Reset defaults") }
+            Text(state.account?.let { "Connected as ${it.username}" } ?: if (state.local) "Local feeds on this device" else "Using demo stories")
+            TextButton(onClick = onAccount) { Text(if (state.demo || state.local) "Connect FreshRSS (optional)" else "FreshRSS account") }
+            if (!state.local) TextButton(onClick = { library.useLocalFeeds(); onClose() }) { Text("Use local feeds") }
+            TextButton(onClick = { library.updateSettings(AppSettings(useLocalFeeds = settings.useLocalFeeds)) }) { Text("Reset defaults") }
         }
     }, confirmButton = { TextButton(onClick = onClose) { Text("Done") } })
 }

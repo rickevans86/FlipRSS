@@ -36,8 +36,8 @@ internal fun AccountDialog(state: LibraryState, library: LibraryController, onCl
                 if (account != null && !state.sessionExpired) {
                     Text("Signed in as ${account.username}")
                     Text(account.endpoint, style = MaterialTheme.typography.bodySmall)
-                    Text("Read and saved changes sync to this account. Sign out to switch accounts or return to demo stories.")
-                    TextButton(enabled = !state.connecting, onClick = { library.signOut() }) { Text("Sign out and use demo") }
+                    Text("Read and saved changes sync to this account. Use local feeds without a server, or sign out to forget this account.")
+                    TextButton(enabled = !state.connecting, onClick = { library.signOut() }) { Text("Sign out and use local feeds") }
                 } else {
                     Text("Enable API access in FreshRSS, then set an API password in your profile. Use that API password here.")
                     OutlinedTextField(server, { server = it }, label = { Text("FreshRSS URL") }, singleLine = true,
@@ -53,6 +53,9 @@ internal fun AccountDialog(state: LibraryState, library: LibraryController, onCl
                     }
                     TextButton(enabled = !state.connecting, onClick = { library.signOut(); password = "" }) { Text("Forget saved sign-in") }
                 }
+                if (state.local) TextButton(enabled = !state.connecting, onClick = { submitted = true; library.useSavedFreshRss() }) { Text("Use saved FreshRSS account") }
+                TextButton(enabled = !state.connecting, onClick = { library.useDemo(); password = ""; onClose() }) { Text("Try sample stories") }
+                TextButton(enabled = !state.connecting, onClick = { library.useLocalFeeds(); password = ""; onClose() }) { Text("Use local feeds without FreshRSS") }
                 state.loginError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
                 if (state.connecting) LinearProgressIndicator(Modifier.fillMaxWidth())
             }

@@ -140,3 +140,52 @@ tap **Retry voice**. This preview needs real-device audio/lifecycle verification
 
 Implementation: `ArticleSpeech.kt`, `SpeechControls.kt`, `SpeechText.kt`; AI:
 **ChatGPT Codex**, #10. Preview version 0.4.0-speech-preview (versionCode 4).
+
+## Local feeds and optional FreshRSS (#12)
+
+New installations open an empty **local library**. Tap **Add feed**, paste an RSS
+or Atom XML feed URL, then **Add to app**. Subscriptions, cached text, read state
+and bookmarks stay on this device in an app-private file; Refresh fetches updates
+while the app is open. Cached articles work offline after restart. No server or
+FreshRSS account is required. Local categories use feed titles.
+
+Existing FreshRSS users stay connected after updating. Settings → **Use local
+feeds** switches to the separate local library while preserving the saved account.
+**Connect FreshRSS (optional)** lets you sign in or **Use saved FreshRSS account**
+to return. Add Feed uses the active source: device in local mode, server in
+FreshRSS mode. Read/saved state is separate; switching does not import or merge
+subscriptions. Sign out forgets the FreshRSS token and opens local feeds.
+**Try sample stories** opens the original demo for the current session.
+
+Settings → **Hide categories with no unread articles** filters Today chips and
+Topics categories/feeds. Unknown unread counts remain visible. A selected category
+that becomes empty returns to All stories. Turning the setting off shows all
+categories again; it is independent of Hide read.
+
+Local mode accepts direct HTTP(S) RSS/Atom URLs, not website discovery, OPML,
+authenticated feeds with embedded username/password, or background synchronization.
+HTTP is unencrypted. Redirects are bounded and HTTPS downgrade is rejected; no
+FreshRSS auth is sent to feeds. A feed download is limited to 5 MB and 500 entries.
+Cache retains up to 500 stories per feed plus saved stories. Feed URL query tokens
+are stored only as part of the local subscription. Device backup/export, custom
+local folders, subscription removal and production signing remain future work.
+
+## GitHub Releases
+
+Install builds from https://github.com/rickevans86/FlipRSS/releases . Previews are
+marked prerelease while their source PRs await review. All use the existing test
+signing identity; signing keys are never uploaded. Checksums and source provenance
+are included in each release. Main is merged only by Rick.
+
+`.release/previews.json` lists immutable APK artifact commits, source commits and
+SHA-256 hashes. **Publish APK previews** runs on the Windows SelfHosted runner
+when a `publish-previews-*` tag is pushed (or manually after the workflow reaches
+the default branch). It verifies APK bytes before attaching them and checks
+existing assets without overwriting mismatches. This also backfills earlier
+previews. Local session uploads to uploads.github.com returned HTTP 401; the
+workflow uses its scoped GitHub Actions token. Release-note download links remain
+available independently if the runner is offline. Future releases add their
+verified artifact to the manifest and trigger publishing.
+
+AI: **ChatGPT Codex**, #12. Local implementation: `data/LocalFeeds.kt`, controller,
+settings/account/feed UI; publication: `.github/scripts/publish-releases.cjs`.

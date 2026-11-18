@@ -44,3 +44,30 @@ each variant, debug/release build/lint pass (0 errors, existing 1 KTX warning),
 instrumentation compiles. Audio/device/live-account execution remains unverified.
 Merge PR #7, then retarget/merge #9, then retarget the speech PR to main and sync
 shared records. No main merge or new release publication for this feature.
+
+## Local RSS and category visibility — #12 / PR #13 (stacked on PR #11)
+
+AI: ChatGPT Codex. codex/12-local-feeds; APK app source 63f47b52. Adds direct
+RSS/Atom subscriptions with atomic app-private JSON cache/read/saved persistence,
+foreground refresh and offline restart. New installs use local mode; existing
+FreshRSS accounts remain active. Source switching preserves both libraries and
+saved account, with explicit return/sign-out/demo controls. Local categories use
+feed titles. Hide-empty-category preference filters chips/Topics/feeds; unknown
+counts stay visible and an emptied selected category returns to All stories.
+
+42 JVM tests pass per debug/release variant, both build/lint pass (0 errors,
+1 existing warning each), instrumentation compiles. Four publisher tests and
+actionlint pass. APK v5 test-signed, signature/alignment/package/download verified.
+No phone/audio/real-account execution. No background sync, OPML, custom local
+folders, subscription removal or production signing.
+
+Rick explicitly authorized all previews on GitHub Releases: v0.2, v0.3, v0.4 and
+v0.5 prereleases now published alongside prior v0.1; each has APK download link.
+Direct asset upload returned HTTP 401. New Windows SelfHosted publishing workflow
+verifies immutable artifact hashes and attaches assets using GITHUB_TOKEN. First
+backfill run 44247234997 is queued; latest run 44247783494 pending behind it.
+No remote upload success claimed.
+Latest: https://github.com/rickevans86/FlipRSS/releases/tag/v0.5.0-local-preview
+Artifact 1ff1e66 / codex/12-local-download (never merge). Main remains 92613d6.
+Merge #7, retarget/merge #9, retarget/merge #11, then retarget #12's PR and sync
+shared records. Rick controls merging and selects independent reviewer.

@@ -111,3 +111,22 @@ reorder earlier entries._
   Add TTS service query for Android 11+, no microphone permission or own cloud API.
 - VersionCode 4 preview uses existing test identity and separate binary download
   branch. Keep #10 stacked on #9 / #7; no main merge/new release implied.
+
+## 2026-11-18 — Standalone feeds, categories and release delivery (#12, Codex)
+
+- Direct RSS/Atom feeds use a separate local repository with atomic private JSON
+  cache/subscriptions/read/saved persistence; reuse common reader/controller
+  behavior. New installs default local; preserve existing FreshRSS sessions and
+  isolate data. Switching modes keeps both sources; no implicit import/merge.
+- Direct HTTP(S) XML URLs, stable feed-scoped hashed entry IDs, bounded redirects
+  without HTTPS downgrade, 5 MB/500-entry input limit, no FreshRSS auth on feeds.
+  Keep 500 cached stories per feed plus saved stories. Refresh in foreground;
+  cached text works offline. Local categories use feed titles.
+- Persist hide-empty-categories independently from hide-read. Filter zero unread
+  categories/feeds everywhere; keep unknown counts visible. Return to All stories
+  when selected category disappears; read/unread changes can restore categories.
+- Rick explicitly requested GitHub Releases for all previews. Publish prerelease
+  pages with verified download links and immutable source/artifact provenance;
+  leave main unmerged. Use Windows Actions token for asset uploads because this
+  session's uploads.github.com authentication returns HTTP 401. Verify hashes and
+  refuse mismatched existing assets; no signing keys or binaries in source PR.

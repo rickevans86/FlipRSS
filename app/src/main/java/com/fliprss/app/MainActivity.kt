@@ -108,6 +108,10 @@ private val Red = Color(0xFFB83224)
         libraryScroll.scrollToItem(0)
         library.selectScope(LibraryScope(topic, destination == "Saved"))
     }
+    LaunchedEffect(state.settings.hideEmptyCategories, state.visibleSections, state.loading, topic) {
+        if (state.settings.hideEmptyCategories && !state.loading && !state.restoring && topic != null &&
+            state.visibleSections.none { it.id == topic }) topic = null
+    }
     val selected = state.visibleArticles
     val readerArticles = readerIds.mapNotNull(library::findArticle)
     val sectionTitle = state.sections.find { it.id == topic }?.title
@@ -169,12 +173,12 @@ private val Red = Color(0xFFB83224)
                 item {
                     Surface(shape = RoundedCornerShape(8.dp), color = MaterialTheme.colorScheme.surfaceVariant) {
                         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Eyebrow(if (state.demo) "DEMO · SAMPLE STORIES" else "FRESHRSS · ${state.account?.username.orEmpty()}")
+                            Eyebrow(if (state.demo) "DEMO · SAMPLE STORIES" else if (state.local) "LOCAL · FEEDS ON THIS DEVICE" else "FRESHRSS · ${state.account?.username.orEmpty()}")
                             Text(if (state.demo) "Try the reading room, or connect your own feeds." else
-                                if (state.sessionExpired) "Your saved session needs a new sign-in." else "${state.unread?.let { "$it unread · " }.orEmpty()}Read and saved changes sync to your account.",
+                                if (state.local) "${state.unread ?: 0} unread · Add feeds directly; FreshRSS is optional." else if (state.sessionExpired) "Your saved session needs a new sign-in." else "${state.unread?.let { "$it unread · " }.orEmpty()}Read and saved changes sync to your account.",
                                 style = MaterialTheme.typography.bodySmall)
                             TextButton(onClick = { accountOpen = true }) {
-                                Text(if (state.demo) "Connect FreshRSS" else if (state.sessionExpired) "Sign in again" else "Account")
+                                Text(if (state.demo || state.local) "Connect FreshRSS (optional)" else if (state.sessionExpired) "Sign in again" else "Account")
                             }
                         }
                     }
@@ -189,7 +193,7 @@ private val Red = Color(0xFFB83224)
                 } }
                 state.error?.let { problem -> item { ProblemBanner(problem, library::dismissError) { library.refresh() } } }
                 if (destination == "Topics") {
-                    val topics = state.sections.filterNot { it.feed }
+                    val topics = state.visibleSections.filterNot { it.feed }
                     items(topics, key = { it.id }) { section ->
                         Box(Modifier.fillMaxWidth().height(160.dp).clip(RoundedCornerShape(12.dp))
                             .background(MaterialTheme.colorScheme.surfaceVariant).clickable { topic = section.id; destination = "Today" }) {
@@ -203,18 +207,18 @@ private val Red = Color(0xFFB83224)
                             }
                         }
                     }
-                    val feeds = state.sections.filter { it.feed }
+                    val feeds = state.visibleSections.filter { it.feed }
                     if (feeds.isNotEmpty()) item { Eyebrow("YOUR FEEDS") }
                     items(feeds, key = { it.id }) { feed ->
                         ListItem(headlineContent = { Text(feed.title) }, supportingContent = { Text(feed.unread?.let { "$it unread" } ?: "Open feed") },
                             leadingContent = { Icon(Icons.Outlined.RssFeed, null) }, modifier = Modifier.clickable { topic = feed.id; destination = "Today" })
                     }
-                    if (state.sections.isEmpty() && !state.loading) item { Text("No sections or feeds loaded. Add subscriptions in FreshRSS, then refresh.") }
+                    if (state.visibleSections.isEmpty() && !state.loading) item { Text(if (state.settings.hideEmptyCategories) "No categories with unread articles. Turn off the category setting to show all." else "No feeds yet. Use Add feed to subscribe.") }
                 } else {
                     if (destination != "Saved" || state.demo) item {
                         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             FilterChip(selected = topic == null, onClick = { topic = null }, label = { Text("All stories") })
-                            state.sections.filterNot { it.feed }.forEach { section ->
+                            state.visibleSections.filterNot { it.feed }.forEach { section ->
                                 FilterChip(selected = topic == section.id, onClick = { topic = section.id }, label = { Text(section.title) })
                             }
                         }

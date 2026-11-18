@@ -18,7 +18,7 @@ import com.fliprss.app.data.LibraryState
     LaunchedEffect(state.feedAddedRevision) { if (state.feedAddedRevision > initialRevision) onClose() }
     AlertDialog(onDismissRequest = { if (!state.addingFeed) onClose() }, title = { Text("Add feed") }, text = {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("Subscribe on your FreshRSS server. The feed will appear under Topics → Your feeds after refresh.")
+            Text(if (state.local) "Add an RSS or Atom XML feed directly to this device. HTTP feeds are unencrypted. FreshRSS is optional." else "Subscribe on your FreshRSS server. The feed will appear under Topics → Your feeds after refresh.")
             OutlinedTextField(url, { url = it }, label = { Text("Feed URL") },
                 placeholder = { Text("https://example.org/feed.xml") }, singleLine = true,
                 enabled = !state.addingFeed, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri))
@@ -28,6 +28,6 @@ import com.fliprss.app.data.LibraryState
         }
     }, confirmButton = {
         Button(enabled = url.isNotBlank() && !state.addingFeed && !state.sessionExpired,
-            onClick = { library.addFeed(url) }) { Text("Add to FreshRSS") }
+            onClick = { library.addFeed(url) }) { Text(if (state.local) "Add to app" else "Add to FreshRSS") }
     }, dismissButton = { TextButton(enabled = !state.addingFeed, onClick = onClose) { Text("Cancel") } })
 }

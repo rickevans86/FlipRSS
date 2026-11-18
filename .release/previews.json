@@ -1,0 +1,47 @@
+[
+  {
+    "tag": "v0.1.0-prototype",
+    "artifact_commit": "0b943482f15357a3586dbe7cbc13b657afe3198d",
+    "directory": "release-download",
+    "source_commit": "92613d6e5271748da6409707e4484e436db85bfb",
+    "apk": "FlipRSS-v0.1.0-prototype.apk",
+    "sha256": "8c392db42fd0640797faa33ef611506dd9d44cf2c5ea34527bb4c46f6cfddceb",
+    "description": "Offline prototype."
+  },
+  {
+    "tag": "v0.2.0-freshrss-preview",
+    "artifact_commit": "6f6673b766c8e000406ec582f3c61596dfe0261f",
+    "directory": "preview",
+    "source_commit": "edcac9836b8981b3e678962350cd77a32869bd79",
+    "apk": "FlipRSS-v0.2.0-freshrss-preview.apk",
+    "sha256": "048a009c790c3c1960450dce2deae53966d669d847b6b48c7de67d83428b07ae",
+    "description": "FreshRSS integration preview, PR #7, awaiting review."
+  },
+  {
+    "tag": "v0.3.0-controls-preview",
+    "artifact_commit": "1bdaf3d143dc9701a3d3663901644d7768446db4",
+    "directory": "preview",
+    "source_commit": "302a1808cdd0e342ec55e54f35b79c473be4beec",
+    "apk": "FlipRSS-v0.3.0-controls-preview.apk",
+    "sha256": "15a59d88a5dc4dd421e94ebd02d347989c2f73904c03d47539bb6b0cc6afff69",
+    "description": "Feed and reading controls preview, PR #9, awaiting review."
+  },
+  {
+    "tag": "v0.4.0-speech-preview",
+    "artifact_commit": "b639c9e280123629601784373229c0bd5abab9e9",
+    "directory": "preview",
+    "source_commit": "4b0dd2852137d5a312121e1de9885175d29da4b8",
+    "apk": "FlipRSS-v0.4.0-speech-preview.apk",
+    "sha256": "81bf3914680dc07e028a1800da819b8ad561a4538f8f2ab9544a2740b494ee8d",
+    "description": "Article speech preview, PR #11, awaiting review."
+  },
+  {
+    "tag": "v0.5.0-local-preview",
+    "artifact_commit": "1ff1e6676473f3aa4a33df8a586244714059912d",
+    "directory": "preview",
+    "source_commit": "63f47b52e3c80b5264bef766a7f12009c779dcf2",
+    "apk": "FlipRSS-v0.5.0-local-preview.apk",
+    "sha256": "1a21f4bab30d7aebb731556e63e949affc74853be84eb0d1850bb104f0f00f6c",
+    "description": "Standalone local RSS/Atom, optional FreshRSS and hide-empty-category setting. Issue #12, awaiting review."
+  }
+]
