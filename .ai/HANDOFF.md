@@ -1,40 +1,39 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #2 — APK rebuild, main publication and Windows Actions build.
+**Task:** #4 — Rick explicitly requested: build and publish release.
 
-**Authorization:** On 2026-11-18 Rick explicitly asked Codex to push to main and
-run Actions, superseding his earlier Rick-only merge instruction for this work.
-Rick then confirmed the `SelfHosted` runner is a Windows machine.
+**Completed:** Published GitHub prerelease v0.1.0-prototype on 2026-11-18:
+https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype
+Release tag points to unchanged main commit `92613d6e5271748da6409707e4484e436db85bfb`.
+Built the RELEASE variant locally; APK is not debuggable and is signed with the
+existing prototype test identity. No production signing key is configured and
+no private keys were published. Current app is offline sample content; FreshRSS
+login/synchronization remains unimplemented.
 
-**Completed:** PR #3 merged into main as `1195fd8379311a372e9d592c32c846ddb8304493`.
-Issue #2 closed by merge. Local APK freshly packaged; 3 unit tests rerun and passed;
-lint passed with 0 errors/7 warnings; APK signature verified. No application code
-changed since the prototype. Earlier APK download remains on `codex/2-apk-build`.
+**Download:** Release notes link to the APK at immutable artifact commit
+`0b943482f15357a3586dbe7cbc13b657afe3198d` on `codex/4-release-download` under
+`release-download/`. This artifact branch is not intended for merge into main.
+GitHub release-asset uploads returned HTTP 401; release publication itself works.
+APK was downloaded back through GitHub blob API and checksum verified.
 
-**In progress:** Adapted the build job to `[SelfHosted, Windows]`, built-in Windows
-PowerShell and `gradlew.bat`. Runner metadata output uses explicit UTF-8 for
-Windows PowerShell compatibility. No Bash or PowerShell Core installation needed
-for the workflow's own run steps. Existing emulator action skips Windows.
-This workflow change will trigger a replacement main build when pushed.
+**Artifact:** FlipRSS-v0.1.0-prototype.apk, 11,496,577 bytes, Android 8.0+.
+SHA-256: `8c392db42fd0640797faa33ef611506dd9d44cf2c5ea34527bb4c46f6cfddceb`.
+Package com.fliprss.app; version 0.1.0-prototype (1); min SDK 26 / target 35.
 
-**Branch/PR:** main; PR #3 merged with Rick’s explicit authorization.
-**Tests:** Local Gradle build/unit/lint checks passed. Workflow actionlint and
-`git diff --check` passed. Remote Windows job results pending; no emulator/device
-execution claimed. App source unchanged; no repeat local app tests for CI-only edit.
+**Tests:** `assembleRelease testReleaseUnitTest lintRelease` passed, 57 tasks
+executed. All 3 release unit tests passed; lint 0 errors/1 warning. zipalign and
+apksigner v2/v3 verification passed; apkanalyzer debuggable=false. GitHub download
+bytes match SHA-256. No device/emulator execution. Windows run 44224234633 is
+cancelled, not build evidence for this release.
 
-**Blockers:** First main run 44223942127 queued for `SelfHosted`, without an
-assigned runner at observation. New Windows-specific run supersedes it. Runner
-must be online with labels `SelfHosted` and default `Windows`. The build should
-upload FlipRSS-debug containing app-debug.apk if successful. GitHub runner-list
-permission is unavailable; job execution/queue endpoints remain accessible.
-
-**Next action:** Observe newest main run, inspect Windows logs if it fails.
-Instrumented tests require a separate supported emulator/device setup; the current
-emulator action is intentionally skipped on Windows. FreshRSS login/sync remains
-unimplemented; all current stories are sample content.
-
-**Shared records updated:** Yes — handoff, state, task board, ownership and activity.
-**Remote synchronization:** PR merge and main SHA confirmed via GitHub; latest
-main integrated locally. Windows workflow/records prepared for direct main push
-under Rick’s current authorization. Check GitHub for final run outcome.
+**In progress:** Shared-record PR awaiting review; no implementation work claimed.
+**Branch/PR:** codex/4-prototype-release (records only); release/download already
+published. PR link added after opening. Do not merge artifact branch.
+**Blockers:** None for the published download. Production signing, live FreshRSS,
+and device validation remain future tasks. Release assets use linked repository
+hosting because the upload endpoint rejected credentials.
+**Next action:** Rick installs/tests prerelease and reviews the record-only PR.
+**Shared records updated:** Yes — all six .ai/ files; append-only logs preserved.
+**Remote synchronization:** Source main fetched; release publication, tag commit,
+artifact branch push and downloaded checksum confirmed via GitHub.

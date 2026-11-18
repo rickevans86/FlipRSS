@@ -2,8 +2,9 @@
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-| `release-download/**` if needed, `.ai/**` | #4 prototype prerelease | Codex | `codex/4-prototype-release` |
+| — | No implementation files currently claimed | — | — |
 
-PR #3 is merged on main with Rick’s 2026-11-18 authorization. Codex’s Windows
-workflow follow-up is included in the same authorized main publication work.
+#4 prerelease publication completed by Codex. Shared records are proposed on
+codex/4-prototype-release; binary files are separately hosted on
+codex/4-release-download, which must not be merged into main.
 Check live Issues/PRs before claiming files.

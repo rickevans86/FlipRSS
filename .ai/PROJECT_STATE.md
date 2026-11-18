@@ -2,23 +2,29 @@
 
 ## Current application
 
-Offline native Kotlin/Jetpack Compose Android prototype is on main after PR #3
-merged as `1195fd8` on 2026-11-18 by Codex, explicitly authorized by Rick in chat.
-Magazine grid, topics, swipe reader, saved/read persistence and bundled samples.
-FreshRSS authentication, networking and synchronization are not implemented.
+Offline Kotlin/Jetpack Compose Android prototype is on main after PR #3. Source
+main/tag commit: `92613d6`. Magazine grid, topic sections, swipe reader and local
+saved/read state with six bundled sample stories. FreshRSS login/networking/sync
+is not implemented. min SDK 26 / target 35.
 
-## Build verification
+## Published prerelease — 2026-11-18
 
-Local fresh APK packaging and 3 unit tests passed; lint 0 errors/7 warnings; APK
-signature verified. SDK min 26 / target 35. No new device/emulator test execution.
-Earlier verified APK/checksum: `downloads/` on branch `codex/2-apk-build`.
+Codex published v0.1.0-prototype at Rick’s explicit request:
+https://github.com/rickevans86/FlipRSS/releases/tag/v0.1.0-prototype
 
-## Actions
+Release-variant APK: 11,496,577 bytes, not debuggable, signed with the existing
+prototype test key. Production signing remains unconfigured. Release notes link
+to APK/checksum/build metadata on separate branch codex/4-release-download,
+immutable commit `0b94348`. Do not merge the artifact branch into main.
 
-Rick confirmed `SelfHosted` is Windows. Build job now targets `[SelfHosted,
-Windows]` and uses Windows PowerShell plus `gradlew.bat`, then uploads the
-FlipRSS-debug APK artifact. The existing emulator action does not support Windows
-and is skipped. actionlint passed for workflow changes; remote outcome pending.
-First main push triggered run 44223942127, queued with no assigned runner at last
-observation. The Windows update triggers a newer main run; consult live GitHub
-Actions for its outcome rather than historical queue/billing records.
+Release-asset upload endpoint returned HTTP 401, so verified repository hosting
+is used. Actual release publication and tag/source commit confirmed. GitHub APK
+was downloaded and checksum verified; see handoff for digest.
+
+## Validation
+
+Local assembleRelease, 3 release unit tests and lintRelease passed (0 errors,
+1 warning). APK v2/v3 signatures, alignment, SDK/package/version and non-debuggable
+flag verified. No emulator/device tests. Windows Actions run 44224234633 was
+cancelled and did not supply release validation. Next: Rick’s device testing and
+independent review; future production signing and FreshRSS integration need tasks.

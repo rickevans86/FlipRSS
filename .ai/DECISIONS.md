@@ -42,3 +42,16 @@ reorder earlier entries._
 - Use Compose HorizontalPager with a stable captured story queue and accessible
   previous/next controls; unsaving a story does not change reader position.
   A 3D flip/page-curl effect is deferred pending prototype feedback.
+
+## 2026-11-18 — Prototype prerelease distribution, Issue #4 (Codex)
+
+- Rick authorized building and publishing a release. Existing version is
+  0.1.0-prototype and FreshRSS integration is absent, so publish a prerelease.
+- Build release variant and sign with the existing prototype test identity;
+  explicitly disclose test signing and non-production status. No production
+  signing configuration or private keys added to Git.
+- Release-asset uploads reject connected credentials (HTTP 401). Publish the
+  release with immutable links to a separate artifact branch; tag still points
+  to actual source main commit. Verify retrieved APK bytes against SHA-256.
+- Keep artifact branch separate from record-only PR to avoid merging APKs into
+  main. Production signing and live account integration remain future tasks.
