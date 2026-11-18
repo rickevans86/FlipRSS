@@ -37,4 +37,15 @@ class ReadingFlowTest {
         compose.onNodeWithText("2 stories").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().assertIsDisplayed()
     }
+    @Test fun accountFormCanBeOpenedAndDismissedWithoutReplacingDemo() {
+        compose.onNodeWithText("Connect FreshRSS").performScrollTo().performClick()
+        compose.onNodeWithText("Sign in").assertIsNotEnabled()
+        compose.onNodeWithText("FreshRSS URL").performTextReplacement("https://rss.example.org")
+        compose.onNodeWithText("Username").performTextInput("demo-user")
+        compose.onNodeWithText("API password").performTextInput("not-a-real-password")
+        compose.onNodeWithText("Sign in").assertIsEnabled()
+        compose.onNodeWithText("Continue demo").performClick()
+        compose.onNodeWithText("Your daily perspective.").performScrollTo().assertIsDisplayed()
+    }
+
 }

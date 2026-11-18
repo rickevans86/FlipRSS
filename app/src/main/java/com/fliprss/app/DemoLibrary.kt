@@ -10,6 +10,13 @@ data class Article(
     val image: String,
     val minutes: Int,
     val paragraphs: List<String>,
+    val imageUrl: String? = null,
+    val originalUrl: String? = null,
+    val topicIds: List<String> = emptyList(),
+    val feedId: String? = null,
+    val initiallyRead: Boolean = false,
+    val initiallyStarred: Boolean = false,
+    val demo: Boolean = true,
 )
 
 object DemoLibrary {

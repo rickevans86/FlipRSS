@@ -1,0 +1,4 @@
+<data-extraction-rules>
+    <cloud-backup><exclude domain="sharedpref" path="freshrss-session.xml" /></cloud-backup>
+    <device-transfer><exclude domain="sharedpref" path="freshrss-session.xml" /></device-transfer>
+</data-extraction-rules>

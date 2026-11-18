@@ -1,0 +1,236 @@
+package com.fliprss.app.data
+
+import com.fliprss.app.Article
+import com.fliprss.app.DemoLibrary
+import java.io.IOException
+import javax.net.ssl.SSLException
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
+interface DemoPreferences {
+    fun load(): DemoReadingState
+    fun save(state: DemoReadingState)
+}
+data class DemoReadingState(val saved: Set<String> = emptySet(), val read: Set<String> = emptySet())
+data class MutationKey(val id: String, val read: Boolean)
+data class LibraryState(
+    val demo: Boolean = true, val restoring: Boolean = true, val account: Account? = null,
+    val accountRevision: Int = 0, val connecting: Boolean = false, val sessionExpired: Boolean = false,
+    val articles: List<Article> = DemoLibrary.articles,
+    val sections: List<Section> = DemoLibrary.topics.map { Section(it, it) },
+    val scope: LibraryScope = LibraryScope(), val savedIds: Set<String> = emptySet(), val readIds: Set<String> = emptySet(),
+    val loading: Boolean = false, val loadingMore: Boolean = false, val continuation: String? = null,
+    val unread: Int? = null, val error: String? = null, val loginError: String? = null,
+    val pending: Set<MutationKey> = emptySet(),
+)
+
+/** Owns async/account boundaries independently of Android, allowing race and rollback tests. */
+class LibraryController(private val scope: CoroutineScope, private val connector: FreshRssConnector,
+    private val sessions: SessionStore, private val demoPreferences: DemoPreferences) {
+    private val mutable = MutableStateFlow(LibraryState().let {
+        val demo = demoPreferences.load(); it.copy(savedIds = demo.saved, readIds = demo.read)
+    })
+    val state: StateFlow<LibraryState> = mutable.asStateFlow()
+    private var repository: FreshRssRepository? = null
+    private var generation = 0
+    private var accountAttempt = 0
+    private var requestNumber = 0
+    private var loadJob: Job? = null
+    private var accountJob: Job? = null
+    private val sessionMutex = Mutex()
+    private val writes = mutableMapOf<MutationKey, Job>()
+    private val cache = mutableMapOf<String, Article>()
+    private var revision = 0L
+    private val readRevision = mutableMapOf<String, Long>()
+    private val starRevision = mutableMapOf<String, Long>()
+
+    init {
+        accountJob = scope.launch {
+            try {
+                val session = sessionMutex.withLock { sessions.read() }
+                if (accountAttempt == 0) {
+                    if (session != null) install(session) else mutable.update { it.copy(restoring = false) }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                if (accountAttempt == 0) mutable.update { it.copy(restoring = false,
+                    loginError = "Saved sign-in could not be restored. Forget it and sign in again.",
+                    error = "Saved sign-in could not be restored. Open Account to reconnect.") }
+            }
+        }
+    }
+
+    fun connect(server: String, username: String, password: String, allowHttp: Boolean) {
+        val attempt = ++accountAttempt
+        accountJob?.cancel()
+        mutable.update { it.copy(connecting = true, restoring = false, loginError = null) }
+        accountJob = scope.launch {
+            try {
+                val session = connector.login(server, username, password, allowHttp)
+                sessionMutex.withLock { if (attempt == accountAttempt) sessions.save(session) }
+                if (attempt == accountAttempt) install(session)
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (attempt == accountAttempt) mutable.update { it.copy(connecting = false, loginError = message(failure)) }
+            }
+        }
+    }
+
+    private fun install(session: FreshRssSession) {
+        generation++
+        loadJob?.cancel(); writes.values.toList().forEach(Job::cancel); writes.clear()
+        repository = connector.repository(session)
+        cache.clear(); readRevision.clear(); starRevision.clear(); revision = 0
+        mutable.value = LibraryState(demo = false, restoring = false,
+            account = Account(session.endpoint, session.username, session.allowHttp),
+            accountRevision = mutable.value.accountRevision + 1, articles = emptyList(), sections = emptyList())
+        refresh()
+    }
+
+    /** Clear encrypted storage before leaving the account, so sign-out cannot silently fail. */
+    fun signOut() {
+        val attempt = ++accountAttempt
+        accountJob?.cancel()
+        mutable.update { it.copy(connecting = true) }
+        accountJob = scope.launch {
+            try {
+                sessionMutex.withLock { if (attempt == accountAttempt) sessions.clear() }
+                if (attempt == accountAttempt) {
+                    generation++
+                    loadJob?.cancel(); writes.values.toList().forEach(Job::cancel); writes.clear()
+                    repository = null; cache.clear(); readRevision.clear(); starRevision.clear()
+                    val demo = demoPreferences.load()
+                    mutable.value = LibraryState(restoring = false, savedIds = demo.saved, readIds = demo.read,
+                        accountRevision = mutable.value.accountRevision + 1)
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { if (attempt == accountAttempt) mutable.update { it.copy(connecting = false,
+                loginError = "Could not forget the saved sign-in. Please try again.") } }
+        }
+    }
+
+    fun selectScope(value: LibraryScope) {
+        val section = value.sectionId?.takeIf { id -> mutable.value.sections.any { it.id == id } }
+        val selection = value.copy(sectionId = if (!mutable.value.demo && value.savedOnly) null else section)
+        if (selection == mutable.value.scope) return
+        loadJob?.cancel()
+        mutable.update { it.copy(scope = selection, articles = emptyList(), continuation = null, loadingMore = false, error = null) }
+        if (mutable.value.demo) updateDemo() else load(reset = true, catalogue = false)
+    }
+
+    fun refresh() { if (!mutable.value.demo) load(reset = true, catalogue = true) else updateDemo() }
+    fun loadMore() { if (!mutable.value.demo && mutable.value.continuation != null && !mutable.value.loading && !mutable.value.loadingMore) load(false, false) }
+    fun dismissError() { mutable.update { it.copy(error = null) } }
+    fun findArticle(id: String): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.id == id } else cache[id]
+    fun cover(section: Section): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.topic == section.id }
+        else cache.values.firstOrNull { it.feedId == section.id || section.id in it.topicIds }
+
+    private fun load(reset: Boolean, catalogue: Boolean) {
+        val client = repository ?: return
+        loadJob?.cancel()
+        val current = generation
+        val request = ++requestNumber
+        val selection = mutable.value.scope
+        val cursor = if (reset) null else mutable.value.continuation
+        val startedAt = revision
+        mutable.update { it.copy(loading = reset, loadingMore = !reset, error = null) }
+        loadJob = scope.launch {
+            try {
+                val categories = if (catalogue) client.catalogue() else null
+                val page = client.page(selection.stream, cursor)
+                if (current != generation || request != requestNumber) return@launch
+                page.articles.forEach { cache[it.id] = it }
+                mutable.update { old ->
+                    val read = old.readIds.toMutableSet(); val saved = old.savedIds.toMutableSet()
+                    page.articles.forEach { article ->
+                        if ((readRevision[article.id] ?: 0) <= startedAt && MutationKey(article.id, true) !in old.pending) {
+                            if (article.initiallyRead) read.add(article.id) else read.remove(article.id)
+                        }
+                        if ((starRevision[article.id] ?: 0) <= startedAt && MutationKey(article.id, false) !in old.pending) {
+                            if (article.initiallyStarred) saved.add(article.id) else saved.remove(article.id)
+                        }
+                    }
+                    old.copy(articles = ((if (reset) emptyList() else old.articles) + page.articles).distinctBy { it.id },
+                        sections = categories?.sections?.map { section ->
+                            if (revision == startedAt) section else section.copy(unread = old.sections.find { it.id == section.id }?.unread ?: section.unread)
+                        } ?: old.sections,
+                        unread = if (categories != null && revision == startedAt) categories.unread else old.unread,
+                        savedIds = saved, readIds = read, loading = false, loadingMore = false,
+                        continuation = page.continuation?.takeUnless { it == cursor })
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (current == generation && request == requestNumber) mutable.update { it.copy(loading = false,
+                    loadingMore = false, sessionExpired = it.sessionExpired || (failure is FreshRssProblem && failure.signInRequired),
+                    error = message(failure)) }
+            }
+        }
+    }
+
+    fun toggleSaved(id: String) = mutate(id, false, id !in mutable.value.savedIds)
+    fun setRead(id: String, read: Boolean) = mutate(id, true, read)
+
+    private fun mutate(id: String, read: Boolean, enabled: Boolean) {
+        val old = mutable.value
+        val previous = id in if (read) old.readIds else old.savedIds
+        if (previous == enabled || findArticle(id) == null) return
+        if (old.demo) {
+            updateFlag(id, read, enabled)
+            demoPreferences.save(DemoReadingState(mutable.value.savedIds, mutable.value.readIds))
+            updateDemo(); return
+        }
+        val client = repository ?: return
+        val key = MutationKey(id, read)
+        if (key in old.pending) return
+        if (old.sessionExpired) { mutable.update { it.copy(error = "Your session has expired. Sign in again.") }; return }
+        val current = generation
+        if (read) readRevision[id] = ++revision else starRevision[id] = ++revision
+        mutable.update { it.copy(pending = it.pending + key) }
+        updateFlag(id, read, enabled)
+        val job = scope.launch(start = CoroutineStart.LAZY) {
+            try {
+                if (read) client.setRead(id, enabled) else client.setStarred(id, enabled)
+                if (current == generation && !read && !enabled && mutable.value.scope.savedOnly) {
+                    mutable.update { it.copy(articles = it.articles.filterNot { article -> article.id == id }) }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (current == generation) {
+                    updateFlag(id, read, previous)
+                    mutable.update { it.copy(sessionExpired = it.sessionExpired || (failure is FreshRssProblem && failure.signInRequired),
+                        error = message(failure) + " Refresh to check the server state.") }
+                }
+            } finally {
+                if (current == generation) { writes.remove(key); mutable.update { it.copy(pending = it.pending - key) } }
+            }
+        }
+        writes[key] = job; job.start()
+    }
+
+    private fun updateFlag(id: String, read: Boolean, enabled: Boolean) {
+        val article = findArticle(id)
+        mutable.update { old ->
+            val existing = if (read) old.readIds else old.savedIds
+            val updated = if (enabled) existing + id else existing - id
+            val countDelta = if (!read || (id in existing) == enabled) 0 else if (enabled) -1 else 1
+            old.copy(readIds = if (read) updated else old.readIds, savedIds = if (!read) updated else old.savedIds,
+                unread = old.unread?.let { (it + countDelta).coerceAtLeast(0) },
+                sections = old.sections.map { section ->
+                    if (section.unread != null && (section.id == article?.feedId || section.id in article?.topicIds.orEmpty()))
+                        section.copy(unread = (section.unread + countDelta).coerceAtLeast(0)) else section
+                })
+        }
+    }
+    private fun updateDemo() { mutable.update { it.copy(articles = DemoLibrary.select(it.scope.sectionId, it.scope.savedOnly, it.savedIds)) } }
+    private fun message(failure: Exception): String = when (failure) {
+        is FreshRssProblem -> failure.message ?: "Could not complete the FreshRSS request."
+        is SSLException -> "Could not verify the server’s secure connection. Check its HTTPS certificate."
+        is IOException -> "Could not reach FreshRSS. Check the connection and instance URL."
+        else -> "Could not read the FreshRSS response or secure session. Check API access and try again."
+    }
+}
