@@ -52,3 +52,12 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   Updated shared handoff/state/task board and integrated latest main without
   discarding Claude’s scaffold/revert history. Authorized PR merge/Actions
   outcome to be confirmed in GitHub, not inferred from this pre-merge record.
+
+- 2026-11-18 — **ChatGPT Codex** — Per Rick’s explicit instruction to push to
+  main and run Actions, merged PR #3 as `1195fd8`; issue #2 closed automatically.
+  Confirmed main push triggered run 44223942127, queued for `SelfHosted`.
+  Rick then confirmed the runner is Windows. Updated only workflow/shared records:
+  Windows labels, built-in Windows PowerShell, UTF-8 runner outputs and gradlew.bat.
+  Emulator action skips Windows. actionlint/diff checks passed. Local APK
+  packaging, 3 rerun unit tests and lint previously passed this session; no new
+  remote success/device execution claimed. Windows update will trigger a new run.

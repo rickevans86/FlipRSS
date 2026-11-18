@@ -1,25 +1,24 @@
 # PROJECT_STATE
 
-FlipRSS is a Kotlin/Jetpack Compose Android reading app for FreshRSS. The current
-prototype is offline: magazine grid, topic sections, horizontal swipe reader,
-saved/read persistence, six sample stories and bundled photos. FreshRSS login,
-networking and synchronization are not implemented.
+## Current application
 
-## 2026-11-18 — Codex build and authorized publication
+Offline native Kotlin/Jetpack Compose Android prototype is on main after PR #3
+merged as `1195fd8` on 2026-11-18 by Codex, explicitly authorized by Rick in chat.
+Magazine grid, topics, swipe reader, saved/read persistence and bundled samples.
+FreshRSS authentication, networking and synchronization are not implemented.
 
-Rick explicitly asked Codex to push the prototype to main and run Actions.
-PR #3 contains the app; publication is being performed after fresh local checks.
-GitHub PR/main history and Actions are authoritative for the final outcome.
-Claude’s intervening scaffold and revert on main were fetched and preserved;
-main’s net file tree before this publication matched the original bootstrap.
+## Build verification
 
-Local verification: debug APK freshly packaged, 3 unit tests rerun and passing,
-lint passing (0 errors/7 warnings), APK signature verified. No device tests run.
-SDK 26 minimum / 35 target; JDK 17+, Kotlin 2.1.20, AGP 8.9.1, Gradle 8.11.1.
+Local fresh APK packaging and 3 unit tests passed; lint 0 errors/7 warnings; APK
+signature verified. SDK min 26 / target 35. No new device/emulator test execution.
+Earlier verified APK/checksum: `downloads/` on branch `codex/2-apk-build`.
 
-The Actions workflow triggers on main pushes and uses runner label `SelfHosted`.
-Remote builds need an online matching runner. Emulator job runs after build only
-on x64 Linux/macOS. Do not treat historical billing/queued statuses as current.
+## Actions
 
-An earlier verified APK and checksum are in `downloads/` on `codex/2-apk-build`.
-Prototype source remains separate from that binary download branch.
+Rick confirmed `SelfHosted` is Windows. Build job now targets `[SelfHosted,
+Windows]` and uses Windows PowerShell plus `gradlew.bat`, then uploads the
+FlipRSS-debug APK artifact. The existing emulator action does not support Windows
+and is skipped. actionlint passed for workflow changes; remote outcome pending.
+First main push triggered run 44223942127, queued with no assigned runner at last
+observation. The Windows update triggers a newer main run; consult live GitHub
+Actions for its outcome rather than historical queue/billing records.

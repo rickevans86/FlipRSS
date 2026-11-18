@@ -1,36 +1,40 @@
 # HANDOFF
 
 **Agent:** ChatGPT Codex
-**Task:** #2 / PR #3 — Rick requested another local build, then explicitly asked
-Codex to push to main and run Actions on 2026-11-18. This session-specific
-instruction supersedes the earlier Rick-only merge rule for this publication.
+**Task:** #2 — APK rebuild, main publication and Windows Actions build.
 
-**Completed:** Locally repackaged APK and reran all 3 unit tests successfully.
-`packageDebug --rerun assembleDebug testDebugUnitTest --rerun lintDebug` succeeded
-(51 tasks: 3 executed, 48 up-to-date); lint has 0 errors/7 warnings. APK signature
-verified. Source matches the offline prototype in PR #3. No application code changed.
-Existing APK download is on `codex/2-apk-build` under `downloads/`.
+**Authorization:** On 2026-11-18 Rick explicitly asked Codex to push to main and
+run Actions, superseding his earlier Rick-only merge instruction for this work.
+Rick then confirmed the `SelfHosted` runner is a Windows machine.
 
-**In progress:** Authorized publication to main and Actions build. This handoff
-is written before the merge; consult GitHub PR #3 and the newest main Actions
-run for the authoritative merge/build result.
+**Completed:** PR #3 merged into main as `1195fd8379311a372e9d592c32c846ddb8304493`.
+Issue #2 closed by merge. Local APK freshly packaged; 3 unit tests rerun and passed;
+lint passed with 0 errors/7 warnings; APK signature verified. No application code
+changed since the prototype. Earlier APK download remains on `codex/2-apk-build`.
 
-**Branch/PR:** `codex/2-prototype` → PR #3 → main (authorized by Rick).
-Latest main fetched and integrated into this branch; no other AI work discarded.
+**In progress:** Adapted the build job to `[SelfHosted, Windows]`, built-in Windows
+PowerShell and `gradlew.bat`. Runner metadata output uses explicit UTF-8 for
+Windows PowerShell compatibility. No Bash or PowerShell Core installation needed
+for the workflow's own run steps. Existing emulator action skips Windows.
+This workflow change will trigger a replacement main build when pushed.
 
-**Tests:** 3 unit tests rerun: 0 failures/0 errors. Android lint passed (cached
-report, 7 non-blocking warnings). Debug APK freshly packaged and apksigner verified.
-No new device/emulator tests run locally.
+**Branch/PR:** main; PR #3 merged with Rick’s explicit authorization.
+**Tests:** Local Gradle build/unit/lint checks passed. Workflow actionlint and
+`git diff --check` passed. Remote Windows job results pending; no emulator/device
+execution claimed. App source unchanged; no repeat local app tests for CI-only edit.
 
-**Blockers:** No local build blocker. Workflow uses Rick’s `SelfHosted` runner;
-remote jobs require an online matching runner. Last observed prior run was
-cancelled; historical runner/billing problems are not a current build result.
-Emulator job requires x64 Linux/macOS and suitable host virtualization support.
+**Blockers:** First main run 44223942127 queued for `SelfHosted`, without an
+assigned runner at observation. New Windows-specific run supersedes it. Runner
+must be online with labels `SelfHosted` and default `Windows`. The build should
+upload FlipRSS-debug containing app-debug.apk if successful. GitHub runner-list
+permission is unavailable; job execution/queue endpoints remain accessible.
 
-**Next action:** Verify main publication and Actions job outcome. Download APK
-from a successful run’s FlipRSS-debug artifact; if runner remains queued, Rick
-needs to check runner availability. FreshRSS authentication/sync is not implemented.
+**Next action:** Observe newest main run, inspect Windows logs if it fails.
+Instrumented tests require a separate supported emulator/device setup; the current
+emulator action is intentionally skipped on Windows. FreshRSS login/sync remains
+unimplemented; all current stories are sample content.
 
-**Shared records updated:** Yes — handoff, project state, task board and append-only activity log.
-**Remote synchronization:** Latest main fetched; records prepared for branch push,
-then authorized PR merge. Verify GitHub before claiming main update or CI success.
+**Shared records updated:** Yes — handoff, state, task board, ownership and activity.
+**Remote synchronization:** PR merge and main SHA confirmed via GitHub; latest
+main integrated locally. Windows workflow/records prepared for direct main push
+under Rick’s current authorization. Check GitHub for final run outcome.
