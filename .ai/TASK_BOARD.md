@@ -1,11 +1,10 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex.
+Rebuilt from live GitHub Issues on 2026-11-18 by ChatGPT Codex. GitHub authoritative.
 
-| Issue | Title | Agent | Status |
-|---|---|---|---|
-| #21 | Ship source tabs, combined Saved, scroll read and live feed discovery | Codex | ai:codex, status:in-progress |
-| #19 | Add pure-black OLED theme and optional popular-feed search page | Codex | ai:codex, status:review |
+No open Issues. #19/#21 closed after Rick-authorized merges #20/#22 and confirmed
+v0.8.0 publication. Prior tasks remain closed. Final records-only follow-up has
+no app changes. Physical phone/installer/account validation not run.
 
-Foundation #20 merged at Rick's instruction. #21 implementation/build complete;
-authorized main merge/publication pending. Prior native releases remain available.
+Latest regular release v0.8.0 with native FlipRSS.apk/checksum/build metadata.
+Hosted publisher 44295156332 succeeded; all eight releases' APK hashes verified.

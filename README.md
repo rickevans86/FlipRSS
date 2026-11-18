@@ -310,3 +310,10 @@ OLED and the setting to hide Search remain. Local data and saved FreshRSS sign-i
 are migrated in place; no library import or deletion occurs. Local mode no longer
 needs to replace the connected server to be viewed. Existing storage/renderer/TTS
 and test-signing limitations remain. AI: ChatGPT Codex, #21.
+
+The 0.8.0 update is on main at Rick's instruction. Native release APK:
+https://github.com/rickevans86/FlipRSS/releases/download/v0.8.0/FlipRSS.apk
+Both builds/lint and 64 unit tests per variant passed; device tests compile only.
+Hosted publication 44295156332 succeeded, all eight APK asset digests match the
+manifest and the latest native download checksum was verified. Actual phone,
+Android installer, audio and real-account write validation remain not run.
