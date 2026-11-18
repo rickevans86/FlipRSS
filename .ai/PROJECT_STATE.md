@@ -48,3 +48,16 @@ v0.8.0 native bytes and verified SHA-256; latest endpoint confirms regular v0.8.
 change; bounded best-effort discovery, no periodic OS worker. Remote cache/Saved
 is in-memory/paged; local cache retains 500/feed plus saved. Existing TTS/renderer/
 signing limitations remain in README. Rick performs phone validation.
+
+## Search regression #24 and speech follow-up #25
+
+Codex reproduced v0.8 Feedspot assigning first common-parent heading NBC News to
+unrelated URLs. Source 72b2956 fixes row/heading ID pairing, row-scoped fallback,
+unmatched-row skip, schema-2 directory cache reset and explicit 20-result paging.
+Actual downloaded page: 453 URLs/449 names, one NBC News, WordPress correctly
+named The WordPress Blog. 68 JVM tests pass per debug/release; both build/lint
+pass, instrumentation compiles. Existing subscriptions/Saved untouched.
+#24 correction will merge under ongoing shipped-update directive, then #25 adds
+requested natural speech options; one combined regular APK release planned.
+No physical-device/audio check performed. Current published v0.8.0 remains until
+combined successor, no native patch asset claimed yet.
