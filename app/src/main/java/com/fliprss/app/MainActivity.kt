@@ -95,6 +95,8 @@ private val Red = Color(0xFFB83224)
     var initialPage by rememberSaveable { mutableIntStateOf(0) }
     var accountOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
+    var speechSettingsOpen by rememberSaveable { mutableStateOf(false) }
+    var speechReturnToSettings by remember { mutableStateOf(false) }
     var feedOpen by remember { mutableStateOf(false) }
     var feedToServer by remember { mutableStateOf(false) }
     var feedInitialUrl by remember { mutableStateOf("") }
@@ -174,7 +176,7 @@ private val Red = Color(0xFFB83224)
         "Saved" -> { model.localLibrary.refresh(); if (!fresh.demo) model.freshLibrary.refresh() }
         else -> library.refresh()
     } }
-    if (readerArticles.isNotEmpty()) Reader(readerArticles, initialPage, state, model) { readerIds = emptyList() }
+    if (readerArticles.isNotEmpty()) Reader(readerArticles, initialPage, state, model, onSpeechSettings = { speechReturnToSettings = false; speechSettingsOpen = true }) { readerIds = emptyList() }
     else Scaffold(bottomBar = {
         NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
             libraryDestinations(local.settings.showFeedSearch).forEach { item ->
@@ -259,7 +261,9 @@ private val Red = Color(0xFFB83224)
         }
     }
     if (settingsOpen) SettingsDialog(local.copy(account = fresh.account, sessionExpired = fresh.sessionExpired), model.localLibrary, onAccount = { settingsOpen = false; accountOpen = true },
-        onClose = { settingsOpen = false }, onSettings = model::updateSettings)
+        onClose = { settingsOpen = false }, onSettings = model::updateSettings,
+        onSpeech = { speechReturnToSettings = true; settingsOpen = false; speechSettingsOpen = true })
+    if (speechSettingsOpen) SpeechSettingsDialog(local.settings, model::updateSettings) { speechSettingsOpen = false; settingsOpen = speechReturnToSettings }
     if (accountOpen) AccountDialog(fresh, model.freshLibrary) { accountOpen = false }
     if (feedOpen) AddFeedDialog(if (feedToServer) fresh else local, if (feedToServer) model.freshLibrary else model.localLibrary,
         onAccount = { feedOpen = false; accountOpen = true }, onClose = { feedOpen = false }, initialUrl = feedInitialUrl)
@@ -349,11 +353,11 @@ private val Red = Color(0xFFB83224)
             tint = if (saved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(20.dp))
     }
 }
-@Composable private fun Reader(articles: List<Article>, initialPage: Int, state: LibraryState, library: LibraryViewModel, onClose: () -> Unit) {
+@Composable private fun Reader(articles: List<Article>, initialPage: Int, state: LibraryState, library: LibraryViewModel, onSpeechSettings: () -> Unit = {}, onClose: () -> Unit) {
     BackHandler(onBack = onClose)
     val pager = rememberPagerState(initialPage = initialPage.coerceIn(articles.indices)) { articles.size }
     val scope = rememberCoroutineScope()
-    val speech = rememberArticleSpeech(articles[pager.currentPage].id)
+    val speech = rememberArticleSpeech(articles[pager.currentPage].id, state.settings.speech)
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     LaunchedEffect(pager, state.settings.autoMarkRead, state.markingAll) {
@@ -388,7 +392,7 @@ private val Red = Color(0xFFB83224)
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
-            Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(articles[pager.currentPage], speech) }
+            Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(articles[pager.currentPage], speech, onSpeechSettings) }
             state.error?.let { ProblemBanner(it, { library.localLibrary.dismissError(); library.freshLibrary.dismissError() }) }
             HorizontalPager(state = pager, key = { articles[it].id }, modifier = Modifier.weight(1f)) { page ->
                 val article = articles[page]

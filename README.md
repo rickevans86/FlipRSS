@@ -328,3 +328,28 @@ refresh immediately; subscriptions and Saved are untouched. Catalogue results sh
 20 at a time with an explicit Load more feeds button, resetting on query/topic or
 catalogue changes. Production parser verification on the actual page found 453
 feed URLs, 449 distinct titles, one NBC News and the correctly named WordPress URL.
+
+## Speech and voices (0.9.0, #25)
+
+Open **Settings → Speech and voices**, or **Voice** in an article. Choose an
+installed Android speech engine and speaker, then use **Preview voice** before
+reading. Automatic selects the highest engine-rated quality available for your
+phone language/region. Reading speed and pitch are adjustable and persist across
+restarts; preview stops when changing playback settings so you can replay them.
+The default pace is 95% with neutral pitch. Rate changes do not repeatedly restart
+the native engine. Play/pause/resume/stop, article navigation, lifecycle and audio
+focus cleanup remain supported.
+
+**Allow online voices** defaults off. Enabling it allows the chosen Android engine
+to send article text over the internet and can unlock more natural voices. When
+o on-device voice is available, choose/install another voice/engine or explicitly
+allow online voices. Offline selection never chooses a voice the engine reports
+as network-required. Voices requiring installation are excluded. Use **Android
+voice settings** to install/configure voice packs, then **Refresh voices**. Exact
+voice quality/catalogue depends on the installed provider, and preview/listening
+must be checked on your phone. No new service account or API key is needed for
+this Android-engine path. No audible naturalness/device test has been run here.
+
+This release also corrects #24's repeated Feedspot names, clears only the old
+public directory cache, and shows 20 search results per explicit Load more.
+Subscriptions, saved stories and the FreshRSS account are preserved.

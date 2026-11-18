@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable internal fun SettingsDialog(state: LibraryState, library: LibraryController,
-    onAccount: () -> Unit, onClose: () -> Unit, onSettings: (AppSettings) -> Unit = library::updateSettings) {
+    onAccount: () -> Unit, onClose: () -> Unit, onSettings: (AppSettings) -> Unit = library::updateSettings, onSpeech: () -> Unit = {}) {
     val settings = state.settings
     AlertDialog(onDismissRequest = onClose, title = { Text("Settings") }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -58,6 +58,7 @@ import kotlin.math.roundToInt
             Text(state.account?.let { "Connected as ${it.username}" } ?: if (state.local) "Local feeds on this device" else "Using demo stories")
             TextButton(onClick = onAccount) { Text(if (state.account == null) "Connect FreshRSS (optional)" else "FreshRSS account") }
             HorizontalDivider()
+            TextButton(onClick = onSpeech) { Text("Speech and voices") }
             UpdateControls()
             TextButton(onClick = { onSettings(AppSettings(useLocalFeeds = settings.useLocalFeeds)) }) { Text("Reset defaults") }
         }
