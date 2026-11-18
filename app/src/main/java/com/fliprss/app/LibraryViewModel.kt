@@ -16,5 +16,6 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
             override fun save(state: DemoReadingState) {
                 preferences.edit { putStringSet("saved", state.saved); putStringSet("read", state.read) }
             }
-        }, AndroidSettingsStore(application))
+        }, AndroidSettingsStore(application), localRepository = LocalFeedRepository(
+            FileLocalFeedStore(java.io.File(application.filesDir, "local-feeds.json"))))
 }

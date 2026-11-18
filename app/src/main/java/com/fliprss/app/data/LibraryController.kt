@@ -19,7 +19,7 @@ interface DemoPreferences {
 data class DemoReadingState(val saved: Set<String> = emptySet(), val read: Set<String> = emptySet())
 data class MutationKey(val id: String, val read: Boolean)
 data class LibraryState(
-    val demo: Boolean = true, val restoring: Boolean = true, val account: Account? = null,
+    val local: Boolean = false, val demo: Boolean = true, val restoring: Boolean = true, val account: Account? = null,
     val accountRevision: Int = 0, val connecting: Boolean = false, val sessionExpired: Boolean = false,
     val articles: List<Article> = DemoLibrary.articles,
     val sections: List<Section> = DemoLibrary.topics.map { Section(it, it) },
@@ -31,6 +31,9 @@ data class LibraryState(
     val addingFeed: Boolean = false, val feedError: String? = null, val feedAddedRevision: Int = 0,
     val markingAll: Boolean = false, val notice: String? = null,
 ) {
+    val visibleSections: List<Section> get() = sections.filter { section ->
+        !settings.hideEmptyCategories || (if (demo) DemoLibrary.articles.count { it.topic == section.id && it.id !in readIds } else section.unread) != 0
+    }
     val visibleArticles: List<Article> get() = if (settings.hideRead) articles.filterNot { it.id in readIds } else articles
 }
 
@@ -38,7 +41,8 @@ data class LibraryState(
 class LibraryController(private val scope: CoroutineScope, private val connector: FreshRssConnector,
     private val sessions: SessionStore, private val demoPreferences: DemoPreferences,
     private val settingsStore: SettingsStore = MemorySettingsStore(),
-    private val nowMillis: () -> Long = System::currentTimeMillis) {
+    private val nowMillis: () -> Long = System::currentTimeMillis,
+    private val localRepository: LocalFeedRepository? = null) {
     private val mutable = MutableStateFlow(LibraryState(settings = settingsStore.load().normalized()).let {
         val demo = demoPreferences.load()
         it.copy(savedIds = demo.saved, readIds = demo.read, scope = LibraryScope(unreadOnly = it.settings.hideRead))
@@ -64,7 +68,8 @@ class LibraryController(private val scope: CoroutineScope, private val connector
             try {
                 val session = sessionMutex.withLock { sessions.read() }
                 if (accountAttempt == 0) {
-                    if (session != null) install(session) else mutable.update { it.copy(restoring = false) }
+                    if (localRepository != null && (session == null || mutable.value.settings.useLocalFeeds)) installLocal()
+                    else if (session != null) install(session) else mutable.update { it.copy(restoring = false) }
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) {
@@ -97,11 +102,56 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         writes.values.toList().forEach(Job::cancel); writes.clear()
         repository = connector.repository(session)
         cache.clear(); readRevision.clear(); starRevision.clear(); revision = 0
-        val settings = mutable.value.settings
+        val settings = mutable.value.settings.copy(useLocalFeeds = false)
+        settingsStore.save(settings)
         mutable.value = LibraryState(demo = false, restoring = false, settings = settings,
             scope = LibraryScope(unreadOnly = settings.hideRead), account = Account(session.endpoint, session.username, session.allowHttp),
             accountRevision = mutable.value.accountRevision + 1, articles = emptyList(), sections = emptyList())
         refresh()
+    }
+
+    /** Switching sources preserves the saved FreshRSS sign-in and local library. */
+    fun useLocalFeeds() {
+        if (localRepository == null) return
+        accountAttempt++; accountJob?.cancel()
+        installLocal()
+    }
+    fun useSavedFreshRss() {
+        val attempt = ++accountAttempt
+        accountJob?.cancel()
+        mutable.update { it.copy(connecting = true, loginError = null) }
+        accountJob = scope.launch {
+            try {
+                val session = sessionMutex.withLock { sessions.read() }
+                    ?: throw FreshRssProblem("No saved FreshRSS account. Sign in below.")
+                if (attempt == accountAttempt) install(session)
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (attempt == accountAttempt) mutable.update { it.copy(connecting = false, loginError = message(failure)) }
+            }
+        }
+    }
+    fun useDemo() {
+        accountAttempt++; accountJob?.cancel(); generation++
+        loadJob?.cancel(); addJob?.cancel(); bulkJob?.cancel()
+        writes.values.toList().forEach(Job::cancel); writes.clear()
+        repository = null; cache.clear(); readRevision.clear(); starRevision.clear()
+        val demo = demoPreferences.load()
+        mutable.value = LibraryState(restoring = false, settings = mutable.value.settings,
+            scope = LibraryScope(unreadOnly = mutable.value.settings.hideRead), savedIds = demo.saved, readIds = demo.read,
+            accountRevision = mutable.value.accountRevision + 1)
+    }
+    private fun installLocal() {
+        repository = localRepository ?: return
+        generation++; loadJob?.cancel(); addJob?.cancel(); bulkJob?.cancel()
+        writes.values.toList().forEach(Job::cancel); writes.clear()
+        cache.clear(); readRevision.clear(); starRevision.clear(); revision = 0
+        val settings = mutable.value.settings.copy(useLocalFeeds = true)
+        settingsStore.save(settings)
+        mutable.value = LibraryState(local = true, demo = false, restoring = false, settings = settings,
+            articles = emptyList(), sections = emptyList(), scope = LibraryScope(unreadOnly = settings.hideRead),
+            accountRevision = mutable.value.accountRevision + 1)
+        load(reset = true, catalogue = true, refreshLocal = false)
     }
 
     /** Clear encrypted storage before leaving the account, so sign-out cannot silently fail. */
@@ -122,6 +172,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
                     mutable.value = LibraryState(restoring = false, settings = settings,
                         scope = LibraryScope(unreadOnly = settings.hideRead), savedIds = demo.saved, readIds = demo.read,
                         accountRevision = mutable.value.accountRevision + 1)
+                    if (localRepository != null) installLocal()
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { if (attempt == accountAttempt) mutable.update { it.copy(connecting = false,
@@ -155,7 +206,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
     fun cover(section: Section): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.topic == section.id }
         else cache.values.firstOrNull { it.feedId == section.id || section.id in it.topicIds }
 
-    private fun load(reset: Boolean, catalogue: Boolean) {
+    private fun load(reset: Boolean, catalogue: Boolean, refreshLocal: Boolean = true) {
         val client = repository ?: return
         loadJob?.cancel()
         val current = generation
@@ -166,6 +217,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         mutable.update { it.copy(loading = reset, loadingMore = !reset, error = null) }
         loadJob = scope.launch {
             try {
+                val warning = if (catalogue && refreshLocal && client is LocalFeedRepository) client.refreshFeeds() else null
                 val categories = if (catalogue) client.catalogue() else null
                 val page = client.page(selection.stream, cursor, selection.unreadOnly)
                 if (current != generation || request != requestNumber) return@launch
@@ -186,7 +238,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
                         } ?: old.sections,
                         unread = if (categories != null && revision == startedAt) categories.unread else old.unread,
                         savedIds = saved, readIds = read, loading = false, loadingMore = false,
-                        continuation = page.continuation?.takeUnless { it == cursor })
+                        continuation = page.continuation?.takeUnless { it == cursor }, error = warning)
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (failure: Exception) {
@@ -252,8 +304,8 @@ class LibraryController(private val scope: CoroutineScope, private val connector
                 client.addFeed(url)
                 if (current == generation) {
                     mutable.update { it.copy(addingFeed = false, feedAddedRevision = it.feedAddedRevision + 1,
-                        notice = "Feed added to FreshRSS.") }
-                    refresh()
+                        notice = if (it.local) "Feed added to this device." else "Feed added to FreshRSS.") }
+                    load(reset = true, catalogue = true, refreshLocal = false)
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (failure: Exception) {
@@ -324,7 +376,9 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         }
     }
     private fun updateDemo() { mutable.update { it.copy(articles = DemoLibrary.select(it.scope.sectionId, it.scope.savedOnly, it.savedIds)) } }
-    private fun message(failure: Exception): String = when (failure) {
+    private fun message(failure: Exception): String = if (mutable.value.local && failure !is FreshRssProblem)
+        "Could not update local feeds. Check the connection and device storage; saved articles are kept."
+        else when (failure) {
         is FreshRssProblem -> failure.message ?: "Could not complete the FreshRSS request."
         is SSLException -> "Could not verify the server’s secure connection. Check its HTTPS certificate."
         is IOException -> "Could not reach FreshRSS. Check the connection and instance URL."

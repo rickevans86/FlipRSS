@@ -7,6 +7,8 @@ data class AppSettings(
     val autoMarkRead: Boolean = true,
     val showImages: Boolean = true,
     val hideRead: Boolean = false,
+    val hideEmptyCategories: Boolean = false,
+    val useLocalFeeds: Boolean = false,
 ) {
     fun normalized() = copy(readerTextSize = readerTextSize.coerceIn(16, 26))
 }

@@ -11,7 +11,10 @@ import com.fliprss.app.data.AppSettings
 class ReadingFlowTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
     @Before fun resetSettings() { compose.runOnIdle {
-        ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library.updateSettings(AppSettings())
+        compose.activity.getSharedPreferences("demo-reading-state", 0).edit().clear().commit()
+        val library = ViewModelProvider(compose.activity)[LibraryViewModel::class.java].library
+        library.useDemo()
+        library.updateSettings(AppSettings())
     } }
 
     @Test fun openStoryTurnPageAndReturnToLibrary() {
@@ -44,7 +47,7 @@ class ReadingFlowTest {
         compose.onNodeWithText(DemoLibrary.articles.first().title).performScrollTo().assertIsDisplayed()
     }
     @Test fun accountFormCanBeOpenedAndDismissedWithoutReplacingDemo() {
-        compose.onNodeWithText("Connect FreshRSS").performScrollTo().performClick()
+        compose.onNodeWithText("Connect FreshRSS (optional)").performScrollTo().performClick()
         compose.onNodeWithText("Sign in").assertIsNotEnabled()
         compose.onNodeWithText("FreshRSS URL").performTextReplacement("https://rss.example.org")
         compose.onNodeWithText("Username").performTextInput("demo-user")
