@@ -277,3 +277,13 @@ reorder earlier entries._
   ten release digests. Intermediate code11 was not separately released.
 - Keep publisher-specific extraction limits explicit. Build/JVM/public HTML
   validation does not establish phone UI/audio/account-write behavior.
+
+## 2026-11-18 — Screen awake during article speech (#34, Codex)
+
+- Use the Compose reader view keepScreenOn flag only while speech actively plays
+  and the reader lifecycle is resumed. Restore the previous view flag on effect
+  disposal and release our request immediately on lifecycle pause.
+- Reuse existing speech playing state, which clears on pause/stop/end/failure/
+  focus loss. No wake lock, new permission, preference or preview behavior change.
+- Publish patch v0.10.1/code13 with existing update-compatible signing identity;
+  device assertions compile only and require actual phone validation.

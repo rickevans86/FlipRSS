@@ -403,3 +403,16 @@ Hosted publisher 44400302581 succeeded. All ten release APK digests and the
 latest native download were verified. Native APK: 13,316,315 bytes; SHA-256
 `636928bfaed9eb0df748fb8f1a732ce4a5751a92100538dabbb5c6719cd75cf5`.
 No physical phone/audio/account-write validation or independent review claimed.
+
+## Screen awake during article speech (#34)
+
+Read aloud keeps the reader screen awake while actively playing. Pausing, stopping,
+completion, speech errors, audio focus loss, backgrounding or leaving the reader
+releases the request and restores normal screen timeout. Voice preview does not
+request this behavior. No wake-lock permission or background playback is added.
+
+Screen-awake patch release: **v0.10.1**, code 13, Android 8+.
+[FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.10.1/FlipRSS.apk).
+85 JVM tests per debug/release, builds/lint and publisher checks pass; new screen
+lifecycle tests compile only. Actual phone screen-timeout/audio checks pending.
+Native publication will be verified after the hosted publisher completes.
