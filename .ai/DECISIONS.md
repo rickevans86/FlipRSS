@@ -256,3 +256,16 @@ reorder earlier entries._
   disabling it immediately calls the same guarded bulk operation with captured
   source/category/cutoff. The footer follows Load more and is absent from Saved/Search.
 - Complete #30 separately, then ship both in one native release.
+
+## 2026-11-18 — Public article expansion (#30, Codex)
+
+- Fetch only the opened article using existing unauthenticated bounded FeedWeb;
+  prefer semantic article body/entry/main blocks, strip non-story/hidden content,
+  reject explicitly restricted metadata, and replace feed paragraphs only when
+  materially longer. Never execute scripts or carry FreshRSS credentials.
+- Keep original article identity/ownership/read/bookmark state. Displayed expanded
+  paragraphs also drive speech; text changes stop playback. Generation guards
+  discard canceled selections, successes use a 20-story memory cache.
+- Automatic loading defaults on per request with persistent off switch/manual
+  retry and feed fallback. No permanent full-article cache or paywall bypass.
+- Ship #29/#30 together as regular v0.10.0/code 12; code 11 remains intermediate.

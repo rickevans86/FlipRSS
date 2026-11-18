@@ -393,3 +393,10 @@ minutes). Regression tests cover extraction filtering, longer-feed preservation,
 restricted/landing pages, nesting, manual/cache behavior, speech input, retry,
 late response rejection and demo/no-fetch. This is HTML/JVM validation, not a
 physical phone or audible playback test.
+
+Combined regular release: **v0.10.0**, code 12, Android 8+.
+[Release](https://github.com/rickevans86/FlipRSS/releases/tag/v0.10.0) ·
+[FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.10.0/FlipRSS.apk).
+85 JVM tests each debug/release, both builds/lint, five publisher tests/actionlint
+pass; instrumentation compiled only. Same existing test signer for updates.
+Publication links become available after the verified hosted publisher runs.
