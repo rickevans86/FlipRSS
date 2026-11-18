@@ -1,11 +1,11 @@
 # FILE_OWNERSHIP
 
-_Planned file modifications for **in-progress** tasks only. Add your files when you
-claim a task; remove them in the PR that completes it._
+Planned file modifications for in-progress tasks only.
 
-| Files / paths | Task (Issue) | Agent | Branch |
-|---------------|--------------|-------|--------|
-| `AGENTS.md`, `.ai/*` | Coordination bootstrap (no Issue) | Claude | `claude/coordination-setup` |
+| Files / paths | Task | Agent | Branch |
+|---|---|---|---|
+| — | No implementation files currently claimed | — | — |
 
-_Once this bootstrap PR merges, the row above is removed. No feature files are
-claimed yet._
+Claude’s bootstrap merged in PR #1. Codex completed implementation for #2;
+its proposed changes are on `codex/2-prototype`, awaiting independent review.
+Check open PRs before claiming overlapping files.

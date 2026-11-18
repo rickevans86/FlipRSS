@@ -1,34 +1,25 @@
 # PROJECT_STATE
 
-_Current project overview. Keep this to the present state of the repo._
+FlipRSS is a Kotlin/Jetpack Compose Android reading app for FreshRSS. The current
+prototype is offline: magazine grid, topic sections, horizontal swipe reader,
+saved/read persistence, six sample stories and bundled photos. FreshRSS login,
+networking and synchronization are not implemented.
 
-## What FlipRSS is
+## 2026-11-18 — Codex build and authorized publication
 
-A native Android client for a self-hosted FreshRSS instance that presents feeds in a
-Flipboard-style experience. Three experience pillars (all equal priority, per Rick):
+Rick explicitly asked Codex to push the prototype to main and run Actions.
+PR #3 contains the app; publication is being performed after fresh local checks.
+GitHub PR/main history and Actions are authoritative for the final outcome.
+Claude’s intervening scaffold and revert on main were fetched and preserved;
+main’s net file tree before this publication matched the original bootstrap.
 
-1. **Magazine card grid** — large cover images, varied tile sizes, clean typography.
-2. **Swipe/flip reader** — full-screen, one story per page, flip between stories.
-3. **Topic sections** — content grouped into named sections (FreshRSS folders/tags)
-   you move between.
+Local verification: debug APK freshly packaged, 3 unit tests rerun and passing,
+lint passing (0 errors/7 warnings), APK signature verified. No device tests run.
+SDK 26 minimum / 35 target; JDK 17+, Kotlin 2.1.20, AGP 8.9.1, Gradle 8.11.1.
 
-## Backend
+The Actions workflow triggers on main pushes and uses runner label `SelfHosted`.
+Remote builds need an online matching runner. Emulator job runs after build only
+on x64 Linux/macOS. Do not treat historical billing/queued statuses as current.
 
-FreshRSS GReader API at `<instance>/api/greader.php`, reachable over the public
-internet. Native HTTP client connects directly (no CORS proxy needed). Auth via
-`ClientLogin` (username + FreshRSS API password) → `GoogleLogin auth=<token>` header.
-
-## Current status
-
-- **Stage:** Bootstrap. Repo contains `README.md` and this coordination system.
-- **No application code yet.** Stack is agreed (see `AGENTS.md` → PROJECT DETAILS)
-  but not scaffolded.
-- **Next:** stand up the Gradle/Compose project skeleton, then the API layer, then
-  the three UI pillars. Tracked as GitHub Issues.
-
-## Environment constraints
-
-- Gradle/Android builds are run by Rick locally (Android Studio) or in CI; the AI
-  cloud sessions cannot assume access to the Android SDK or a device.
-- Rick builds and releases Android apps already (maintains a Mihon fork), so the
-  deliverable is a buildable project, not a pre-compiled APK.
+An earlier verified APK and checksum are in `downloads/` on `codex/2-apk-build`.
+Prototype source remains separate from that binary download branch.
