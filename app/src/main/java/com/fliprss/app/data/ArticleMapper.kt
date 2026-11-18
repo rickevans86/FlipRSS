@@ -25,7 +25,7 @@ internal object ArticleMapper {
         val image = enclosures ?: mediaUrl(item.mediaContent, original ?: base)
             ?: mediaUrl(item.mediaGroup, original ?: base)
             ?: document.select("img").firstNotNullOfOrNull {
-                safeUrl(it.attr("src").ifBlank { it.attr("data-src") }, original ?: base)
+                safeUrl(it.attr("src"), original ?: base) ?: safeUrl(it.attr("data-src"), original ?: base)
             }
         val categoryIds = item.categories.orEmpty()
         val topics = (categoryIds + subscription?.categories.orEmpty().mapNotNull { it.id })

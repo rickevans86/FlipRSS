@@ -15,6 +15,9 @@ class ArticleMapperTest {
         assertEquals(listOf("Visible"), mapped.paragraphs)
         assertEquals("https://example.org/media.jpg", ArticleMapper.map(item.copy(enclosure = null), emptyMap(), "https://example.org/")!!.imageUrl)
         assertEquals("https://example.org/fallback.jpg", ArticleMapper.map(item.copy(enclosure = null, mediaContent = null), emptyMap(), "https://example.org/")!!.imageUrl)
+        val lazyImage = item.copy(enclosure = null, mediaContent = null,
+            summary = Content("<p>Body</p><img src='data:image/gif;base64,AA' data-src='/actual.jpg'>"))
+        assertEquals("https://example.org/actual.jpg", ArticleMapper.map(lazyImage, emptyMap(), "https://example.org/")!!.imageUrl)
         assertNull(ArticleMapper.safeUrl("javascript:alert(1)", "https://example.org/"))
         assertNull(ArticleMapper.safeUrl("https://user:password@example.org/image", "https://example.org/"))
     }

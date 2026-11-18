@@ -315,7 +315,7 @@ private val Red = Color(0xFFB83224)
                     Column(Modifier.widthIn(max = 720.dp).align(Alignment.CenterHorizontally).padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         Eyebrow("${article.topic.uppercase()} / ${article.source}")
                         Text(article.title, fontFamily = FontFamily.Serif, fontSize = 36.sp, lineHeight = 40.sp)
-                        if (article.summary.isNotBlank()) Text(article.summary, style = MaterialTheme.typography.titleMedium,
+                        if (article.demo && article.summary.isNotBlank()) Text(article.summary, style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text("${if (article.demo) "DEMO EDITORIAL" else article.source} · ${article.minutes} MIN READ", fontSize = 10.sp, letterSpacing = 1.sp)
                         HorizontalDivider()

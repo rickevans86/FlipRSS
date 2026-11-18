@@ -17,7 +17,7 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 - **Stack:** Kotlin, Jetpack Compose (Material 3), Android (min SDK 26, compile/target SDK 35 for the prototype).
 - **Key libraries:** Retrofit + OkHttp (FreshRSS Google Reader API),
   Kotlin Coroutines/Flow, Coil (image loading), Jsoup (extract cover images from
-  item HTML), Jetpack DataStore + EncryptedSharedPreferences (credentials/token),
+  item HTML), EncryptedSharedPreferences (auth token), DataStore (deferred preferences),
   Room (offline cache, planned), optional Hilt (DI, deferred).
 - **Backend API:** FreshRSS "GReader" API at `<instance>/api/greader.php` —
   `ClientLogin` for the auth token, `subscription/list`, `tag/list`,
