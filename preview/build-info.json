@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0-freshrss-preview",
+  "version_code": 2,
+  "source_commit": "edcac9836b8981b3e678962350cd77a32869bd79",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Prototype test signing identity; production signing not configured",
+  "sha256": "048a009c790c3c1960450dce2deae53966d669d847b6b48c7de67d83428b07ae",
+  "size_bytes": 13164707,
+  "unit_tests_each_variant": 18,
+  "lint": {
+    "debug": {
+      "errors": 0,
+      "warnings": 8
+    },
+    "release": {
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "real_account_test": "Not run; no instance/credentials provided",
+  "device_tests": "Compiled, not run",
+  "ai": "ChatGPT Codex",
+  "task": "#6"
+}
