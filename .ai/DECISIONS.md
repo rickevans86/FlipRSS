@@ -204,3 +204,14 @@ reorder earlier entries._
   candidates; no Basic credentials or FreshRSS auth forwarded, no silent subscribe.
 - Rick explicitly authorizes merging/publishing #21. Use hosted publisher with
   immutable signed artifact for regular v0.8.0 and preserve source provenance.
+
+## 2026-11-18 — Verified regular v0.8.0 publication (#21, Codex)
+
+- Publish regular v0.8.0 (versionCode 8) from the tested app source identical to
+  main; retain earlier preview/history and existing upgrade signer. Native APK/
+  checksum/build metadata verified by hosted publisher plus downloaded APK hash.
+- Keep lists cached per source with bundled fallback; do not modify subscriptions
+  when directory entries disappear. Daily refresh is foreground and disabled
+  with Search; metadata source counts indicate extraction, not validation of all
+  external targets. Actual source/installer UI and account writes require phone
+  validation; do not infer that from JVM/build/publication success.

@@ -3,6 +3,6 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-#21 implementation complete on codex/21-source-tabs; authorized merge/publication
-in progress. Check its PR before modifying app/shared records. No other active
-implementation claims. Never merge binary artifact branches.
+No active implementation claims. #19/#21 completed under Rick's explicit main/
+publication instruction; PRs #20/#22 merged. Native v0.8.0 verified. Check live
+GitHub before claiming work. Never merge binary artifact branches.

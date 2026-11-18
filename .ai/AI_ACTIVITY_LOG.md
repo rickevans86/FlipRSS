@@ -232,3 +232,16 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6; signature/
   alignment/package/version/SDK and prior signer equality checked. Authorized
   merge and native publication follow; no independent self-review claimed.
+
+- 2026-11-18 — **ChatGPT Codex** — Completed #21 at Rick's explicit instruction
+  on main/build/publish. Foundation #20 merged at 0bd0077; implementation #22 at
+  8a62d3d. Main app tree matches tested 7dc9763. Hosted publisher 44295156332
+  SUCCESS; v0.8.0 confirmed latest regular, native FlipRSS.apk/checksum/metadata
+  attached. All eight releases' APK digests match manifest; downloaded v0.8.0
+  (13,283,547 bytes) SHA-256 39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6
+  verified. Closed #19/#21, records/README updated, claims cleared. All 64 JVM tests
+  per debug/release pass, both builds/lint (0 errors, 1 existing warning), device
+  compilation, 5 publisher tests/actionlint pass. Live pages parsed 114/454 public
+  links; no actual phone/installer/audio/account-write tests or independent review
+  claimed. Source/binary histories/signing key preserved. Final records-only merge
+  authorized by Rick, no additional app change.

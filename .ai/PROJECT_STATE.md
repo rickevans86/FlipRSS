@@ -1,90 +1,50 @@
 # PROJECT_STATE
 
-## Main and release
+## Main / current release
 
-Rick explicitly authorized all merges and native APK publication on 2026-11-18.
-ChatGPT Codex merged #7/#9/#11/#13/#15 sequentially, then publisher follow-up #17.
-Main application includes FreshRSS, local RSS/Atom and offline text/read/saved
-persistence, subscriptions/settings/categories, article TTS, Saved/read fixes and
-GitHub updater. Main publisher code at 12b2587 uses GitHub-hosted Ubuntu; Android
-build CI remains Windows SelfHosted. Final shared-record follow-up contains no
-app code changes. No independent self-review claimed.
+Rick explicitly authorized the agreed next update on main, build and publication.
+ChatGPT Codex merged OLED/search foundation #20 (0bd0077) and source/discovery
+implementation #22 (8a62d3d). Current app source
+7dc97632646dcec2ae6c3ed29a2c41e8eb529991 has identical app tree to main:
+58c84fec2d2045cd16132215f33fa93e263eb61f. No independent review claimed.
 
-Latest regular release v0.6.0, versionCode 6, Android 8+:
-https://github.com/rickevans86/FlipRSS/releases/tag/v0.6.0
-https://github.com/rickevans86/FlipRSS/releases/download/v0.6.0/FlipRSS.apk
-13,234,395 bytes; SHA-256:
-`ddf8033b0f01af9512887b4c8ce38ac06738afc54c705cee57b1a0de4600acf4`.
-Existing test signing identity retained for upgrade compatibility; production
-signing remains unconfigured, no signing key published.
+Regular/latest v0.8.0, versionCode 8, Android 8+, signed non-debuggable release:
+https://github.com/rickevans86/FlipRSS/releases/tag/v0.8.0
+https://github.com/rickevans86/FlipRSS/releases/download/v0.8.0/FlipRSS.apk
+13,283,547 bytes; SHA-256:
+`39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6`.
+Same test identity as previous builds; production signing remains unconfigured.
+Artifact 04a95a49389528f5c897bc9c8b0d21fad638bbc9 on codex/21-release-download
+remains immutable/separate. Never merge binary branches or upload signing keys.
 
-## Native asset publishing verified
+## Current behavior
 
-GitHub-hosted action 44254047153 completed SUCCESS. All six releases v0.1–v0.6
-have native FlipRSS.apk, SHA256SUMS.txt and build-info.json assets. Every APK asset
-digest matches .release/previews.json. Downloaded v0.6.0 native release APK bytes
-and verified SHA-256. In-app updater's stable-release metadata and APK endpoints
-are now available. Direct session upload still HTTP 401; hosted GITHUB_TOKEN
-resolved publication without using SelfHosted hardware or exposing signing keys.
-Superseded queued publication jobs cancelled.
+FreshRSS and FlipRSS tabs keep independent server/local sources concurrently.
+Saved combines both, includes read bookmarks, and routes writes to their owner.
+Topics removed; category chips retained. + only FreshRSS. Search always adds local.
+Local feed manager supports selectable/open/copy URL and explicit account-confirmed
+Add to FreshRSS, preserving local subscription/read/saved data.
 
-## Source and validation
+Default-off Mark as read on scroll marks previously observed cards passed above
+the top in source pages only. Reader auto-read separate. Search updates Feeder/
+Feedspot public lists daily on foreground opening when enabled plus manual refresh,
+with atomic per-source cache/dedup/failure retention/bundled fallback/attribution.
+Website/feed URL discovery validates direct XML, alternate/RSS/icon links/common
+paths, including blocked-homepage fallback. OLED/Search-disable remain.
 
-Release app source de926519c5f44c3c8f3f19553bcab78ffafb98fd is an ancestor of main.
-App tree 9c47d258bfb8cffd02ad0e8d83f2befe848a847d is identical on main and tested
-source. Existing immutable artifact 3cd57a6 remains separate; binary branches
-are never merged. 49 JVM tests passed in each debug/release variant, both builds/
-lint passed (0 errors, 1 existing warning), instrumentation compiled. Five
-publisher tests/actionlint passed, hosted publication action succeeded. Actual
-phone/installer/audio/live-account execution not run; Windows Android CI still
-queued and no remote Android test success claimed. Existing caching/TTS/signing
-limits remain documented in README. Issues #4/#6/#8/#10/#12/#14/#16 closed after
-Rick-authorized merges and confirmed native publication.
+## Verification / limits
 
-## OLED and feed search — #19 / PR #20 (review branch, not merged)
+64 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
+1 existing KTX warning); instrumentation compiles only. Five publisher tests and
+actionlint pass. Compiled production parsers extracted 114 Feeder/454 Feedspot
+public URLs from current pages; both sources HTTP 200 with app headers. Not every
+feed target probed, subscription validates. Actual phone/installer/audio/live-
+account-write tests NOT RUN. Remote Android CI success not claimed.
 
-AI: ChatGPT Codex. codex/19-oled-feed-search from main e090d0a; app source
-6f0ba16692077e2e93d0a218d8524b8128d6d524. Adds persistent OLED palette with pure
-black background/neutral surfaces/system bars and no elevation tint/navigation
-contrast scrim. Light/Dark/System remain. Settings chips wrap for small screens.
-Search tab has 15 curated well-known RSS/Atom feeds, local word/topic filtering
-and active-source add confirmation with prefilled URL. Demo/expired-account source
-selection preserves candidate. Show feed search defaults on; disabling hides tab
-and returns from Search to Today, without changing subscriptions.
-
-54 JVM tests pass per debug/release variant; both builds/lint pass (0 errors,
-1 existing warning), instrumentation compiles. All 15 included feed URLs returned
-HTTP 200 with RSS/Atom roots. Five publisher tests/actionlint pass. No actual
-phone/OLED-system-bar/UI/real-account tests.
-
-Review prerelease v0.7.0-preview, APK version 0.7.0 / versionCode 7, existing test
-signer matches v0.6. Source awaits independent reviewer/main merge; main stable
-code remains v0.6. No new merge authorization assumed from completed #16. Hosted
-publication 44256865471 succeeded; FlipRSS.apk, checksum/build-info attached.
-Downloaded native APK verified: 13,250,779 bytes; SHA-256
-a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18.
-https://github.com/rickevans86/FlipRSS/releases/tag/v0.7.0-preview
-Artifact 68fc7e2 / codex/19-discovery-download (never merge).
-
-## Next update #21 — source tabs, Saved, scroll read and live discovery
-
-Rick explicitly authorized implementing on main, building and publishing. Codex
-merged foundation #20 at 0bd0077. New source 7dc9763 / codex/21-source-tabs adds
-simultaneous local/FreshRSS controllers, FreshRSS/FlipRSS/Search/Saved (no Topics),
-combined bookmarks with owner-routed read/star, + only FreshRSS, Search-to-local,
-local URL menus/confirmed server subscription, optional default-off scroll read.
-Directory has daily/manual per-source cache/import from supplied Feeder/Feedspot
-pages, and bounded site/direct-feed discovery via XML/HTML links/common paths.
-OLED and Search-disable preserved. Existing files/session/data retained.
-
-64 JVM tests pass per debug/release variant, both builds/lint pass (0 errors,
-1 existing warning); instrumentation compiles. Five publisher tests/actionlint
-pass. Real-page parsers extracted 114/454 source links; both URLs returned HTTP
-200 using production request headers. No phone/installer/audio/account writes
-performed. App source awaits authorized feature PR merge/publication.
-
-v0.8.0 APK code 8, Android 8+, signed release/non-debuggable, same signer as v0.6.
-Artifact 04a95a4 / codex/21-release-download, 13,283,547 bytes, SHA-256
-39e89edc9e63ae0bd6c4b9f3a173b63a99c7013674cf94f8833eb26001bccaf6.
-Native publication pending after main merge/hosted action. Production signer
-unconfigured, binary branches never merge. No independent review claimed.
+Hosted publication 44295156332 SUCCESS. All eight releases have native FlipRSS.apk,
+SHA256SUMS.txt and build-info.json; all APK digests match manifest. Downloaded
+v0.8.0 native bytes and verified SHA-256; latest endpoint confirms regular v0.8.0.
+#19/#21 closed, no implementation/publication blocker. Source format/access may
+change; bounded best-effort discovery, no periodic OS worker. Remote cache/Saved
+is in-memory/paged; local cache retains 500/feed plus saved. Existing TTS/renderer/
+signing limitations remain in README. Rick performs phone validation.
