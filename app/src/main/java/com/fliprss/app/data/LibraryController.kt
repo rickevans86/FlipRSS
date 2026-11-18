@@ -317,6 +317,14 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         }
     }
 
+    /** Both page shortcuts use this policy; capture the same scope/cutoff before any action. */
+    fun requestMarkAllRead(): MarkReadTarget? {
+        val target = markReadTarget()
+        if (mutable.value.settings.confirmMarkAllRead) return target
+        markAllRead(target)
+        return null
+    }
+
     fun markReadTarget(): MarkReadTarget {
         val value = mutable.value
         val title = if (value.scope.savedOnly) "Saved stories" else

@@ -359,3 +359,12 @@ https://github.com/rickevans86/FlipRSS/releases/download/v0.9.0/FlipRSS.apk
 Both builds/lint and 73 unit tests per variant passed. Hosted publication
 44300897612 succeeded; downloaded native APK and all nine release APK hashes
 verified. Actual phone/audio/naturalness testing remains for Preview voice.
+
+## Bulk-read footer (#29)
+
+FreshRSS and FlipRSS each have **Mark all read** after the loaded stories and
+Load more control. It applies to the current source/category, including unloaded
+stories, using the same captured scope, arrival cutoff and busy guards as the top
+button. Saved and Search do not offer bulk read. Settings → **Confirm mark all
+read** defaults on; switch it off to apply either button immediately. The choice
+persists across restarts.

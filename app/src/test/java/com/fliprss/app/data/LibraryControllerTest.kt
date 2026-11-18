@@ -366,4 +366,38 @@ class LibraryControllerTest {
         controller.updateSettings(AppSettings(hideRead = true)); controller.selectScope(LibraryScope(savedOnly = true))
         assertEquals(listOf(id), controller.state.value.visibleArticles.map { it.id })
     }
+    @Test fun bulkRequestWaitsForConfirmationByDefault() = runTest {
+        val repository = FakeRepository(story)
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs(), nowMillis = {123L})
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        controller.selectScope(LibraryScope("feed/1")); advanceUntilIdle()
+        val target = controller.requestMarkAllRead()
+        assertTrue(AppSettings().confirmMarkAllRead); assertNotNull(target)
+        advanceUntilIdle(); assertTrue(repository.bulkRequests.isEmpty())
+        controller.markAllRead(target!!); advanceUntilIdle()
+        assertEquals(listOf("feed/1" to 123_000L), repository.bulkRequests)
+    }
+    @Test fun disablingConfirmationAppliesCapturedScopeImmediatelyAndPersists() = runTest {
+        val repository = FakeRepository(story); val settings = MemorySettingsStore()
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs(), settings, nowMillis = {456L})
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        controller.updateSettings(controller.state.value.settings.copy(confirmMarkAllRead = false))
+        controller.selectScope(LibraryScope("feed/1")); advanceUntilIdle()
+        assertNull(controller.requestMarkAllRead()); advanceUntilIdle()
+        assertEquals(listOf("feed/1" to 456_000L), repository.bulkRequests)
+        assertTrue(repository.readWrites.isEmpty()); assertTrue(story.id in controller.state.value.readIds)
+        assertFalse(settings.load().confirmMarkAllRead)
+        val restored = LibraryController(this, Connector(emptyMap()), SavedSession(), DemoPrefs(), settings)
+        advanceUntilIdle(); assertFalse(restored.state.value.settings.confirmMarkAllRead)
+    }
+    @Test fun immediateBulkStillBlocksDuplicateBusyRequests() = runTest {
+        val gate = CompletableDeferred<Unit>(); val repository = FakeRepository(story).apply { bulkGate = gate }
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        controller.updateSettings(controller.state.value.settings.copy(confirmMarkAllRead = false))
+        controller.requestMarkAllRead(); runCurrent()
+        assertTrue(controller.state.value.markingAll)
+        controller.requestMarkAllRead(); runCurrent(); assertEquals(1, repository.bulkRequests.size)
+        gate.complete(Unit); advanceUntilIdle()
+    }
 }
