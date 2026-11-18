@@ -41,7 +41,7 @@ queued and no remote Android test success claimed. Existing caching/TTS/signing
 limits remain documented in README. Issues #4/#6/#8/#10/#12/#14/#16 closed after
 Rick-authorized merges and confirmed native publication.
 
-## OLED and feed search — #19 (review branch, not merged)
+## OLED and feed search — #19 / PR #20 (review branch, not merged)
 
 AI: ChatGPT Codex. codex/19-oled-feed-search from main e090d0a; app source
 6f0ba16692077e2e93d0a218d8524b8128d6d524. Adds persistent OLED palette with pure

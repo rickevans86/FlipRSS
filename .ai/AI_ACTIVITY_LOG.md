@@ -212,3 +212,8 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   SHA-256 a3b428e3958b52fc6ad0a7a06539dddc8798c89a2470fa0f7a19cdbb8cbf5f18,
   artifact 68fc7e2. Source awaits Rick-selected independent review/main merge; no
   new main merge performed or independent self-review claimed.
+
+- 2026-11-18 — **ChatGPT Codex** — Opened PR #20 for #19 (base main) and
+  confirmed review status. Native v0.7.0-preview APK bytes/hash and hosted
+  publisher success verified. Updated handoff/project/task board with PR refs.
+  No new main merge; Rick selects independent reviewer and validates on phone.

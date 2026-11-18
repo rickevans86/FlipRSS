@@ -17,7 +17,7 @@ subscriptions without confirmation and no third-party search requests.
 SettingsDialog, AddFeedDialog, AppSettings/AndroidSettingsStore, version/tests,
 README, release manifest and all six .ai records.
 **Branch/PR:** codex/19-oled-feed-search from main e090d0a. App implementation
-6f0ba16692077e2e93d0a218d8524b8128d6d524. PR to open after records update, base
+6f0ba16692077e2e93d0a218d8524b8128d6d524. [PR #20](https://github.com/rickevans86/FlipRSS/pull/20) open; #19 status:review, base
 main. Rick selects independent reviewer/merges. Earlier #16 merge authorization
 was completed; no new main merge performed for #19. Main retains all prior v0.6
 features and hosted publisher, no other AI changes/claims found this session.
