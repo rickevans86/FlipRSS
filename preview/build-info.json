@@ -1,0 +1,28 @@
+{
+  "version": "0.4.0-speech-preview",
+  "version_code": 4,
+  "source_commit": "4b0dd2852137d5a312121e1de9885175d29da4b8",
+  "variant": "release",
+  "debuggable": false,
+  "signing": "Existing prototype test identity; production signing not configured",
+  "sha256": "81bf3914680dc07e028a1800da819b8ad561a4538f8f2ab9544a2740b494ee8d",
+  "size_bytes": 13217955,
+  "unit_tests_each_variant": 31,
+  "lint": {
+    "debug": {
+      "errors": 0,
+      "warnings": 1
+    },
+    "release": {
+      "errors": 0,
+      "warnings": 1
+    }
+  },
+  "device_audio_and_real_account_tests": "Not run; instrumentation APK compiled",
+  "ai": "ChatGPT Codex",
+  "task": "#10",
+  "depends_on_prs": [
+    7,
+    9
+  ]
+}
