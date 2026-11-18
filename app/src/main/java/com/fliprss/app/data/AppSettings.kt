@@ -1,0 +1,26 @@
+package com.fliprss.app.data
+
+enum class AppTheme { SYSTEM, LIGHT, DARK }
+data class AppSettings(
+    val theme: AppTheme = AppTheme.SYSTEM,
+    val readerTextSize: Int = 19,
+    val autoMarkRead: Boolean = true,
+    val showImages: Boolean = true,
+    val hideRead: Boolean = false,
+) {
+    fun normalized() = copy(readerTextSize = readerTextSize.coerceIn(16, 26))
+}
+interface SettingsStore {
+    fun load(): AppSettings
+    fun save(settings: AppSettings)
+}
+class MemorySettingsStore : SettingsStore {
+    private var value = AppSettings()
+    override fun load() = value
+    override fun save(settings: AppSettings) { value = settings.normalized() }
+}
+/** Captured when confirmation opens: later navigation/account changes cannot widen its scope. */
+class MarkReadTarget internal constructor(
+    val stream: String, val title: String, val cutoffMicros: Long,
+    internal val accountGeneration: Int, internal val knownIds: Set<String>,
+)

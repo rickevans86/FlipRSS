@@ -27,13 +27,21 @@ data class LibraryState(
     val loading: Boolean = false, val loadingMore: Boolean = false, val continuation: String? = null,
     val unread: Int? = null, val error: String? = null, val loginError: String? = null,
     val pending: Set<MutationKey> = emptySet(),
-)
+    val settings: AppSettings = AppSettings(),
+    val addingFeed: Boolean = false, val feedError: String? = null, val feedAddedRevision: Int = 0,
+    val markingAll: Boolean = false, val notice: String? = null,
+) {
+    val visibleArticles: List<Article> get() = if (settings.hideRead) articles.filterNot { it.id in readIds } else articles
+}
 
 /** Owns async/account boundaries independently of Android, allowing race and rollback tests. */
 class LibraryController(private val scope: CoroutineScope, private val connector: FreshRssConnector,
-    private val sessions: SessionStore, private val demoPreferences: DemoPreferences) {
-    private val mutable = MutableStateFlow(LibraryState().let {
-        val demo = demoPreferences.load(); it.copy(savedIds = demo.saved, readIds = demo.read)
+    private val sessions: SessionStore, private val demoPreferences: DemoPreferences,
+    private val settingsStore: SettingsStore = MemorySettingsStore(),
+    private val nowMillis: () -> Long = System::currentTimeMillis) {
+    private val mutable = MutableStateFlow(LibraryState(settings = settingsStore.load().normalized()).let {
+        val demo = demoPreferences.load()
+        it.copy(savedIds = demo.saved, readIds = demo.read, scope = LibraryScope(unreadOnly = it.settings.hideRead))
     })
     val state: StateFlow<LibraryState> = mutable.asStateFlow()
     private var repository: FreshRssRepository? = null
@@ -42,6 +50,8 @@ class LibraryController(private val scope: CoroutineScope, private val connector
     private var requestNumber = 0
     private var loadJob: Job? = null
     private var accountJob: Job? = null
+    private var addJob: Job? = null
+    private var bulkJob: Job? = null
     private val sessionMutex = Mutex()
     private val writes = mutableMapOf<MutationKey, Job>()
     private val cache = mutableMapOf<String, Article>()
@@ -83,11 +93,13 @@ class LibraryController(private val scope: CoroutineScope, private val connector
 
     private fun install(session: FreshRssSession) {
         generation++
-        loadJob?.cancel(); writes.values.toList().forEach(Job::cancel); writes.clear()
+        loadJob?.cancel(); addJob?.cancel(); bulkJob?.cancel()
+        writes.values.toList().forEach(Job::cancel); writes.clear()
         repository = connector.repository(session)
         cache.clear(); readRevision.clear(); starRevision.clear(); revision = 0
-        mutable.value = LibraryState(demo = false, restoring = false,
-            account = Account(session.endpoint, session.username, session.allowHttp),
+        val settings = mutable.value.settings
+        mutable.value = LibraryState(demo = false, restoring = false, settings = settings,
+            scope = LibraryScope(unreadOnly = settings.hideRead), account = Account(session.endpoint, session.username, session.allowHttp),
             accountRevision = mutable.value.accountRevision + 1, articles = emptyList(), sections = emptyList())
         refresh()
     }
@@ -102,10 +114,13 @@ class LibraryController(private val scope: CoroutineScope, private val connector
                 sessionMutex.withLock { if (attempt == accountAttempt) sessions.clear() }
                 if (attempt == accountAttempt) {
                     generation++
-                    loadJob?.cancel(); writes.values.toList().forEach(Job::cancel); writes.clear()
+                    loadJob?.cancel(); addJob?.cancel(); bulkJob?.cancel()
+                    writes.values.toList().forEach(Job::cancel); writes.clear()
                     repository = null; cache.clear(); readRevision.clear(); starRevision.clear()
                     val demo = demoPreferences.load()
-                    mutable.value = LibraryState(restoring = false, savedIds = demo.saved, readIds = demo.read,
+                    val settings = mutable.value.settings
+                    mutable.value = LibraryState(restoring = false, settings = settings,
+                        scope = LibraryScope(unreadOnly = settings.hideRead), savedIds = demo.saved, readIds = demo.read,
                         accountRevision = mutable.value.accountRevision + 1)
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
@@ -116,7 +131,8 @@ class LibraryController(private val scope: CoroutineScope, private val connector
 
     fun selectScope(value: LibraryScope) {
         val section = value.sectionId?.takeIf { id -> mutable.value.sections.any { it.id == id } }
-        val selection = value.copy(sectionId = if (!mutable.value.demo && value.savedOnly) null else section)
+        val selection = value.copy(sectionId = if (!mutable.value.demo && value.savedOnly) null else section,
+            unreadOnly = mutable.value.settings.hideRead)
         if (selection == mutable.value.scope) return
         loadJob?.cancel()
         mutable.update { it.copy(scope = selection, articles = emptyList(), continuation = null, loadingMore = false, error = null) }
@@ -126,6 +142,15 @@ class LibraryController(private val scope: CoroutineScope, private val connector
     fun refresh() { if (!mutable.value.demo) load(reset = true, catalogue = true) else updateDemo() }
     fun loadMore() { if (!mutable.value.demo && mutable.value.continuation != null && !mutable.value.loading && !mutable.value.loadingMore) load(false, false) }
     fun dismissError() { mutable.update { it.copy(error = null) } }
+    fun dismissNotice() { mutable.update { it.copy(notice = null) } }
+    fun clearFeedError() { mutable.update { it.copy(feedError = null) } }
+    fun updateSettings(value: AppSettings) {
+        val settings = value.normalized()
+        val changedFilter = settings.hideRead != mutable.value.settings.hideRead
+        settingsStore.save(settings)
+        mutable.update { it.copy(settings = settings) }
+        if (changedFilter) selectScope(mutable.value.scope.copy(unreadOnly = settings.hideRead))
+    }
     fun findArticle(id: String): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.id == id } else cache[id]
     fun cover(section: Section): Article? = if (mutable.value.demo) DemoLibrary.articles.find { it.topic == section.id }
         else cache.values.firstOrNull { it.feedId == section.id || section.id in it.topicIds }
@@ -142,7 +167,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         loadJob = scope.launch {
             try {
                 val categories = if (catalogue) client.catalogue() else null
-                val page = client.page(selection.stream, cursor)
+                val page = client.page(selection.stream, cursor, selection.unreadOnly)
                 if (current != generation || request != requestNumber) return@launch
                 page.articles.forEach { cache[it.id] = it }
                 mutable.update { old ->
@@ -177,6 +202,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
 
     private fun mutate(id: String, read: Boolean, enabled: Boolean) {
         val old = mutable.value
+        if (old.markingAll) return
         val previous = id in if (read) old.readIds else old.savedIds
         if (previous == enabled || findArticle(id) == null) return
         if (old.demo) {
@@ -210,6 +236,77 @@ class LibraryController(private val scope: CoroutineScope, private val connector
             }
         }
         writes[key] = job; job.start()
+    }
+
+    fun addFeed(url: String) {
+        val old = mutable.value
+        val client = repository
+        if (old.demo || client == null || old.sessionExpired) {
+            mutable.update { it.copy(feedError = "Sign in to FreshRSS before adding a feed.") }; return
+        }
+        if (old.addingFeed || old.markingAll) return
+        val current = generation
+        mutable.update { it.copy(addingFeed = true, feedError = null, notice = null) }
+        addJob = scope.launch {
+            try {
+                client.addFeed(url)
+                if (current == generation) {
+                    mutable.update { it.copy(addingFeed = false, feedAddedRevision = it.feedAddedRevision + 1,
+                        notice = "Feed added to FreshRSS.") }
+                    refresh()
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (current == generation) mutable.update { it.copy(addingFeed = false,
+                    sessionExpired = it.sessionExpired || (failure is FreshRssProblem && failure.signInRequired),
+                    feedError = message(failure) + if (failure is IOException) " Refresh feeds before retrying to check whether it was added." else "") }
+            }
+        }
+    }
+
+    fun markReadTarget(): MarkReadTarget {
+        val value = mutable.value
+        val title = if (value.scope.savedOnly) "Saved stories" else
+            value.sections.find { it.id == value.scope.sectionId }?.title ?: "All stories"
+        return MarkReadTarget(value.scope.stream, title, nowMillis() * 1_000L, generation,
+            value.articles.map { it.id }.toSet())
+    }
+
+    fun markAllRead(target: MarkReadTarget) {
+        val old = mutable.value
+        if (target.accountGeneration != generation) {
+            mutable.update { it.copy(error = "The account changed. Open mark all read again.") }; return
+        }
+        if (old.markingAll || old.addingFeed || old.loading || old.loadingMore || old.connecting || old.pending.isNotEmpty()) {
+            mutable.update { it.copy(error = "Wait for current changes to finish, then try again.") }; return
+        }
+        if (old.demo) {
+            val ids = DemoLibrary.articles.map { it.id }.toSet()
+            // Use the confirmed snapshot, not the subsequently selected scope.
+            mutable.update { it.copy(readIds = it.readIds + target.knownIds.intersect(ids), notice = "Marked ${target.title} as read.") }
+            demoPreferences.save(DemoReadingState(mutable.value.savedIds, mutable.value.readIds))
+            return
+        }
+        val client = repository ?: return
+        if (old.sessionExpired) { mutable.update { it.copy(error = "Your session has expired. Sign in again.") }; return }
+        val current = generation
+        mutable.update { it.copy(markingAll = true, error = null, notice = null) }
+        bulkJob = scope.launch {
+            try {
+                client.markAllRead(target.stream, target.cutoffMicros)
+                if (current == generation) {
+                    target.knownIds.forEach { readRevision[it] = ++revision }
+                    mutable.update { it.copy(markingAll = false, readIds = it.readIds + target.knownIds,
+                        notice = "Marked ${target.title} as read.") }
+                    refresh()
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (failure: Exception) {
+                if (current == generation) mutable.update { it.copy(markingAll = false,
+                    sessionExpired = it.sessionExpired || (failure is FreshRssProblem && failure.signInRequired),
+                    error = message(failure) + " Refresh to check the server state.") }
+            }
+        }
     }
 
     private fun updateFlag(id: String, read: Boolean, enabled: Boolean) {

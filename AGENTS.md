@@ -21,7 +21,8 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
   Room (offline cache, planned), optional Hilt (DI, deferred).
 - **Backend API:** FreshRSS "GReader" API at `<instance>/api/greader.php` —
   `ClientLogin` for the auth token, `subscription/list`, `tag/list`,
-  `stream/contents/{streamId}`, `unread-count`, `edit-tag` (mark read/starred).
+  `stream/contents/{streamId}`, `unread-count`, `edit-tag` (mark read/starred),
+  `subscription/quickadd` (subscribe) and `mark-all-as-read` (scoped bulk read).
   The instance is reachable over the public internet, so a native HTTP client
   talks to it directly (no CORS layer needed).
 - **Install:** Open the project in Android Studio and let Gradle sync, or
@@ -31,7 +32,8 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 - **Lint / format:** `./gradlew lint`; code style via ktlint/detekt if added.
 
 > Status: #2 added the offline prototype; #6 adds FreshRSS authentication,
-> catalogue/article loading, pagination and read/star synchronization. Live article
+> catalogue/article loading, pagination and read/star synchronization. #8 adds
+> subscriptions, persistent reading/appearance settings and scoped bulk read. Live article
 > caching remains in memory; Room and background sync are not implemented. Build
 > with JDK 17+ and Android SDK 35. See README.md for setup and validation.
 

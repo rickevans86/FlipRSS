@@ -83,8 +83,8 @@ internal class GReaderRepository(private val api: GReaderApi, private val sessio
             feed = true, unread = counts[it.id]) }, counts[READING_LIST])
     }
 
-    override suspend fun page(stream: String, continuation: String?): ArticlePage {
-        val response = api.contents(auth, FreshRssEndpoint.streamPath(stream), continuation).data()
+    override suspend fun page(stream: String, continuation: String?, unreadOnly: Boolean): ArticlePage {
+        val response = api.contents(auth, FreshRssEndpoint.streamPath(stream), continuation, READ.takeIf { unreadOnly }).data()
         val feeds = subscriptions
         return withContext(Dispatchers.Default) {
             ArticlePage(response.items.orEmpty().mapNotNull { ArticleMapper.map(it, feeds, session.endpoint) }
@@ -103,15 +103,39 @@ internal class GReaderRepository(private val api: GReaderApi, private val sessio
         }
     }
 
-    private suspend fun edit(id: String, tag: String, enabled: Boolean) {
-        suspend fun send(value: String) = api.edit(auth, value, id, tag.takeIf { enabled }, tag.takeUnless { enabled })
+    private suspend fun <T> authenticatedWrite(send: suspend (String) -> Response<T>): Response<T> {
         var response = send(token())
         if (response.code() == 403) {
             response.errorBody()?.close()
             response = send(token(force = true))
         }
+        return response
+    }
+
+    private suspend fun edit(id: String, tag: String, enabled: Boolean) {
+        val response = authenticatedWrite { api.edit(auth, it, id, tag.takeIf { enabled }, tag.takeUnless { enabled }) }
         if (response.text().trim() != "OK") throw FreshRssProblem("The server did not confirm the change. Refresh to check its state.")
     }
+
+    override suspend fun addFeed(url: String): String {
+        val parsed = url.trim().toHttpUrlOrNull()
+            ?: throw FreshRssProblem("Enter a valid HTTP or HTTPS feed URL.")
+        if (parsed.username.isNotEmpty() || parsed.password.isNotEmpty()) {
+            throw FreshRssProblem("Feed URLs with embedded usernames or passwords are not supported.")
+        }
+        val normalized = parsed.newBuilder().fragment(null).build().toString()
+        val result = authenticatedWrite { api.addFeed(auth, it, normalized) }.data()
+        return result.streamId?.takeIf { result.numResults == 1 && it.startsWith("feed/") && it.length > 5 }
+            ?: throw FreshRssProblem("FreshRSS could not add a feed at that URL. Check the address or whether it is already subscribed.")
+    }
+
+    override suspend fun markAllRead(stream: String, cutoffMicros: Long) {
+        FreshRssEndpoint.streamPath(stream) // Validate scope before any server mutation.
+        if (cutoffMicros <= 0) throw FreshRssProblem("Could not determine the read cutoff. Refresh and try again.")
+        val response = authenticatedWrite { api.markAllRead(auth, it, stream, cutoffMicros.toString()) }
+        if (response.text().trim() != "OK") throw FreshRssProblem("The server did not confirm marking stories read. Refresh to check their state.")
+    }
+
 }
 
 private fun Response<*>.check(login: Boolean = false) {

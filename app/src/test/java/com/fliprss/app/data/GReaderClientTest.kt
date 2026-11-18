@@ -28,6 +28,8 @@ class GReaderClientTest {
                     path == "reader/api/0/tag/list" -> """{"tags":[{"id":"user/-/state/com.google/starred"},{"id":"user/-/label/Tech / AI"}]}"""
                     path == "reader/api/0/unread-count" -> """{"unreadcounts":[{"id":"user/-/label/Tech / AI","count":3},{"id":"user/-/state/com.google/reading-list","count":3}]}"""
                     path.startsWith("reader/api/0/stream/contents/") -> """{"items":[{"id":"tag:google.com,2005:reader/item/ffffffffffffffff","title":"Hello &amp; world","origin":{"streamId":"feed/1"},"categories":["user/-/state/com.google/read"],"canonical":[{"href":"article.html"}],"summary":{"content":"<p>Hello <b>reader</b>.</p><script>steal()</script><img src='../images/hero.jpg'>"}}],"continuation":"18446744073709551615"}"""
+                    path == "reader/api/0/subscription/quickadd" -> """{"numResults":1,"streamId":"feed/2"}"""
+                    path == "reader/api/0/mark-all-as-read" -> return MockResponse().setBody("OK\n")
                     path == "reader/api/0/token" -> return MockResponse().setBody("write-${tokens.incrementAndGet()}\n")
                     path == "reader/api/0/edit-tag" -> {
                         if (rejectFirstEdit && edits.incrementAndGet() == 1) return MockResponse().setResponseCode(403)
@@ -124,6 +126,53 @@ class GReaderClientTest {
         for (bad in listOf("http://example.org", "https://user:password@example.org", "https://example.org/?token=secret")) {
             try { FreshRssEndpoint.normalize(bad, false); fail("Accepted unsafe URL") } catch (_: FreshRssProblem) { }
         }
+    }
+
+
+    @Test fun hideReadIsSentToServerForEveryPage() = runBlocking {
+        val connector = GReaderConnector()
+        val repository = connector.repository(connector.login(server.url("/").toString(), "rick", "dummy", true))
+        repository.page(READING_LIST, null, unreadOnly = true)
+        repository.page(READING_LIST, "next", unreadOnly = true)
+        val requests = drain().filter { it.path!!.contains("stream/contents") }
+        assertEquals(2, requests.size)
+        requests.forEach { assertEquals(READ, it.requestUrl!!.queryParameter("xt")) }
+        assertEquals("next", requests.last().requestUrl!!.queryParameter("c"))
+    }
+
+    @Test fun subscribeAndBulkReadUseWriteTokensAndExactScopedCutoff() = runBlocking {
+        val connector = GReaderConnector()
+        val repository = connector.repository(connector.login(server.url("/").toString(), "rick", "dummy", true))
+        val feed = "https://feeds.example.org/rss?key=dummy-private"
+        assertEquals("feed/2", repository.addFeed(feed + "#ignored"))
+        repository.markAllRead("user/-/label/Tech / AI", 1_700_000_000_123_000L)
+        val requests = drain()
+        val add = requests.single { it.path!!.contains("quickadd") }
+        assertEquals("POST", add.method)
+        assertFalse(add.path!!.contains("dummy-private"))
+        assertEquals(feed, decodeForm(add)["quickadd"])
+        assertEquals("write-1", decodeForm(add)["T"])
+        val bulk = requests.single { it.path!!.contains("mark-all-as-read") }
+        assertEquals("GoogleLogin auth=test-auth", bulk.getHeader("Authorization"))
+        assertEquals("user/-/label/Tech / AI", decodeForm(bulk)["s"])
+        assertEquals("1700000000123000", decodeForm(bulk)["ts"])
+        assertEquals("write-1", decodeForm(bulk)["T"])
+    }
+
+    @Test fun rejectedSubscriptionNeverClaimsSuccessAndInvalidUrlSendsNothing() = runBlocking {
+        val connector = GReaderConnector()
+        val repository = connector.repository(connector.login(server.url("/").toString(), "rick", "dummy", true))
+        val before = server.requestCount
+        for (url in listOf("not-a-url", "https://user:secret@example.org/feed")) {
+            try { repository.addFeed(url); fail("Accepted invalid feed URL") } catch (_: FreshRssProblem) { }
+        }
+        assertEquals(before, server.requestCount)
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest) = if (request.path!!.contains("token")) MockResponse().setBody("test-write-token")
+                else MockResponse().setBody("""{"numResults":0,"error":"private server diagnostic"}""")
+        }
+        try { repository.addFeed("https://feeds.example.org/rss"); fail("Claimed rejected feed success") }
+        catch (failure: FreshRssProblem) { assertFalse(failure.message!!.contains("private server diagnostic")) }
     }
 
     private fun drain() = List(server.requestCount) { server.takeRequest(1, TimeUnit.SECONDS)!! }

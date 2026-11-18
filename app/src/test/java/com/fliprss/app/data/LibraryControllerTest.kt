@@ -29,16 +29,37 @@ class LibraryControllerTest {
         var pageFailure: Exception? = null
         var pageCall: (suspend (String?) -> ArticlePage)? = null
         val cursors = mutableListOf<String?>()
+        val unreadFilters = mutableListOf<Boolean>()
+        val added = mutableListOf<String>()
+        val bulkRequests = mutableListOf<Pair<String, Long>>()
+        var addFailure: Exception? = null
+        var addGate: CompletableDeferred<Unit>? = null
+        var bulkFailure: Exception? = null
+        var bulkGate: CompletableDeferred<Unit>? = null
+        var allRead = false
+        var catalogueCalls = 0
         val readWrites = mutableListOf<Boolean>()
-        override suspend fun catalogue() = Catalogue(listOf(Section("user/-/label/News", "News", unread = 2),
-            Section("feed/1", "Feed", feed = true, unread = 2)), 2)
-        override suspend fun page(stream: String, continuation: String?): ArticlePage {
-            cursors += continuation
+        override suspend fun catalogue(): Catalogue {
+            catalogueCalls++
+            val count = if (allRead) 0 else 2
+            return Catalogue(listOf(Section("user/-/label/News", "News", unread = count),
+                Section("feed/1", "Feed", feed = true, unread = count)), count)
+        }
+        override suspend fun page(stream: String, continuation: String?, unreadOnly: Boolean): ArticlePage {
+            cursors += continuation; unreadFilters += unreadOnly
             pageFailure?.let { throw it }
-            return pageCall?.invoke(continuation) ?: ArticlePage(listOf(article), null)
+            return pageCall?.invoke(continuation) ?: ArticlePage(
+                if (unreadOnly && allRead) emptyList() else listOf(article.copy(initiallyRead = allRead || article.initiallyRead)), null)
         }
         override suspend fun setRead(id: String, read: Boolean) { readGate?.await(); readFailure?.let { throw it }; readWrites += read }
         override suspend fun setStarred(id: String, starred: Boolean) { starFailure?.let { throw it } }
+        override suspend fun addFeed(url: String): String {
+            addGate?.await(); addFailure?.let { throw it }; added += url; return "feed/2"
+        }
+        override suspend fun markAllRead(stream: String, cutoffMicros: Long) {
+            bulkRequests += stream to cutoffMicros
+            bulkGate?.await(); bulkFailure?.let { throw it }; allRead = true
+        }
     }
     private class Connector(private val clients: Map<String, FreshRssRepository>) : FreshRssConnector {
         var logins = 0
@@ -179,6 +200,112 @@ class LibraryControllerTest {
         assertTrue(story.id in controller.state.value.readIds)
         assertTrue(controller.state.value.pending.isEmpty())
         assertNotNull(controller.state.value.loginError)
+    }
+
+    @Test fun hideReadUsesServerFilterAndHidesOptimisticReadsUntilRollback() = runTest {
+        val repository = FakeRepository(story)
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        controller.updateSettings(controller.state.value.settings.copy(hideRead = true)); advanceUntilIdle()
+        assertTrue(repository.unreadFilters.last())
+        repository.readFailure = FreshRssProblem("Write failed")
+        controller.setRead(story.id, true)
+        assertTrue(controller.state.value.visibleArticles.isEmpty())
+        advanceUntilIdle()
+        assertEquals(listOf(story), controller.state.value.visibleArticles)
+        controller.updateSettings(controller.state.value.settings.copy(hideRead = false)); advanceUntilIdle()
+        assertFalse(repository.unreadFilters.last())
+    }
+
+    @Test fun settingsPersistAndSurviveAccountChangesWithoutUnnecessaryRefresh() = runTest {
+        val repository = FakeRepository(story)
+        val settings = MemorySettingsStore()
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs(), settings)
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        val calls = repository.cursors.size
+        controller.updateSettings(AppSettings(theme = AppTheme.DARK, readerTextSize = 40, autoMarkRead = false, showImages = false))
+        assertEquals(calls, repository.cursors.size)
+        assertEquals(26, controller.state.value.settings.readerTextSize)
+        controller.signOut(); advanceUntilIdle()
+        assertEquals(AppTheme.DARK, controller.state.value.settings.theme)
+        assertFalse(controller.state.value.settings.autoMarkRead)
+        val restored = LibraryController(this, Connector(emptyMap()), SavedSession(), DemoPrefs(), settings)
+        advanceUntilIdle()
+        assertEquals(controller.state.value.settings, restored.state.value.settings)
+    }
+
+    @Test fun markAllReadCallsServerForCapturedScopeAndUnloadedItems() = runTest {
+        val repository = FakeRepository(story)
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs(),
+            nowMillis = { 1_700_000_000_123L })
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        controller.selectScope(LibraryScope("feed/1")); advanceUntilIdle()
+        val target = controller.markReadTarget()
+        controller.selectScope(LibraryScope()); advanceUntilIdle()
+        controller.markAllRead(target); advanceUntilIdle()
+        assertEquals(listOf("feed/1" to 1_700_000_000_123_000L), repository.bulkRequests)
+        assertTrue(repository.readWrites.isEmpty())
+        assertTrue(story.id in controller.state.value.readIds)
+        assertEquals(0, controller.state.value.unread)
+        assertNotNull(controller.state.value.notice)
+    }
+
+    @Test fun bulkFailureDoesNotClaimReadAndStaleAccountConfirmationIsRejected() = runTest {
+        val repository = FakeRepository(story).apply { bulkFailure = FreshRssProblem("Bulk failed") }
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        val target = controller.markReadTarget()
+        controller.markAllRead(target); advanceUntilIdle()
+        assertFalse(story.id in controller.state.value.readIds)
+        assertFalse(controller.state.value.markingAll)
+        assertNull(controller.state.value.notice)
+        controller.signOut(); advanceUntilIdle()
+        controller.markAllRead(target); advanceUntilIdle()
+        assertEquals(1, repository.bulkRequests.size)
+        assertNotNull(controller.state.value.error)
+    }
+
+    @Test fun addFeedRefreshesCatalogueOnlyAfterServerSuccessAndReportsFailure() = runTest {
+        val repository = FakeRepository(story)
+        val controller = LibraryController(this, Connector(mapOf("rick" to repository)), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.connect("https://example.org", "rick", "dummy", false); advanceUntilIdle()
+        val calls = repository.catalogueCalls
+        controller.addFeed("https://feeds.example.org/rss"); advanceUntilIdle()
+        assertEquals(listOf("https://feeds.example.org/rss"), repository.added)
+        assertEquals(calls + 1, repository.catalogueCalls)
+        assertEquals(1, controller.state.value.feedAddedRevision)
+        repository.addFailure = FreshRssProblem("Not a feed")
+        controller.addFeed("https://feeds.example.org/not-feed"); advanceUntilIdle()
+        assertEquals(1, controller.state.value.feedAddedRevision)
+        assertNotNull(controller.state.value.feedError)
+        assertFalse(controller.state.value.addingFeed)
+    }
+
+    @Test fun demoBulkUsesConfirmedSnapshotAndDoesNotContactServer() = runTest {
+        val controller = LibraryController(this, Connector(emptyMap()), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.selectScope(LibraryScope("Nature"))
+        val target = controller.markReadTarget()
+        controller.selectScope(LibraryScope("Design"))
+        controller.markAllRead(target); advanceUntilIdle()
+        assertEquals(DemoLibrary.articles.filter { it.topic == "Nature" }.map { it.id }.toSet(), controller.state.value.readIds)
+    }
+
+    @Test fun savedBulkRequestStaysStarredAndKeepsNewAccountUntouched() = runTest {
+        val first = FakeRepository(story.copy(initiallyStarred = true))
+        val second = FakeRepository(story.copy(id = "other-account"))
+        val gate = CompletableDeferred<Unit>()
+        first.bulkGate = gate
+        val controller = LibraryController(this, Connector(mapOf("first" to first, "second" to second)), SavedSession(), DemoPrefs())
+        advanceUntilIdle(); controller.connect("https://example.org", "first", "dummy", false); advanceUntilIdle()
+        controller.selectScope(LibraryScope(savedOnly = true)); advanceUntilIdle()
+        controller.markAllRead(controller.markReadTarget()); runCurrent()
+        assertEquals(STARRED, first.bulkRequests.single().first)
+        controller.connect("https://example.org", "second", "dummy", false); runCurrent()
+        gate.complete(Unit); advanceUntilIdle()
+        assertEquals("second", controller.state.value.account?.username)
+        assertFalse(controller.state.value.markingAll)
+        assertFalse("other-account" in controller.state.value.readIds)
+        assertNull(controller.state.value.notice)
     }
 
 }
