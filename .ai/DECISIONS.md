@@ -150,3 +150,14 @@ reorder earlier entries._
 - Saved scope ignores global hide-read in server paging and local visibility.
   Remove Hide read on Saved; retain global setting on Today. Remove page perspective
   heading/subtitle and account banner; account remains available via Settings.
+
+## 2026-11-18 — Rick-authorized merges and hosted release publishing (#16, Codex)
+
+- Rick's explicit "Merge all to main" instruction authorizes Codex to merge this
+  feature chain and necessary publication/record follow-up. Retarget stacked PRs
+  sequentially and use merge commits to preserve ancestry. No self-review claimed.
+- Keep binary branches unmerged. Existing signed v0.6.0 APK app source is identical
+  to merged app, so retain its immutable provenance/signature and release tag.
+- Run upload-only publication on GitHub-hosted Ubuntu, independent of queued
+  SelfHosted hardware. Repo is public. Retrieve immutable signed artifacts, verify
+  hashes and upload with scoped GITHUB_TOKEN; never transfer signing keystore.
