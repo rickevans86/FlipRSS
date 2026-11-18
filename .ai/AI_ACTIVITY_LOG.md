@@ -254,3 +254,16 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   verified 453 URLs/449 titles, one NBC News, WordPress correct. No physical UI/
   audio/account checks. Merge and combined publication with added #25 speech
   request follow; no APK publication or independent self-review claimed here.
+
+- 2026-11-18 — **ChatGPT Codex** — #25 natural speech request while #24 fix
+  active. Merged Search correction #26 at 2b9525c. Added quality-ranked Android
+  engine/voice selection, explicit online opt-in, preview, rate/pitch persistence
+  and reader/settings entry points; source b1fb05f. Files speech/profile/controller/
+  UI/settings/tests/version, README/release manifest/six records. 73 JVM tests
+  pass per debug/release, build/lint pass (0 errors, 1 existing warning), device
+  tests compile only. Five publisher tests/actionlint pass. No audible/phone/
+  naturalness/account checks. Optional cloud preference unanswered; announced
+  Android default used, no API key/account. APK artifact a166595, 13,299,931 bytes,
+  SHA-256 823aba453b4923c0dbbb906349e36de510739902fa41c553dc3d462dd683fda4;
+  signing/alignment/version/SDK/signer equality checked. Combined regular v0.9.0
+  merge/publication follows; no native upload or independent review claimed yet.

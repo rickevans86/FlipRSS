@@ -2,8 +2,7 @@
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-| SpeechOptions, ArticleSpeech, speech UI/settings/tests/version, README, .release/**, .ai/** | #25 natural speech | Codex | codex/25-natural-speech |
 
-#24 implementation complete; PR correction pending merge. #25 speech is next,
-not yet modifying app files. Both assigned to Codex. No other active claims.
-Never merge binary download branches.
+#24 correction merged (#26); #25 implementation complete on codex/25-natural-speech,
+merge/publication pending. No other implementation claims. Check PR before edits.
+Never merge binary artifact branches.
