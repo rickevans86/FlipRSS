@@ -370,6 +370,7 @@ private val Red = Color(0xFFB83224)
     val pager = rememberPagerState(initialPage = initialPage.coerceIn(articles.indices)) { articles.size }
     val scope = rememberCoroutineScope()
     val speech = rememberArticleSpeech(articles[pager.currentPage].id, state.settings.speech)
+    ReadingScreenAwake(speech.playing)
     val articleContent by library.articleContent.state.collectAsStateWithLifecycle()
     val currentArticle = articleContent.display(articles[pager.currentPage])
     LaunchedEffect(articles[pager.currentPage].contentKey(), state.settings.autoLoadFullArticles) {
