@@ -2,6 +2,4 @@
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-
-No active claims. #37 completed, #38 merged; native v0.11.0 verified.
-Check live GitHub before new work. Never merge binary artifact branches.
+| app owned rendered-reader bridge/loader/reader/browser/controller/tests/version, README.md, .release/**, .ai/** | #40 browser/BPC text in reader | Codex | codex/40-rendered-reader |
