@@ -322,3 +322,7 @@ reorder earlier entries._
   signing/data compatibility, and state add-on OFF-by-default enable instructions.
 - Do not infer browser/site-specific extension runtime success from JVM/build/
   native-byte checks. Device validation remains an explicit next action.
+
+## 2026-11-19 — Rendered page is the bridge between browser and reader (#40, Codex)
+
+Use a separately owned native-messaging extension, not changes to BPC. Capture visible rendered article DOM with origin/story/session/nonce bounds and cleanup; respect existing add-on enable state. Retain static/feed fallback; explicit Read in app transfers bounded in-process matching-article token data. Automatic real-viewport renderer lives behind reader. Future reader-bridge changes require manifest version bump beyond1.0.0. Static metadata restrictions remain; browser capture excludes hidden script article data. Physical site-specific behavior needs device verification.

@@ -5,6 +5,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -371,15 +373,35 @@ private val Red = Color(0xFFB83224)
     val scope = rememberCoroutineScope()
     val speech = rememberArticleSpeech(articles[pager.currentPage].id, state.settings.speech)
     ReadingScreenAwake(speech.playing)
+    com.fliprss.app.browser.ReaderBrowserLifecycle(library.browserText)
     val articleContent by library.articleContent.state.collectAsStateWithLifecycle()
     val currentArticle = articleContent.display(articles[pager.currentPage])
-    LaunchedEffect(articles[pager.currentPage].contentKey(), state.settings.autoLoadFullArticles) {
+    LaunchedEffect(articles[pager.currentPage].contentKey(), state.settings.autoLoadFullArticles, state.settings.useBuiltInBrowser) {
         library.articleContent.open(articles[pager.currentPage], state.settings.autoLoadFullArticles)
     }
     DisposableEffect(library.articleContent) { onDispose { library.articleContent.close() } }
     LaunchedEffect(currentArticle.contentKey(), speech) { speech.stop() }
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    var pendingBrowser by rememberSaveable { mutableStateOf<String?>(null) }
+    var returnedBrowser by rememberSaveable { mutableStateOf<String?>(null) }
+    val articleBrowser = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val token = result.data?.getStringExtra("readerResult")
+        if (result.resultCode == android.app.Activity.RESULT_OK && token != null && token == pendingBrowser) returnedBrowser = token
+        else com.fliprss.app.browser.BrowserTextTransfer.discard(pendingBrowser)
+        pendingBrowser = null
+    }
+    LaunchedEffect(returnedBrowser, articleContent.key, articles[pager.currentPage].contentKey()) {
+        val token = returnedBrowser ?: return@LaunchedEffect
+        val entry = com.fliprss.app.browser.BrowserTextTransfer.peek(token)
+        if (entry == null || entry.original.contentKey() != articles[pager.currentPage].contentKey()) {
+            com.fliprss.app.browser.BrowserTextTransfer.discard(token); returnedBrowser = null
+        } else if (articleContent.key == entry.original.contentKey()) {
+            com.fliprss.app.browser.BrowserTextTransfer.take(token)
+            entry.result?.let { library.articleContent.importBrowser(entry.original, it) }
+            returnedBrowser = null
+        }
+    }
     LaunchedEffect(pager, state.settings.autoMarkRead, state.markingAll) {
         if (state.settings.autoMarkRead && !state.markingAll) snapshotFlow { pager.settledPage }.distinctUntilChanged().collect { library.owner(articles[it]).setRead(articles[it].id, true) }
     }
@@ -411,7 +433,9 @@ private val Red = Color(0xFFB83224)
             }
         }
     }) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Box(Modifier.fillMaxSize().padding(padding)) {
+            com.fliprss.app.browser.ReaderBrowserSurface(library.browserText)
+            Column(Modifier.fillMaxSize()) {
             Box(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) { SpeechControls(currentArticle, speech, onSpeechSettings) }
             state.error?.let { ProblemBanner(it, { library.localLibrary.dismissError(); library.freshLibrary.dismissError() }) }
             HorizontalPager(state = pager, key = { articles[it].id }, modifier = Modifier.weight(1f)) { page ->
@@ -431,24 +455,32 @@ private val Red = Color(0xFFB83224)
                             when {
                                 matched && articleContent.loading -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-                                    Text("Loading full article…", style = MaterialTheme.typography.bodySmall)
+                                    Text(if (articleContent.browserLoading) "Loading browser article text…" else "Loading full article…", style = MaterialTheme.typography.bodySmall)
                                 }
-                                matched && articleContent.expanded != null -> Text("Fuller article text loaded", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                                matched && articleContent.expanded != null -> Text(if (articleContent.viaBrowser) "Browser article text loaded" else "Article text loaded", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                                 else -> Column {
-                                    if (matched && articleContent.attempted) Text("No extra text available. Showing the feed version.", style = MaterialTheme.typography.bodySmall)
+                                    if (matched && articleContent.attempted) Text("Showing feed text. You can try the browser for more.", style = MaterialTheme.typography.bodySmall)
                                     TextButton(onClick = { library.articleContent.load() }, enabled = matched) {
                                         Text(if (matched && articleContent.attempted) "Retry full article" else "Load full article")
                                     }
                                 }
                             }
+                            TextButton(onClick = { library.articleContent.load(browserOnly = true) }, enabled = matched && !articleContent.loading) { Text("Load browser text") }
                         }
                         article.paragraphs.ifEmpty { listOf("This feed includes only a headline. Open the original article to read more.") }.forEach {
                             Text(it, fontFamily = FontFamily.Serif, fontSize = state.settings.readerTextSize.sp,
                                 lineHeight = (state.settings.readerTextSize * 1.55f).sp)
                         }
                         article.originalUrl?.let { url ->
-                            OutlinedButton(onClick = {
-                                runCatching { if (state.settings.useBuiltInBrowser) com.fliprss.app.browser.BrowserActivity.open(context, url) else uriHandler.openUri(url) }.onFailure {
+                            OutlinedButton(enabled = pendingBrowser == null, onClick = {
+                                runCatching {
+                                    if (state.settings.useBuiltInBrowser) {
+                                        val token = com.fliprss.app.browser.BrowserTextTransfer.begin(original, article)
+                                        pendingBrowser = token
+                                        articleBrowser.launch(com.fliprss.app.browser.BrowserActivity.articleIntent(context, url, token))
+                                    } else uriHandler.openUri(url)
+                                }.onFailure {
+                                    com.fliprss.app.browser.BrowserTextTransfer.discard(pendingBrowser); pendingBrowser = null
                                     Toast.makeText(context, "No browser is available to open this article.", Toast.LENGTH_SHORT).show()
                                 }
                             }) { Text("Open original article") }
@@ -458,6 +490,7 @@ private val Red = Color(0xFFB83224)
                     }
                 }
             }
+        }
         }
     }
 }

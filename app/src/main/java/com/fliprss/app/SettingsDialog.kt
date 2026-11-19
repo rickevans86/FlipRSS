@@ -54,7 +54,7 @@ import kotlin.math.roundToInt
             SettingsToggle("Automatic mark read", "Mark an article read when its reader page settles.", settings.autoMarkRead) {
                 onSettings(settings.copy(autoMarkRead = it))
             }
-            SettingsToggle("Use built-in browser", "Open original articles inside FlipRSS; turn off to use your external browser.", settings.useBuiltInBrowser) {
+            SettingsToggle("Use built-in browser", "Open original articles and load more reader text inside FlipRSS. Turn off to use an external browser and stop automatic browser text loading.", settings.useBuiltInBrowser) {
                 onSettings(settings.copy(useBuiltInBrowser = it))
             }
             val browserContext = androidx.compose.ui.platform.LocalContext.current

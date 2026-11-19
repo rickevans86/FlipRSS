@@ -67,3 +67,16 @@ jobs:
         with:
           name: reading-flow-reports
           path: app/build/reports/androidTests/
+
+  reader-dom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:reader-bridge

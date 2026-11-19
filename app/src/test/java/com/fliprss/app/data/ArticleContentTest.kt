@@ -68,4 +68,84 @@ class ArticleContentTest {
         controller.open(story.copy(demo = true), true); advanceUntilIdle(); assertEquals(0, calls)
         controller.close(); assertNull(controller.state.value.key)
     }
+    @Test fun browserFallbackRunsAfterHttpFailureAndFeedsSpeech() = runTest {
+        val full = story.copy(paragraphs = List(5) { "$it $paragraph" })
+        val controller = ArticleContentController(this, { error("HTTP 403") }, StandardTestDispatcher(testScheduler),
+            render = { full }, autoBrowser = { true })
+        controller.open(story, true); advanceUntilIdle()
+        assertTrue(controller.state.value.viaBrowser)
+        assertEquals(full.paragraphs, controller.state.value.display(story).paragraphs)
+        assertTrue(SpeechText.chunks(controller.state.value.display(story)).joinToString().contains(paragraph))
+    }
+    @Test fun browserCanExpandAlreadyImprovedStaticTextAndKeepsItWhileLoading() = runTest {
+        val gate = CompletableDeferred<Article?>(); var baseline: Article? = null
+        val controller = ArticleContentController(this, { page() }, StandardTestDispatcher(testScheduler),
+            render = { baseline = it; gate.await() }, autoBrowser = { true })
+        controller.open(story, true); runCurrent()
+        assertTrue(controller.state.value.browserLoading); assertTrue(controller.state.value.loading)
+        assertEquals(paragraph, controller.state.value.display(story).paragraphs.first())
+        assertEquals(controller.state.value.display(story).paragraphs, baseline!!.paragraphs)
+        gate.complete(baseline!!.copy(paragraphs = baseline!!.paragraphs + List(4) { paragraph })); advanceUntilIdle()
+        assertTrue(controller.state.value.viaBrowser); assertFalse(controller.state.value.loading)
+    }
+    @Test fun failedBrowserKeepsSuccessfulStaticText() = runTest {
+        val controller = ArticleContentController(this, { page() }, StandardTestDispatcher(testScheduler),
+            render = { error("browser offline") }, autoBrowser = { true })
+        controller.open(story, true); advanceUntilIdle()
+        assertEquals(paragraph, controller.state.value.display(story).paragraphs.first())
+        assertFalse(controller.state.value.loading); assertFalse(controller.state.value.viaBrowser)
+    }
+    @Test fun explicitBrowserLoadWorksWithAutoOffAndDoesNotFetchStaticAgain() = runTest {
+        var fetches = 0; var renders = 0
+        val full = story.copy(paragraphs = List(4) { paragraph })
+        val controller = ArticleContentController(this, { fetches++; page() }, StandardTestDispatcher(testScheduler),
+            render = { renders++; full }, autoBrowser = { false })
+        controller.open(story, false); controller.load(browserOnly = true); advanceUntilIdle()
+        assertEquals(0, fetches); assertEquals(1, renders); assertTrue(controller.state.value.viaBrowser)
+    }
+    @Test fun manualImportCancelsPendingRenderAndCannotBeOverwrittenByLateReply() = runTest {
+        val gate = CompletableDeferred<Article?>()
+        val controller = ArticleContentController(this, { error("short feed") }, StandardTestDispatcher(testScheduler),
+            render = { withContext(NonCancellable) { gate.await() } }, autoBrowser = { true })
+        controller.open(story, true); runCurrent()
+        val approved = story.copy(paragraphs = List(8) { "$it $paragraph" })
+        assertTrue(controller.importBrowser(story, approved))
+        gate.complete(story.copy(paragraphs = List(3) { paragraph })); advanceUntilIdle()
+        assertEquals(approved.paragraphs, controller.state.value.display(story).paragraphs)
+        assertTrue(controller.state.value.viaBrowser)
+    }
+    @Test fun staleForeignAndShorterImportsCannotReplaceTheSelectedStory() = runTest {
+        val controller = ArticleContentController(this, { page() }, StandardTestDispatcher(testScheduler))
+        controller.open(story, true); advanceUntilIdle()
+        val selected = controller.state.value.display(story)
+        assertFalse(controller.importBrowser(story, story.copy(paragraphs = listOf("short"))))
+        assertFalse(controller.importBrowser(story, selected.copy(id = "other")))
+        assertEquals(selected.paragraphs, controller.state.value.display(story).paragraphs)
+        val other = story.copy(id = "another"); controller.open(other, false)
+        assertFalse(controller.importBrowser(story, selected.copy(paragraphs = List(10) { paragraph })))
+        assertEquals(other, controller.state.value.display(other))
+    }
+    @Test fun wrongBrowserArticleIsNeverAcceptedAndClosingCancelsItsLoad() = runTest {
+        val controller = ArticleContentController(this, { error("offline") }, StandardTestDispatcher(testScheduler),
+            render = { story.copy(id = "foreign", paragraphs = List(5) { paragraph }) }, autoBrowser = { true })
+        controller.open(story, true); advanceUntilIdle()
+        assertEquals(story, controller.state.value.display(story)); assertNull(controller.state.value.expanded)
+        controller.close(); assertNull(controller.state.value.key)
+    }
+
+    @Test fun publicBrowserFallbackWorksWithoutAddonWhenStaticHasNoText() = runTest {
+        var renders = 0
+        val controller = ArticleContentController(this, { error("needs JavaScript") }, StandardTestDispatcher(testScheduler),
+            render = { renders++; story.copy(paragraphs = List(4) { paragraph }) }, autoBrowser = { true }, expandWithBrowser = { false })
+        controller.open(story, true); advanceUntilIdle()
+        assertEquals(1, renders); assertTrue(controller.state.value.viaBrowser)
+    }
+    @Test fun alreadyExpandedPublicArticleDoesNotStartBrowserWithoutAddon() = runTest {
+        var renders = 0
+        val controller = ArticleContentController(this, { page() }, StandardTestDispatcher(testScheduler),
+            render = { renders++; null }, autoBrowser = { true }, expandWithBrowser = { false })
+        controller.open(story, true); advanceUntilIdle()
+        assertEquals(0, renders); assertEquals(paragraph, controller.state.value.display(story).paragraphs.first())
+    }
+
 }

@@ -26,7 +26,10 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     val localLibrary = LibraryController(viewModelScope, GReaderConnector(), noSession, demo, settings, localRepository = localRepository)
     val freshLibrary = LibraryController(viewModelScope, GReaderConnector(), EncryptedSessionStore(application), demo, settings)
     // Compatibility for reader/demo fixtures; production navigation selects sources explicitly.
-    internal val articleContent = ArticleContentController(viewModelScope)
+    internal val browserText = com.fliprss.app.browser.BrowserArticleRenderer(application)
+    internal val articleContent = ArticleContentController(viewModelScope, render = browserText::render,
+        autoBrowser = { settings.load().useBuiltInBrowser },
+        expandWithBrowser = { com.fliprss.app.browser.BrowserEngine.addonRequested(application) })
     val library get() = localLibrary
     private val mutableFeeds = MutableStateFlow<List<LocalFeed>>(emptyList())
     internal val localFeeds = mutableFeeds.asStateFlow()
