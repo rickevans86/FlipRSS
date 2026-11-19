@@ -103,5 +103,49 @@
     "sha256": "92b640a5fafb48d85996fed1417e4de97392c6a5e2aa8e46386c5a52d47822ee",
     "prerelease": false,
     "description": "The article reader now keeps the screen awake while Read aloud actively plays. Normal screen timeout resumes on pause, stop, completion, speech failure, audio focus loss, backgrounding or leaving the reader. A pre-existing screen-on request is preserved. Voice preview is unchanged.\n\nAI: ChatGPT Codex, #34. 85 JVM tests each debug/release, both builds/lint (0 errors, 1 existing warning), five publisher tests/actionlint pass. Two new lifecycle/disposal/preservation device tests compile but were not executed. Physical phone/screen-timeout/audio validation remains pending. Existing prototype test signer retained for upgrades; production signing unconfigured."
+  },
+  {
+    "tag": "v0.11.0",
+    "artifact_commit": "da7515a5a2ad38cf979bae6fd2fb04d1ab320464",
+    "directory": "release-download",
+    "source_commit": "0289c2ccc82068025d7d7b2a9e9b3406e8d6fcd7",
+    "apk": "FlipRSS.apk",
+    "sha256": "07f8cbba43ce1db0b9582388741f3e268776e3521b412f897ce248376dabd21c",
+    "apk_parts": [
+      {
+        "name": "FlipRSS.apk.part001",
+        "sha256": "fa7c4256e6cb71ca839e3f6b8700d4d81585f7a7d7bf6a8359ab166a53520e26"
+      },
+      {
+        "name": "FlipRSS.apk.part002",
+        "sha256": "890caf220308634bfeda8be5880966b20016b34fa5416f4cac702a82d3eb5cb3"
+      },
+      {
+        "name": "FlipRSS.apk.part003",
+        "sha256": "e7904f3e4452de2097d4ac096787ddf1598336ef1e343cac18fdafa2c42f8ad0"
+      },
+      {
+        "name": "FlipRSS.apk.part004",
+        "sha256": "1296082455070a49fd647993d27d1edbfc67ffd6a8aa8cc77e9a5dc1cd6e9148"
+      },
+      {
+        "name": "FlipRSS.apk.part005",
+        "sha256": "96c2003514c750b74cd853f9cbbbfbb0f20446da9411fe826d6ce0d653f3fc5f"
+      },
+      {
+        "name": "FlipRSS.apk.part006",
+        "sha256": "b16d72cdf69dcf6f092ded9193a96dd315e316c44dd1c5ec5035ba7bd8b5a709"
+      },
+      {
+        "name": "FlipRSS.apk.part007",
+        "sha256": "4b47d8de67298bf26ae1a1a8d0f301f7c41a6e508ec8116c993d3a4ddb1a606d"
+      },
+      {
+        "name": "FlipRSS.apk.part008",
+        "sha256": "4cb8624e3c23943ef3b45f8f6e3d7f6101a3cdab8675f6f7377bb37fbb890bff"
+      }
+    ],
+    "prerelease": false,
+    "description": "Open original articles inside FlipRSS with a GeckoView browser: address entry, back/forward/reload/stop, tabs, external-open and normal JavaScript/form dialogs. Settings \u2192 Use built-in browser turns it off.\n\nBundled Firefox Bypass Paywalls Clean 4.4.9.6 from Rick's requested GitFlic repository, with enable/disable, per-site popup, extension options and permission controls. It starts OFF: enable under Settings \u2192 Browser and add-on. The third-party add-on can read/change supported website pages, cookies and requests; site support varies. Licences/source/provenance are included. Reader extraction/TTS remain separate from browser/add-on output.\n\nIMPORTANT: Universal APK is 261 MB (about249 MiB), ARM64/ARMv7/x86-64, Android8+. Versions up to0.10.1 have an80MB updater cap: download/install FlipRSS.apk directly over the existing app once, without uninstalling. This version raises future update downloads to512MB. Existing signing identity retained for data-compatible upgrades; production signing unconfigured.\n\nAI: ChatGPT Codex, #37. 90 JVM tests per debug/release, release build/lint (0 errors/17 target/dependency/version/KTX warnings), instrumentation compilation, 9 publisher tests/actionlint pass. Exact upstream XPI hash, every bundled asset and39 Mozilla native libraries verified. Signature/alignment/package/version/SDK/ABI/prior signer checked. Physical browser/rendering/popup/permission/site-bypass/audio/installer/account-write tests and independent review NOT RUN."
   }
 ]

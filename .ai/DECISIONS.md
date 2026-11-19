@@ -294,3 +294,21 @@ reorder earlier entries._
   actual native download and all eleven release APK digests after hosted publish.
 - Keep physical screen-timeout/audio validation explicitly pending; compiling
   lifecycle assertions is not a device test result.
+
+## 2026-11-19 — Native browser and pinned add-on (#37, Codex)
+
+- Use current GeckoView, since Android WebView cannot execute the requested Firefox
+  WebExtension. Upgrade required compile toolchain and retain target35/min26.
+- Bundle original BPC XPI/byte-identical extracted files with MIT/provenance;
+  include Gecko MPL and DOMPurify source/licence notices. Add-on defaults off with
+  access description, optional-permission prompts, site popup/options. No automatic
+  add-on binary updates; its own optional rule/version settings remain upstream.
+- Browser profile/session lifecycle stays separate from FreshRSS API. Guard web
+  URLs and own extension origin; don't bypass certificate failures. Reader text/
+  speech are unaffected by browser extension output.
+- Universal native engine APK exceeds Git's100MB file limit and old updater80MB
+  cap. Use immutable ordered32MiB parts with per-part+whole-file verification,
+  expose normal FlipRSS.apk on Releases, raise future updater cap512MB/timeout.
+  Existing clients require one direct install over current app, same signer.
+- Ship v0.11.0/code14 for ARM64/ARMv7/x86-64. Runtime/browser/site-bypass testing
+  requires actual device and is not inferred from compiler/JVM/native-byte checks.

@@ -445,10 +445,17 @@ Physical browser/site-specific extension tests require a device and are not clai
 from build/unit checks. HTTP(S) navigation is validated; only this bundled add-on's
 own origin may open extension pages, and certificate failures are not bypassed.
 
-**One-time update note:** the universal APK is about 240 MB because it includes
+**One-time update note:** the universal APK is about 250 MiB (261 MB) because it includes
 ARM64, ARMv7 and x86-64 browser engines. Versions up to 0.10.1 reject updates above
 80 MB: download/install this APK directly over the existing app to retain data.
 This version raises the updater limit to 512 MB and allows longer downloads for
 future updates, retaining GitHub HTTPS host/size/hash checks. Large release binaries
 use ordered, individually verified immutable 32 MiB artifact parts internally;
 GitHub Releases still exposes one normal `FlipRSS.apk` asset.
+
+Prepared regular browser release: **v0.11.0**, code14.
+[FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.11.0/FlipRSS.apk).
+Native publication is verified after the hosted publisher completes. 90 JVM tests
+per debug/release, release build/lint (0 errors/17 warnings), nine publisher tests
+and actionlint pass; instrumentation compiles only. Runtime browser/site-specific
+add-on tests remain pending.
