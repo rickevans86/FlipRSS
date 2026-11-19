@@ -453,9 +453,12 @@ future updates, retaining GitHub HTTPS host/size/hash checks. Large release bina
 use ordered, individually verified immutable 32 MiB artifact parts internally;
 GitHub Releases still exposes one normal `FlipRSS.apk` asset.
 
-Prepared regular browser release: **v0.11.0**, code14.
+Published regular browser release: **v0.11.0**, code14.
 [FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.11.0/FlipRSS.apk).
-Native publication is verified after the hosted publisher completes. 90 JVM tests
+Hosted publisher 44443483017 succeeded; all twelve native release APK digests
+verified, and latest native bytes/build-info/checksum downloaded and matched.
+APK: 261,392,018 bytes; SHA256
+`07f8cbba43ce1db0b9582388741f3e268776e3521b412f897ce248376dabd21c`. 90 JVM tests
 per debug/release, release build/lint (0 errors/17 warnings), nine publisher tests
 and actionlint pass; instrumentation compiles only. Runtime browser/site-specific
 add-on tests remain pending.

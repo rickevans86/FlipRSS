@@ -319,3 +319,17 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   claimed. Final records-only follow-up continues authorized publication workflow.
 
 - 2026-11-19 — **ChatGPT Codex** — #37 implemented Gecko browser, pinned MIT BPC4.4.9.6 with controls/options/popup, basic web prompts, guarded navigation and separate browser profile. Source0289c2ccc82068025d7d7b2a9e9b3406e8d6fcd7; required SDK37.2/AGP9.5.1/Kotlin2.4.21/Gradle9.6 migration, retained target35/min26. 90 JVM tests each debug/release, release build/lint0errors17warnings, earlier debug lint0errors18warnings, instrumentation compile, 9 publisher tests/actionlint pass. Exact XPI/all assets/39 native libraries verified. Signed universal artifactda7515a5a2ad38cf979bae6fd2fb04d1ab320464, 261392018bytes, SHA25607f8cbba43ce1db0b9582388741f3e268776e3521b412f897ce248376dabd21c. New multipart publisher and updater512MB support; old80MB clients need one direct install. No physical device/extension/site-bypass or independent review claimed. Records/PR/publication follow; no signing key published.
+
+- 2026-11-19 — **ChatGPT Codex** — #37 completed/closed, #38 merged d361fdb.
+  Main app equals source0289c2c / tree366dd1d. Hosted multipart publisher
+  44443483017 SUCCESS (1m30s); regular/latest v0.11.0 native FlipRSS.apk,
+  checksum/build-info attached. All twelve native APK digests verified, latest
+  native bytes/metadata/checksum downloaded and checked: 261,392,018 bytes,
+  SHA25607f8cbba43ce1db0b9582388741f3e268776e3521b412f897ce248376dabd21c.
+  90 JVM tests EACH debug/release, release build/lint0errors17warnings, earlier
+  debug lint0errors18warnings, instrumentation compile, 9 publisher tests/actionlint
+  pass. XPI/all assets/39 native libraries/signing/SDK/ABI/alignment verified.
+  Browser/add-on/site-bypass/device/audio/installer and independent review not
+  claimed. BPC defaults off; <=0.10.1 requires one direct install (old80MB cap).
+  Same signer retained, no key published. README/six records synchronized, claims
+  clear, issue closed. Final records-only merge continues authorized workflow.
