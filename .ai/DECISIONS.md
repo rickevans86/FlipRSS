@@ -312,3 +312,13 @@ reorder earlier entries._
   Existing clients require one direct install over current app, same signer.
 - Ship v0.11.0/code14 for ARM64/ARMv7/x86-64. Runtime/browser/site-bypass testing
   requires actual device and is not inferred from compiler/JVM/native-byte checks.
+
+## 2026-11-19 — Browser v0.11.0 native publication verified (#37, Codex)
+
+- Verify real eight-part reconstruction/upload and all twelve native release
+  digests, then download latest APK/metadata/checksum. Keep one standard filename
+  for users; multipart transport is internal and never merged into main.
+- Record one-time direct-install requirement for old80MB updater clients, keep
+  signing/data compatibility, and state add-on OFF-by-default enable instructions.
+- Do not infer browser/site-specific extension runtime success from JVM/build/
+  native-byte checks. Device validation remains an explicit next action.

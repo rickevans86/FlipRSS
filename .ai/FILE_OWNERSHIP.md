@@ -3,4 +3,5 @@
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
 
-#37 implementation complete; native publication pending. No active implementation claims. Never merge binary artifact branches.
+No active claims. #37 completed, #38 merged; native v0.11.0 verified.
+Check live GitHub before new work. Never merge binary artifact branches.
