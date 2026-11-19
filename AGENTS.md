@@ -14,11 +14,11 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
   instance. It presents the user's feeds in a Flipboard-style reading experience:
   a magazine card grid, a full-screen swipe/flip article reader, and content
   grouped into topic sections (FreshRSS folders/tags).
-- **Stack:** Kotlin, Jetpack Compose (Material 3), Android (min SDK 26, compile/target SDK 35 for the prototype).
+- **Stack:** Kotlin (AGP built-in), Jetpack Compose (Material 3), Android (min SDK 26, compile SDK 37.2 / target SDK 35).
 - **Key libraries:** Retrofit + OkHttp (FreshRSS Google Reader API),
   Kotlin Coroutines/Flow, Coil (image loading), Jsoup (extract cover images from
   item HTML), EncryptedSharedPreferences (auth token), DataStore (deferred preferences),
-  Room (offline cache, planned), optional Hilt (DI, deferred).
+  Room (offline cache, planned), optional Hilt (DI, deferred), GeckoView with bundled Firefox BPC add-on for the optional in-app browser.
 - **Backend API:** FreshRSS "GReader" API at `<instance>/api/greader.php` —
   `ClientLogin` for the auth token, `subscription/list`, `tag/list`,
   `stream/contents/{streamId}`, `unread-count`, `edit-tag` (mark read/starred),
@@ -37,7 +37,7 @@ conflict with GitHub history, GitHub is right — investigate and correct the fi
 > caching remains in memory for FreshRSS. #12 adds a separate on-device RSS/Atom
 > library with atomic JSON persistence and optional FreshRSS connection. Room and
 > background sync are not implemented. Build
-> with JDK 17+ and Android SDK 35. See README.md for setup and validation.
+> with JDK 17+, SDK 37.2/build tools 36, AGP 9.5.1 and Gradle 9.6. See README.md for setup and validation.
 
 ---
 

@@ -448,7 +448,7 @@ private val Red = Color(0xFFB83224)
                         }
                         article.originalUrl?.let { url ->
                             OutlinedButton(onClick = {
-                                runCatching { uriHandler.openUri(url) }.onFailure {
+                                runCatching { if (state.settings.useBuiltInBrowser) com.fliprss.app.browser.BrowserActivity.open(context, url) else uriHandler.openUri(url) }.onFailure {
                                     Toast.makeText(context, "No browser is available to open this article.", Toast.LENGTH_SHORT).show()
                                 }
                             }) { Text("Open original article") }

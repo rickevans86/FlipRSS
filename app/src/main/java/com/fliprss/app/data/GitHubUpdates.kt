@@ -16,7 +16,7 @@ import okhttp3.Response
 
 internal const val RELEASES_PAGE = "https://github.com/rickevans86/FlipRSS/releases"
 internal const val LATEST_RELEASE = "https://api.github.com/repos/rickevans86/FlipRSS/releases/latest"
-internal const val MAX_UPDATE_BYTES = 80_000_000L
+internal const val MAX_UPDATE_BYTES = 512_000_000L
 internal data class AppUpdate(val version: String, val code: Long, val url: String, val sha256: String, val size: Long)
 internal class UpdateProblem(message: String) : Exception(message)
 
@@ -49,7 +49,7 @@ internal object UpdateManifest {
 
 internal class GitHubUpdates(private val client: OkHttpClient = OkHttpClient.Builder()
     .followRedirects(false).followSslRedirects(false).connectTimeout(15, TimeUnit.SECONDS)
-    .readTimeout(30, TimeUnit.SECONDS).callTimeout(120, TimeUnit.SECONDS).build()) {
+    .readTimeout(30, TimeUnit.SECONDS).callTimeout(600, TimeUnit.SECONDS).build()) {
     private fun open(url: String): Response {
         var address = url
         repeat(6) {

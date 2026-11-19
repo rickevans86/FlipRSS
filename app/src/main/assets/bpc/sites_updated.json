@@ -1,0 +1,78 @@
+{
+  "Australia News Corp (removed)": {
+    "domain": "###_au_news_corp",
+    "group": [],
+    "allow_cookies": 1,
+    "upd_version": "4.4.9.6"
+  },
+  "Bonnier News Group": {
+    "domain": "###_se_bonnier_group",
+    "group": [
+      "dagensmedicin.se",
+      "dn.se",
+      "hd.se",
+      "sydsvenskan.se"
+    ],
+    "allow_cookies": 1,
+    "ld_archive_is": "div#tapet-paywall|article",
+    "exception": [{
+        "domain": "dagensmedicin.se",
+        "allow_cookies": 1,
+        "useragent": "googlebot",
+        "cs_code": [{"hide_elem":"div[data-bad-fullpage-container]"}]
+      }
+    ],
+    "upd_version": "4.4.9.6"
+  },
+  "National Review": {
+    "domain": "nationalreview.com",
+    "remove_cookies_select_drop": ["nr_meter"],
+    "upd_version": "4.4.9.4"
+  },
+  "Nederlands Dagblad (removed)": {
+    "domain": "nd.nl",
+    "allow_cookies": 1,
+    "nofix": 1,
+    "upd_version": "4.4.9.1"
+  },
+  "Puck.news": {
+    "domain": "puck.news",
+    "allow_cookies": 1,
+    "ld_archive_is": "div.puck-article-page__paywall-slot|article",
+    "upd_version": "4.4.9.1"
+  },
+  "The Economist (removed)": {
+    "domain": "economist.com",
+    "allow_cookies": 1,
+    "block_regex": "(\\/zephr\\/feature|\\.economist\\.com\\/(latest\\/wall-ui|script)\\.js)",
+    "nofix": 1,
+    "cs_block": 1,
+    "cs_code": [{"cond": "html,body", "set_attrib":"style|overflow: visible !important"}],
+    "upd_version": "4.4.8.7"
+  },
+  "Die Welt": {
+    "domain": "welt.de",
+    "allow_cookies": 1,
+    "block_regex": "\\.welt\\.de\\/pss-chords-.+\\.js",
+    "ld_archive_is": "div.contains_walled_content,div.c-article-paywall|main header + div",
+    "upd_version": "4.4.9.5"
+  },
+  "WirtschaftsWoche": {
+    "domain": "wiwo.de",
+    "allow_cookies": 1,
+    "block_regex": "\\.wiwo\\.de\\/frontend\\/chunk-4FPQLM6C\\.js",
+    "useragent": "googlebot",
+    "upd_version": "4.4.9.3"
+  },
+  "Wyborcza.pl Group": {
+    "domain": "###_pl_wyborcza_group",
+    "group": [
+      "wyborcza.biz",
+      "wyborcza.pl",
+      "wysokieobcasy.pl"
+    ],
+    "allow_cookies": 1,
+    "headers_custom": {"X-Forwarded-For": "10.54.23.76"},
+    "upd_version": "4.4.9.6"
+  }
+}

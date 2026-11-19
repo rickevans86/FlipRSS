@@ -54,6 +54,11 @@ import kotlin.math.roundToInt
             SettingsToggle("Automatic mark read", "Mark an article read when its reader page settles.", settings.autoMarkRead) {
                 onSettings(settings.copy(autoMarkRead = it))
             }
+            SettingsToggle("Use built-in browser", "Open original articles inside FlipRSS; turn off to use your external browser.", settings.useBuiltInBrowser) {
+                onSettings(settings.copy(useBuiltInBrowser = it))
+            }
+            val browserContext = androidx.compose.ui.platform.LocalContext.current
+            TextButton(onClick = { com.fliprss.app.browser.BrowserActivity.settings(browserContext) }) { Text("Browser and add-on") }
             SettingsToggle("Load full articles", "Fetch public article text from the publisher when you open a story. Feed text remains available if loading fails.", settings.autoLoadFullArticles) {
                 onSettings(settings.copy(autoLoadFullArticles = it))
             }

@@ -43,3 +43,32 @@ test('regular release publishes the standard filename and becomes latest', async
   assert.equal(f.created[0].prerelease,false);assert.equal(f.created[0].make_latest,'true');
   assert.equal(f.assets[0].name,'FlipRSS.apk');assert.equal(updated.prerelease,false);assert.equal(updated.make_latest,'true');
 });
+
+function partsFixture() {
+  const f = fixture(); const chunks = [Buffer.from('test APK '), Buffer.from('bytes')];
+  const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+  f.manifest[0].apk_parts = chunks.map((bytes, i) => ({name:`${f.manifest[0].apk}.part${String(i+1).padStart(3,'0')}`,sha256:digest(bytes)}));
+  f.github.rest.repos.getContent = async ({path}) => ({data:{sha:path.split('/').pop()}});
+  f.github.rest.git.getBlob = async ({file_sha}) => ({data:{content:(file_sha.endsWith('part001')?chunks[0]:file_sha.endsWith('part002')?chunks[1]:Buffer.from('{}')).toString('base64')}});
+  return f;
+}
+test('reconstructs larger APK from ordered immutable verified chunks', async () => {
+  const f = partsFixture(); await publish(f);
+  assert.equal(f.assets[0].name,'FlipRSS.apk'); assert.equal(f.assets[0].digest,'sha256:'+f.manifest[0].sha256);
+});
+test('bad part hash blocks release creation', async () => {
+  const f=partsFixture(); f.manifest[0].apk_parts[1].sha256='0'.repeat(64);
+  await assert.rejects(publish(f),/part checksum/); assert.equal(f.created.length,0);
+});
+test('reordered, missing, excessive or path-traversal parts are rejected', async () => {
+  for (const parts of [[], [{name:'../private',sha256:'a'.repeat(64)}], Array(17).fill({name:'x',sha256:'a'.repeat(64)})]) {
+    const f=partsFixture(); f.manifest[0].apk_parts=parts;
+    await assert.rejects(publish(f),/Invalid APK parts/); assert.equal(f.created.length,0);
+  }
+  const f=partsFixture(); f.manifest[0].apk_parts.reverse();
+  await assert.rejects(publish(f),/Invalid APK parts/); assert.equal(f.created.length,0);
+});
+test('valid parts still require the final assembled APK hash', async () => {
+  const f=partsFixture(); f.manifest[0].sha256='0'.repeat(64);
+  await assert.rejects(publish(f),/APK checksum mismatch/); assert.equal(f.created.length,0);
+});
