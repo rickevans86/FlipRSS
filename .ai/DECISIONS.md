@@ -326,3 +326,7 @@ reorder earlier entries._
 ## 2026-11-19 — Rendered page is the bridge between browser and reader (#40, Codex)
 
 Use a separately owned native-messaging extension, not changes to BPC. Capture visible rendered article DOM with origin/story/session/nonce bounds and cleanup; respect existing add-on enable state. Retain static/feed fallback; explicit Read in app transfers bounded in-process matching-article token data. Automatic real-viewport renderer lives behind reader. Future reader-bridge changes require manifest version bump beyond1.0.0. Static metadata restrictions remain; browser capture excludes hidden script article data. Physical site-specific behavior needs device verification.
+
+## 2026-11-19 — Rendered-reader native publication verified (#40, Codex)
+
+Verify published native APK bytes and metadata/checksum against signed release; all13 historical APK digests match manifest. Keep one FlipRSS.apk release asset, internal eight-part transport only. Current v0.11 updater accepts size; older<=0.10.1 needs direct install. Record rendered extraction fixtures separately from unexecuted real Gecko/BPC/phone behavior; successful DOM simulation does not establish actual publisher compatibility.

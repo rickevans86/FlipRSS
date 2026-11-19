@@ -505,8 +505,10 @@ Development checks: `npm ci --ignore-scripts`, `npx playwright install chromium`
 These are headless browser DOM fixture tests, including simulated add-on updates;
 they do not establish real Gecko/BPC behavior on every site or a physical phone.
 
-Release candidate **v0.12.0/code15**: source9dda973, 107 JVM tests each variant, six
+Published regular/latest **v0.12.0/code15**: source9dda973, 107 JVM tests each variant, six
 headless Chromium fixtures, release build/lint0errors17warnings and nine publisher
 tests/actionlint pass; instrumentation compiled only. Signed APK 261408558 bytes,
-SHA256 `b55d2dbba7bdedd5fa7940eadcefa229fc51094e658dc9992dcaff05caec99f5`. Native publication pending.
+SHA256 `b55d2dbba7bdedd5fa7940eadcefa229fc51094e658dc9992dcaff05caec99f5`. Hosted publisher44537613170 SUCCESS; all13 native release digests verified,
+and latest APK/build-info/checksum downloaded and matched.
+[Download FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.12.0/FlipRSS.apk).
 Actual Gecko/BPC/The Age/device behavior remains to be verified on a phone.

@@ -1,3 +1,3 @@
 # FILE_OWNERSHIP
 
-No in-progress implementation claims. #40 implementation complete; publication tracked in task board.
+No in-progress task claims. #40 closed after publication verification.
