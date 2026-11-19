@@ -1,0 +1,3 @@
+
+app/src/main/assets/bpc/** -text
+third_party/bpc/*.xpi -text

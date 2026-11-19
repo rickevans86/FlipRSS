@@ -71,7 +71,7 @@ are separate from API requests and do not receive your auth token.
 ## Build and run
 
 Open in Android Studio, sync Gradle and run **app**, or with JDK 17+ and Android
-SDK platform/build tools 35 installed:
+SDK platform 37.2 and build tools 36 installed (Gradle 9.6 / AGP 9.5.1 / built-in Kotlin):
 
 ```sh
 ./gradlew assembleDebug installDebug
@@ -418,3 +418,37 @@ lifecycle tests compile only. Actual phone screen-timeout/audio checks pending.
 Hosted publisher 44411187965 succeeded. All eleven release native APK digests
 and latest downloaded bytes were verified. APK SHA256:
 `92b640a5fafb48d85996fed1417e4de97392c6a5e2aa8e46386c5a52d47822ee`.
+
+## Built-in browser and Bypass Paywalls Clean (#37)
+
+**Open original article** now opens a GeckoView browser inside FlipRSS. The toolbar
+has close/back/forward/reload/stop, address entry, tabs, an External shortcut and
+Browser and add-on controls. Settings → **Use built-in browser** switches back to
+an external browser. Browser sessions survive activity recreation and pause when
+backgrounded; browser website cookies are separate from the FreshRSS API client.
+
+Settings → **Browser and add-on** (also the extension icon in the browser) includes
+**Enable bundled add-on**, **Add-on site controls** and **Extension options**.
+Bypass Paywalls Clean is bundled but starts **off** until enabled. It can read and
+change page content, cookies and requests on its supported websites; optional
+extra site permissions are shown for Allow/Deny. Site support varies. The browser
+uses the actual Firefox extension, rather than a WebView imitation. Reader text
+extraction and Read aloud remain separate from the browser page/add-on output.
+
+Pinned GeckoView: `160.0.20261116130455` (MPL 2.0). Pinned Firefox add-on: `4.4.9.6`,
+MIT, from the exact repository Rick supplied. The XPI SHA256 matches upstream
+release-hashes.txt; all unpacked assets remain byte-for-byte identical. See
+[third-party notices](THIRD_PARTY_NOTICES.md), `third_party/bpc/provenance.json`
+and Browser → Licences and source. Browser prompts/downloads/file uploads and
+media permission integrations are limited; this is not a full Firefox replacement.
+Physical browser/site-specific extension tests require a device and are not claimed
+from build/unit checks. HTTP(S) navigation is validated; only this bundled add-on's
+own origin may open extension pages, and certificate failures are not bypassed.
+
+**One-time update note:** the universal APK is about 240 MB because it includes
+ARM64, ARMv7 and x86-64 browser engines. Versions up to 0.10.1 reject updates above
+80 MB: download/install this APK directly over the existing app to retain data.
+This version raises the updater limit to 512 MB and allows longer downloads for
+future updates, retaining GitHub HTTPS host/size/hash checks. Large release binaries
+use ordered, individually verified immutable 32 MiB artifact parts internally;
+GitHub Releases still exposes one normal `FlipRSS.apk` asset.

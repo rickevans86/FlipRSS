@@ -17,6 +17,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
         markReadOnScroll = preferences.getBoolean("mark-read-on-scroll", false),
         confirmMarkAllRead = preferences.getBoolean("confirm-mark-all-read", true),
         autoLoadFullArticles = preferences.getBoolean("auto-load-full-articles", true),
+        useBuiltInBrowser = preferences.getBoolean("use-built-in-browser", true),
         speech = SpeechOptions(preferences.getString("speech-engine", "").orEmpty(), preferences.getString("speech-voice", "").orEmpty(),
             preferences.getBoolean("speech-online", false), preferences.getInt("speech-rate", 95), preferences.getInt("speech-pitch", 100)),
     ).normalized()
@@ -32,6 +33,7 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
             putBoolean("mark-read-on-scroll", value.markReadOnScroll)
             putBoolean("confirm-mark-all-read", value.confirmMarkAllRead)
             putBoolean("auto-load-full-articles", value.autoLoadFullArticles)
+            putBoolean("use-built-in-browser", value.useBuiltInBrowser)
             putString("speech-engine", value.speech.engine); putString("speech-voice", value.speech.voice)
             putBoolean("speech-online", value.speech.allowOnline); putInt("speech-rate", value.speech.ratePercent)
             putInt("speech-pitch", value.speech.pitchPercent)

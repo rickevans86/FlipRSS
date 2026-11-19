@@ -14,7 +14,22 @@ module.exports = async ({github, context, core, manifest}) => {
       const {data: blob} = await github.rest.git.getBlob({owner, repo, file_sha: metadata.sha});
       return Buffer.from(blob.content, 'base64');
     };
-    const apk = await download(item.apk);
+    let apk;
+    if (item.apk_parts !== undefined) {
+      if (!Array.isArray(item.apk_parts) || item.apk_parts.length < 1 || item.apk_parts.length > 16 ||
+          item.apk_parts.some((part, i) => !part || part.name !== `${item.apk}.part${String(i + 1).padStart(3, '0')}` || !/^[a-f0-9]{64}$/.test(part.sha256))) {
+        throw new Error('Invalid APK parts');
+      }
+      const chunks = [];
+      for (const part of item.apk_parts) {
+        const bytes = await download(part.name);
+        if (!bytes.length || bytes.length > 32 * 1024 * 1024 || crypto.createHash('sha256').update(bytes).digest('hex') !== part.sha256) throw new Error('APK part checksum/size mismatch');
+        chunks.push(bytes);
+      }
+      apk = Buffer.concat(chunks);
+    } else {
+      apk = await download(item.apk);
+    }
     if (crypto.createHash('sha256').update(apk).digest('hex') !== item.sha256) throw new Error('APK checksum mismatch');
     let release;
     try { release = (await github.rest.repos.getReleaseByTag({owner, repo, tag: item.tag})).data; }
@@ -22,7 +37,7 @@ module.exports = async ({github, context, core, manifest}) => {
       if (error.status !== 404) throw error;
       release = (await github.rest.repos.createRelease({owner, repo, tag_name: item.tag,
         target_commitish: item.source_commit, name: `FlipRSS ${item.tag}`, prerelease: item.prerelease !== false, make_latest: item.prerelease === false ? 'true' : 'false',
-        body: `${item.description}\n\nAndroid 8.0+. Prototype test signing identity. AI: ChatGPT Codex.\nSource: ${item.source_commit}\nSHA-256: ${item.sha256}\n\n[Download APK](https://github.com/${owner}/${repo}/blob/${item.artifact_commit}/${item.directory}/${item.apk}?raw=true)`})).data;
+        body: `${item.description}\n\nAndroid 8.0+. Prototype test signing identity. AI: ChatGPT Codex.\nSource: ${item.source_commit}\nSHA-256: ${item.sha256}\n\n[Download FlipRSS.apk](https://github.com/${owner}/${repo}/releases/download/${item.tag}/FlipRSS.apk)`})).data;
     }
     const assets = (await github.rest.repos.listReleaseAssets({owner, repo, release_id: release.id, per_page: 100})).data;
     for (const [name, bytes] of [['FlipRSS.apk', apk], ['SHA256SUMS.txt', Buffer.from(`${item.sha256}  FlipRSS.apk\n`)], ['build-info.json', await download('build-info.json')]]) {

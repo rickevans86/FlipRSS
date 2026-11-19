@@ -15,12 +15,12 @@ class GitHubUpdatesTest {
     private val hash = MessageDigest.getInstance("SHA-256").digest(apk).joinToString("") { "%02x".format(it) }
     private val url = "$RELEASES_PAGE/download/v0.7.0/FlipRSS.apk"
     private val gson = Gson()
-    private fun release(prerelease: Boolean = false, apkUrl: String = url, digest: String = "sha256:$hash") = gson.toJson(mapOf(
+    private fun release(prerelease: Boolean = false, apkUrl: String = url, digest: String = "sha256:$hash", size: Long = apk.size.toLong()) = gson.toJson(mapOf(
         "tag_name" to "v0.7.0", "prerelease" to prerelease, "draft" to false,
-        "assets" to listOf(mapOf("name" to "FlipRSS.apk", "size" to apk.size, "browser_download_url" to apkUrl, "digest" to digest),
+        "assets" to listOf(mapOf("name" to "FlipRSS.apk", "size" to size, "browser_download_url" to apkUrl, "digest" to digest),
             mapOf("name" to "build-info.json", "browser_download_url" to "$RELEASES_PAGE/download/v0.7.0/build-info.json"))))
-    private fun metadata(version: String = "0.7.0", code: Int = 7) = gson.toJson(mapOf("version" to version,
-        "version_code" to code, "sha256" to hash, "size_bytes" to apk.size))
+    private fun metadata(version: String = "0.7.0", code: Int = 7, size: Long = apk.size.toLong()) = gson.toJson(mapOf("version" to version,
+        "version_code" to code, "sha256" to hash, "size_bytes" to size))
     @Test fun offersNewerRegularReleaseAndIgnoresOlderOrEqualBuilds() {
         val update = UpdateManifest.parse(release(), metadata(), 6)!!
         assertEquals(7L, update.code); assertEquals(url, update.url); assertEquals(hash, update.sha256)
@@ -31,6 +31,14 @@ class GitHubUpdatesTest {
         val invalid = listOf(release(true) to metadata(), release() to metadata("0.8.0"),
             release(apkUrl = "https://example.org/FlipRSS.apk") to metadata(), release(digest = "sha256:" + "0".repeat(64)) to metadata())
         invalid.forEach { (r, m) -> try { UpdateManifest.parse(r, m, 6); fail() } catch (_: UpdateProblem) { } }
+    }
+    @Test fun acceptsLargerBrowserBuildButKeepsSizeAndMetadataGuards() {
+        val browserSize = 250_000_000L
+        assertEquals(browserSize, UpdateManifest.parse(release(size = browserSize), metadata(size = browserSize), 6)!!.size)
+        for ((r, m) in listOf(release(size = MAX_UPDATE_BYTES + 1) to metadata(size = MAX_UPDATE_BYTES + 1),
+            release() to metadata(size = browserSize))) {
+            try { UpdateManifest.parse(r, m, 6); fail("Invalid size accepted") } catch (_: UpdateProblem) { }
+        }
     }
     @Test fun checksPublishedMetadataWithoutSendingAccountAuthorization() = runBlocking {
         val client = OkHttpClient.Builder().addInterceptor { chain ->
