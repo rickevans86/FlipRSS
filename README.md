@@ -504,3 +504,9 @@ Development checks: `npm ci --ignore-scripts`, `npx playwright install chromium`
 `npm run test:reader-bridge` (or set `CHROMIUM_PATH` to an existing Chromium).
 These are headless browser DOM fixture tests, including simulated add-on updates;
 they do not establish real Gecko/BPC behavior on every site or a physical phone.
+
+Release candidate **v0.12.0/code15**: source9dda973, 107 JVM tests each variant, six
+headless Chromium fixtures, release build/lint0errors17warnings and nine publisher
+tests/actionlint pass; instrumentation compiled only. Signed APK 261408558 bytes,
+SHA256 `b55d2dbba7bdedd5fa7940eadcefa229fc51094e658dc9992dcaff05caec99f5`. Native publication pending.
+Actual Gecko/BPC/The Age/device behavior remains to be verified on a phone.

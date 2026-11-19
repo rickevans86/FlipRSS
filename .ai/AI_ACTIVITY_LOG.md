@@ -333,3 +333,7 @@ _Append-only. Add one dated entry at the end. Never edit or reorder earlier entr
   claimed. BPC defaults off; <=0.10.1 requires one direct install (old80MB cap).
   Same signer retained, no key published. README/six records synchronized, claims
   clear, issue closed. Final records-only merge continues authorized workflow.
+
+## 2026-11-19 — Rendered reader implementation and signed v0.12.0 preparation (#40, Codex)
+
+Implemented #40 browser/bridge/renderer/native reader import and Read aloud integration, tests/CI, version15 and release manifest. Source9dda973/app9bdca51; artifact3f2278e47886e18d221f126c09339c37289ecb6f. 107 tests each variant,6 Chromium fixtures,9 publisher tests,actionlint,release build/lint0errors17warnings and instrumentation compile pass. Prior signer/assets/39 libraries/alignment/package verified. No physical Gecko/BPC/site/audio tests or independent review claimed. Publication pending. Live GitHub checked, no overlap. Continuing Rick-authorized main/build/publish workflow.

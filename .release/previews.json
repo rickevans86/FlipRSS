@@ -147,5 +147,49 @@
     ],
     "prerelease": false,
     "description": "Open original articles inside FlipRSS with a GeckoView browser: address entry, back/forward/reload/stop, tabs, external-open and normal JavaScript/form dialogs. Settings \u2192 Use built-in browser turns it off.\n\nBundled Firefox Bypass Paywalls Clean 4.4.9.6 from Rick's requested GitFlic repository, with enable/disable, per-site popup, extension options and permission controls. It starts OFF: enable under Settings \u2192 Browser and add-on. The third-party add-on can read/change supported website pages, cookies and requests; site support varies. Licences/source/provenance are included. Reader extraction/TTS remain separate from browser/add-on output.\n\nIMPORTANT: Universal APK is 261 MB (about249 MiB), ARM64/ARMv7/x86-64, Android8+. Versions up to0.10.1 have an80MB updater cap: download/install FlipRSS.apk directly over the existing app once, without uninstalling. This version raises future update downloads to512MB. Existing signing identity retained for data-compatible upgrades; production signing unconfigured.\n\nAI: ChatGPT Codex, #37. 90 JVM tests per debug/release, release build/lint (0 errors/17 target/dependency/version/KTX warnings), instrumentation compilation, 9 publisher tests/actionlint pass. Exact upstream XPI hash, every bundled asset and39 Mozilla native libraries verified. Signature/alignment/package/version/SDK/ABI/prior signer checked. Physical browser/rendering/popup/permission/site-bypass/audio/installer/account-write tests and independent review NOT RUN."
+  },
+  {
+    "tag": "v0.12.0",
+    "artifact_commit": "3f2278e47886e18d221f126c09339c37289ecb6f",
+    "directory": "release-download",
+    "source_commit": "9dda97363b02bfd173ad56a4c342369abbe9acdc",
+    "apk": "FlipRSS.apk",
+    "sha256": "b55d2dbba7bdedd5fa7940eadcefa229fc51094e658dc9992dcaff05caec99f5",
+    "apk_parts": [
+      {
+        "name": "FlipRSS.apk.part001",
+        "sha256": "d0692eec564f38fca54940a3d52604d3e76202bd062b1c56898c79d2925d6b44"
+      },
+      {
+        "name": "FlipRSS.apk.part002",
+        "sha256": "461e5670c0bb5c10b0df483c7c3d20d295b601b4b522c1bbdd114353ab875182"
+      },
+      {
+        "name": "FlipRSS.apk.part003",
+        "sha256": "c22f330d28a67749ab3b45f945f304b44ee179c35fff08e02bb0b7d5f5cdbf8d"
+      },
+      {
+        "name": "FlipRSS.apk.part004",
+        "sha256": "49566c731fd4ad1f4a8ea75a6c287baa43ce6dbe73e7147e4ad3b495cf64f1a6"
+      },
+      {
+        "name": "FlipRSS.apk.part005",
+        "sha256": "fe3749377dc6ccb0dcc0ebf6757695c180554eb89c94bff03463b8a6cdca5b72"
+      },
+      {
+        "name": "FlipRSS.apk.part006",
+        "sha256": "e648abaffb5bf237b9817e1110bf435c7e8025f6f16294127fa1e1b037fb35b9"
+      },
+      {
+        "name": "FlipRSS.apk.part007",
+        "sha256": "3c3f1209b6d59c0536f6f85579cc5acd369333c62958a74823123068eb7a25d2"
+      },
+      {
+        "name": "FlipRSS.apk.part008",
+        "sha256": "caa3b5a61e363185937043e1bd080a74734eb16671631a54999eccc2a49c2f61"
+      }
+    ],
+    "prerelease": false,
+    "description": "Article reader now loads rendered browser text when the plain fetch misses content. The existing Bypass Paywalls Clean setting applies; with it enabled the reader also checks for more text after partial static results. No automatic add-on enablement. Existing article text stays available on failure.\n\nOpen original article, wait for the page, then tap Read in app to return visible article paragraphs to the reader and Read aloud. Load browser text provides an explicit retry. Story identity/source/read/saved state are preserved; capture is bounded and cancelled on navigation/backgrounding.\n\nAI: ChatGPT Codex, #40. 107 JVM tests EACH debug/release, six headless Chromium DOM fixtures, nine publisher tests, actionlint, release build/lint (0 errors,17 warnings), instrumentation compilation pass. All committed assets/39 native libraries, signing/alignment/package/version/ABI verified. Actual Gecko/BPC/The Age/phone/audio/installer behavior and independent review remain untested. Same prototype signer; production signing unconfigured. Universal APK about249 MiB. v0.11 updater supports it; <=0.10.1 requires direct install over existing app."
   }
 ]
