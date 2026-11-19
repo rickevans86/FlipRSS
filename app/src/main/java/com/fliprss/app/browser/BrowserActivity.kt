@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.net.toUri
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -73,7 +74,7 @@ class BrowserActivity : ComponentActivity() {
 }
 internal fun openExternal(context: Context, url: String) {
     val address = BrowserUrls.web(url) ?: return
-    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(address))) }
+    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, address.toUri())) }
         .onFailure { Toast.makeText(context, "No external browser is available.", Toast.LENGTH_SHORT).show() }
 }
 
