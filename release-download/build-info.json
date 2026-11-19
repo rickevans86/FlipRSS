@@ -1,0 +1,47 @@
+{
+  "version": "0.11.0",
+  "version_code": 14,
+  "source_commit": "0289c2ccc82068025d7d7b2a9e9b3406e8d6fcd7",
+  "app_tree": "366dd1dd3a65fd4a7e90244d97b3ce25008e997a",
+  "sha256": "07f8cbba43ce1db0b9582388741f3e268776e3521b412f897ce248376dabd21c",
+  "size_bytes": 261392018,
+  "variant": "release",
+  "debuggable": false,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": "37.2",
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "ai": "ChatGPT Codex",
+  "task": 37,
+  "geckoview": "160.0.20261116130455",
+  "addon": {
+    "version": "4.4.9.6",
+    "id": "magnolia@12.34",
+    "upstream_commit": "50f74c1e667eff99e04a22f28158634509234e8d",
+    "xpi_sha256": "0d0b9c627eb5085c16a263f61415c5706428ce7ba259566d0d50c4ac7e096dac",
+    "default_enabled": false,
+    "licence": "MIT; bundled DOMPurify MPL-2.0 option; notices/source included"
+  },
+  "tests": {
+    "jvm_debug": 90,
+    "jvm_release": 90,
+    "release_build": "passed",
+    "release_lint": "0 errors / 17 target/dependency/version/KTX warnings",
+    "earlier_debug_lint": "0 errors / 18 warnings",
+    "instrumentation": "compiled only; not executed",
+    "publisher_tests": 9,
+    "actionlint": "passed",
+    "assets": "all committed assets byte-equal; pinned XPI hash and all extracted entries checked",
+    "mozilla_native_libraries": 39,
+    "signing_alignment_sdk_package_abi": "verified"
+  },
+  "signing": "Same prototype test signer as 0.10.1; production signing unconfigured",
+  "toolchain": "AGP 9.5.1 / Gradle 9.6.0 / built-in Kotlin and Compose 2.4.21 / JDK17 / SDK37.2 / build-tools36",
+  "upgrade": "Direct installation required from <=0.10.1 due to old 80MB updater cap; new limit512MB",
+  "runtime_validation": "No device/emulator browser/rendering/popup/permission/site-bypass/audio/installer/account-write tests or independent review claimed",
+  "source_note": "Code matches tested695cd96; final0289c2c adds sanitizer source/licence notice and was repackaged; AGP worktree VCS metadata unavailable"
+}
