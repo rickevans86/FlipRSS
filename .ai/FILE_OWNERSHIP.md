@@ -2,5 +2,4 @@
 
 | Files / paths | Task | Agent | Branch |
 |---|---|---|---|
-
-No active claims. #34 completed, #35 merged; native v0.10.1 verified. Check live GitHub before new work. Never merge artifact branches.
+| app browser/add-on/reader/settings/assets/tests/version, build setup, release tooling/manifest, README/notices, .ai/** | #37 in-app browser and requested extension | Codex | codex/37-browser |
