@@ -45,14 +45,16 @@ class BrowserActivity : ComponentActivity() {
         if (url == null && !settingsOnly) { finish(); return }
         val result = runCatching { ViewModelProvider(this)[BrowserModel::class.java] }
         model = result.getOrNull()
-        model?.start(url)
+        model?.start(url, intent.getStringExtra("readerRequest"))
         setContent {
             val theme = AndroidSettingsStore(this).load().theme
             val dark = theme == AppTheme.DARK || theme == AppTheme.OLED || (theme == AppTheme.SYSTEM && isSystemInDarkTheme())
             val colors = if (theme == AppTheme.OLED) darkColorScheme(background = Color.Black, surface = Color.Black)
                 else if (dark) darkColorScheme() else lightColorScheme()
             MaterialTheme(colorScheme = colors) {
-                model?.let { Browser(it, settingsOnly, ::finish) } ?: Scaffold { padding ->
+                model?.let { Browser(it, settingsOnly, ::finish) { token ->
+                    setResult(RESULT_OK, Intent().putExtra("readerResult", token)); finish()
+                } } ?: Scaffold { padding ->
                     Column(Modifier.padding(padding).padding(24.dp)) {
                         Text("The built-in browser could not start.")
                         if (url != null) TextButton(onClick = { openExternal(this@BrowserActivity, url) }) { Text("Open in external browser") }
@@ -69,6 +71,8 @@ class BrowserActivity : ComponentActivity() {
             val address = BrowserUrls.web(url) ?: return
             context.startActivity(Intent(context, BrowserActivity::class.java).putExtra("url", address))
         }
+        fun articleIntent(context: Context, url: String, token: String) =
+            Intent(context, BrowserActivity::class.java).putExtra("url", BrowserUrls.web(url)).putExtra("readerRequest", token)
         fun settings(context: Context) { context.startActivity(Intent(context, BrowserActivity::class.java).putExtra("settings", true)) }
     }
 }
@@ -78,8 +82,9 @@ internal fun openExternal(context: Context, url: String) {
         .onFailure { Toast.makeText(context, "No external browser is available.", Toast.LENGTH_SHORT).show() }
 }
 
-@Composable private fun Browser(model: BrowserModel, settingsOnly: Boolean, close: () -> Unit) {
+@Composable private fun Browser(model: BrowserModel, settingsOnly: Boolean, close: () -> Unit, returnText: (String) -> Unit) {
     val addon by model.engine.state.collectAsStateWithLifecycle()
+    LaunchedEffect(model.returnArticle) { model.returnArticle?.let(returnText) }
     var settings by rememberSaveable { mutableStateOf(settingsOnly) }
     var showTabs by rememberSaveable { mutableStateOf(false) }
     var licences by rememberSaveable { mutableStateOf(false) }
@@ -116,7 +121,11 @@ internal fun openExternal(context: Context, url: String) {
                 TextButton(enabled = tab?.url?.let { it.startsWith("http") && BrowserUrls.web(it) != null } == true,
                     onClick = { tab?.url?.let { openExternal(context, it) } }) { Text("External") }
             }
-            if (tab?.loading == true || addon.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (model.canReadInApp) TextButton(onClick = model::readInApp,
+                enabled = model.ready && !model.capturing && tab?.loading != true && tab?.url?.startsWith("http") == true) {
+                Text(if (model.capturing) "Reading page…" else "Read in app")
+            }
+            if (tab?.loading == true || addon.busy || model.capturing) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {

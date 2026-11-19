@@ -432,8 +432,8 @@ Settings → **Browser and add-on** (also the extension icon in the browser) inc
 Bypass Paywalls Clean is bundled but starts **off** until enabled. It can read and
 change page content, cookies and requests on its supported websites; optional
 extra site permissions are shown for Allow/Deny. Site support varies. The browser
-uses the actual Firefox extension, rather than a WebView imitation. Reader text
-extraction and Read aloud remain separate from the browser page/add-on output.
+uses the actual Firefox extension, rather than a WebView imitation. Reader text can now use the rendered browser page/add-on output through the
+owned reader bridge described in #40 below.
 
 Pinned GeckoView: `160.0.20261116130455` (MPL 2.0). Pinned Firefox add-on: `4.4.9.6`,
 MIT, from the exact repository Rick supplied. The XPI SHA256 matches upstream
@@ -462,3 +462,45 @@ APK: 261,392,018 bytes; SHA256
 per debug/release, release build/lint (0 errors/17 warnings), nine publisher tests
 and actionlint pass; instrumentation compiles only. Runtime browser/site-specific
 add-on tests remain pending.
+
+## Browser text in the reader and Read aloud (#40)
+
+The reader now uses the built-in browser when a plain article fetch cannot expand
+the feed text. If Bypass Paywalls Clean is enabled, its page changes apply to this
+load too; with the add-on enabled the app also checks for more text after a partial
+plain-HTML result. **Load full articles** and **Use built-in browser** control the
+automatic requests. **Load browser text** explicitly retries rendering for one
+story, using the current add-on choice. Existing feed/static text stays visible
+and is retained if rendering fails. The result is used by **Read aloud**.
+
+If you can see more by opening **Open original article**, let the page/add-on finish
+and tap **Read in app** in the browser. That brings the article paragraphs back to
+the same reader story. It will not import a different story you browsed to. Return
+uses an expiring in-process token, not a large article body in Android Binder.
+
+An owned, separately bundled reader bridge extracts rendered article paragraphs
+on native request. It does not read article bodies from hidden JSON/scripts, grant
+new BPC permissions or enable the add-on by itself. CSS-hidden/menu/ad/comment/
+form content is excluded; visible modal consent/login dialogs need user action in
+the browser first. Replies require the owned extension/top frame/registered
+session/current port/native document URL and matching random request nonce.
+Original/canonical publisher URL, headline, size and longer-text checks apply.
+Article identity, source ownership and read/bookmark state remain unchanged.
+
+Rendering uses a noninteractive, transparent TextureView behind the reader with a
+real viewport, shared publisher browser profile and current add-on settings. Only
+the selected article is loaded; backgrounding/leaving/swiping cancels its request
+and closes its session. Automatic capture waits for dynamic content with a bounded
+26-second total; manual capture is bounded to 16 seconds. Successful text remains
+in the existing 20-story memory cache. Sites that require scrolling/interaction or
+take longer can still need manual **Read in app**; full text is not guaranteed.
+
+Bridge source is under `assets/reader-bridge`, currently version **1.0.0**. Bump its
+manifest version whenever its code changes in future releases so Gecko reinstalls
+it. Original BPC assets/XPI remain byte-identical. The static parser still rejects
+restricted metadata; browser import reads only the rendered page's article DOM.
+
+Development checks: `npm ci --ignore-scripts`, `npx playwright install chromium`,
+`npm run test:reader-bridge` (or set `CHROMIUM_PATH` to an existing Chromium).
+These are headless browser DOM fixture tests, including simulated add-on updates;
+they do not establish real Gecko/BPC behavior on every site or a physical phone.

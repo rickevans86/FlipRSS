@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
+import com.fliprss.app.data.RenderedArticleText
 import org.mozilla.geckoview.*
 
 internal class BrowserTab(val session: GeckoSession) {
@@ -30,14 +32,46 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
     var permission by mutableStateOf<Pair<List<String>, GeckoResult<AllowOrDeny>>?>(null); private set
     private var initialUrl: String? = null
     private var initialized = false
+    private var articleRequest: String? = null
+    private var captureJob: Job? = null
+    private var captureGeneration = 0
+    var capturing by mutableStateOf(false); private set
+    var returnArticle by mutableStateOf<String?>(null); private set
+    val canReadInApp get() = BrowserTextTransfer.peek(articleRequest) != null
+    private fun cancelCapture() {
+        ++captureGeneration; captureJob?.cancel(); captureJob = null; capturing = false
+        current?.session?.let(engine.reader::abort)
+    }
+    fun readInApp() {
+        if (capturing || !ready) return
+        val token = articleRequest ?: return
+        val entry = BrowserTextTransfer.peek(token) ?: run { error = "Reader request expired. Reopen the original article."; return }
+        val page = current?.session ?: return
+        val request = ++captureGeneration
+        capturing = true; error = null
+        captureJob = viewModelScope.launch {
+            try {
+                val result = engine.reader.capture(page, entry.baseline, false)
+                if (request != captureGeneration || current?.session !== page) return@launch
+                if (result != null && BrowserTextTransfer.complete(token, result)) returnArticle = token
+                else error = "Could not capture more of the original article. Let the page load, then try Read in app again."
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+            catch (_: Exception) { error = "Browser text could not be read. Reload the original page and try again." }
+            finally { if (request == captureGeneration) capturing = false }
+        }
+    }
     init { engine.host = WeakReference(this) }
-    fun start(url: String?) {
+    fun start(url: String?, readerRequest: String? = null) {
         if (initialized) return
         initialized = true; initialUrl = url
+        articleRequest = readerRequest?.takeIf { token ->
+            val original = BrowserTextTransfer.peek(token)?.original?.originalUrl
+            original != null && url != null && RenderedArticleText.samePage(original, url)
+        }
         newTab()
         configure(engine.requestedEnabled)
     }
-    fun configure(enabled: Boolean) { viewModelScope.launch {
+    fun configure(enabled: Boolean) { cancelCapture(); viewModelScope.launch {
         if (engine.configure(enabled)) {
             ready = true; error = null
             tabs.forEach { engine.attach(it.session) }
@@ -63,6 +97,7 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
         session.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onLocationChange(session: GeckoSession, url: String?, perms: MutableList<GeckoSession.PermissionDelegate.ContentPermission>, hasUserGesture: Boolean) {
                 if (url != null) tab.url = url
+                engine.reader.location(session, url)
             }
             override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) { tab.back = canGoBack }
             override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) { tab.forward = canGoForward }
@@ -79,7 +114,7 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
             }
         }
         session.progressDelegate = object : GeckoSession.ProgressDelegate {
-            override fun onPageStart(session: GeckoSession, url: String) { tab.loading = true; error = null }
+            override fun onPageStart(session: GeckoSession, url: String) { if (current?.session === session) cancelCapture(); tab.loading = true; error = null }
             override fun onPageStop(session: GeckoSession, success: Boolean) { tab.loading = false; if (!success) error = "The page did not finish loading. Try reloading." }
         }
         session.contentDelegate = object : GeckoSession.ContentDelegate {
@@ -106,17 +141,19 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
     }
     fun dismissPopup() { popup?.let { it.setActive(false); it.close() }; popup = null }
     fun select(session: GeckoSession) {
+        if (current?.session !== session) cancelCapture()
         current?.session?.let { it.setActive(false); engine.runtime.webExtensionController.setTabActive(it, false) }
         current = tabs.firstOrNull { it.session == session }
         active(resumed)
     }
     fun active(value: Boolean) {
         resumed = value
-        if (!value) dismissPopup()
+        if (!value) { cancelCapture(); dismissPopup() }
         if (value) engine.host = WeakReference(this)
         current?.session?.let { it.setActive(value); engine.runtime.webExtensionController.setTabActive(it, value) }
     }
     fun closeTab(session: GeckoSession): Boolean {
+        if (current?.session === session) cancelCapture()
         val tab = tabs.firstOrNull { it.session == session } ?: return false
         session.setActive(false); engine.runtime.webExtensionController.setTabActive(session, false)
         tabs.remove(tab); engine.detach(session); session.close()

@@ -24,6 +24,7 @@ internal suspend fun <T : Any> GeckoResult<T>.awaitResult(): T = suspendCancella
 internal class BrowserEngine private constructor(context: Context) {
     val runtime = GeckoRuntime.create(context.applicationContext, GeckoRuntimeSettings.Builder()
         .javaScriptEnabled(true).remoteDebuggingEnabled(false).consoleOutput(false).build())
+    val reader = ReaderBridge(runtime)
     private val preferences = context.applicationContext.getSharedPreferences("browser-addon", 0)
     private val mutex = Mutex()
     private val mutable = MutableStateFlow(AddonState())
@@ -49,7 +50,7 @@ internal class BrowserEngine private constructor(context: Context) {
         if (!state.value.enabled || action == null) return false
         action.click(); return true
     }
-    fun detach(session: GeckoSession) { actions.remove(session) }
+    fun detach(session: GeckoSession) { reader.detach(session); actions.remove(session) }
     var host = WeakReference<BrowserModel>(null)
     val requestedEnabled get() = preferences.getBoolean("enabled", false)
     init {
@@ -62,6 +63,7 @@ internal class BrowserEngine private constructor(context: Context) {
     suspend fun configure(enabled: Boolean): Boolean = mutex.withLock { kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
         mutable.value = mutable.value.copy(busy = true, error = null)
         try {
+            try { reader.prepare() } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled } catch (_: Exception) { /* Browser still works; capture can retry. */ }
             var installed = runtime.webExtensionController.list().awaitResult().firstOrNull { it.id == ID }
             if (enabled) installed = runtime.webExtensionController.ensureBuiltIn("resource://android/assets/bpc/", ID).awaitResult()
             if (installed != null) {
@@ -95,11 +97,13 @@ internal class BrowserEngine private constructor(context: Context) {
             override fun onOpenOptionsPage(source: WebExtension) { host.get()?.openOptions() }
         })
     }
-    fun attach(session: GeckoSession) {
+    fun attach(session: GeckoSession, readerUrl: String? = null) {
+        reader.attach(session)
         extension?.let { addon ->
             session.webExtensionController.setActionDelegate(addon, actionDelegate)
             session.webExtensionController.setTabDelegate(addon, object : WebExtension.SessionTabDelegate {
             override fun onUpdateTab(extension: WebExtension, session: GeckoSession, details: WebExtension.UpdateTabDetails): GeckoResult<AllowOrDeny> {
+                if (readerUrl != null) return if (details.url == null || com.fliprss.app.data.RenderedArticleText.sameOrigin(readerUrl, details.url!!)) GeckoResult.allow() else GeckoResult.deny()
                 val model = host.get() ?: return GeckoResult.deny()
                 if (details.url != null && !BrowserUrls.allowed(details.url!!, state.value.optionsUrl)) return GeckoResult.deny()
                 if (details.active == true) model.select(session)
@@ -113,6 +117,7 @@ internal class BrowserEngine private constructor(context: Context) {
     }
     companion object {
         const val ID = "magnolia@12.34"
+        fun addonRequested(context: Context) = context.applicationContext.getSharedPreferences("browser-addon", 0).getBoolean("enabled", false)
         private var instance: BrowserEngine? = null
         fun get(context: Context): BrowserEngine = instance ?: BrowserEngine(context).also { instance = it }
     }

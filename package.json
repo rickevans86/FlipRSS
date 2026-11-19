@@ -1,0 +1,9 @@
+{
+  "name": "fliprss-development-checks",
+  "private": true,
+  "scripts": {
+    "test:publisher": "node --test .github/scripts/publish-releases.test.cjs",
+    "test:reader-bridge": "node --test scripts/reader-bridge.test.cjs"
+  },
+  "devDependencies": { "playwright": "1.62.1" }
+}

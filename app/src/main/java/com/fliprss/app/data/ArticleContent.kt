@@ -39,13 +39,16 @@ internal object ArticleContentExtractor {
 
 internal fun Article.contentKey() = "${if (local) "local" else if (demo) "demo" else "fresh"}:$id:$originalUrl:${paragraphs.hashCode()}"
 internal data class ArticleContentState(val key: String? = null, val expanded: Article? = null,
-    val loading: Boolean = false, val attempted: Boolean = false) {
+    val loading: Boolean = false, val attempted: Boolean = false, val browserLoading: Boolean = false, val viaBrowser: Boolean = false) {
     fun display(article: Article) = expanded?.takeIf { key == article.contentKey() } ?: article
 }
 /** Only the open story is fetched. Responses from canceled/replaced selections cannot enter the reader. */
 internal class ArticleContentController(private val scope: CoroutineScope,
     private val fetch: suspend (String) -> FeedPage = { FeedWeb().get(it) },
-    private val parseDispatcher: CoroutineDispatcher = Dispatchers.Default) {
+    private val parseDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val render: suspend (Article) -> Article? = { null },
+    private val autoBrowser: () -> Boolean = { false },
+    private val expandWithBrowser: () -> Boolean = { true }) {
     private val mutable = MutableStateFlow(ArticleContentState())
     val state = mutable.asStateFlow()
     private var current: Article? = null
@@ -61,21 +64,49 @@ internal class ArticleContentController(private val scope: CoroutineScope,
         mutable.value = ArticleContentState(article.contentKey(), cached, attempted = cached != null)
         if (autoLoad && cached == null) load()
     }
-    fun load() {
+    fun load(browserOnly: Boolean = false) {
         val article = current ?: return
         val address = article.originalUrl?.takeIf { normalizedFeedUrl(it) != null } ?: return
         if (article.demo || mutable.value.loading) return
         val request = ++generation
-        mutable.value = ArticleContentState(article.contentKey(), loading = true)
+        val previous = mutable.value.expanded
+        val previousViaBrowser = mutable.value.viaBrowser
+        mutable.value = mutable.value.copy(loading = true, browserLoading = browserOnly)
         job = scope.launch {
-            val expanded = try { withContext(parseDispatcher) { ArticleContentExtractor.extract(fetch(address), article) } }
-                catch (cancelled: CancellationException) { throw cancelled }
-                catch (_: Exception) { null }
+            var best = previous
+            var viaBrowser = previousViaBrowser
+            try {
+                val direct = if (browserOnly) null else try {
+                    withContext(parseDispatcher) { ArticleContentExtractor.extract(fetch(address), article) }
+                } catch (cancelled: CancellationException) { throw cancelled } catch (_: Exception) { null }
+                if (direct != null && direct.paragraphs.sumOf(String::length) > (best?.paragraphs?.sumOf(String::length) ?: 0)) {
+                    best = direct; viaBrowser = false
+                }
+                if (browserOnly || (autoBrowser() && (best == null || expandWithBrowser()))) {
+                    if (request == generation) mutable.value = mutable.value.copy(expanded = best, browserLoading = true)
+                    val baseline = best ?: article
+                    val candidate = render(baseline)
+                    if (candidate != null && candidate.id == article.id && candidate.originalUrl == article.originalUrl &&
+                        candidate.local == article.local && candidate.demo == article.demo) {
+                        RenderedArticleText.enrich(baseline, candidate.paragraphs)?.let { best = it; viaBrowser = true }
+                    }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled } catch (_: Exception) { /* Keep best available text. */ }
             if (request == generation) {
-                if (expanded != null) cache[article.contentKey()] = expanded
-                mutable.value = ArticleContentState(article.contentKey(), expanded, attempted = true)
+                if (best != null) cache[article.contentKey()] = best!!
+                mutable.value = ArticleContentState(article.contentKey(), best, attempted = true, viaBrowser = viaBrowser)
             }
         }
+    }
+    fun importBrowser(original: Article, candidate: Article): Boolean {
+        val selected = current ?: return false
+        if (selected.contentKey() != original.contentKey() || candidate.id != original.id || candidate.originalUrl != original.originalUrl ||
+            candidate.local != original.local || candidate.demo != original.demo) return false
+        val longer = RenderedArticleText.enrich(mutable.value.display(original), candidate.paragraphs) ?: return false
+        ++generation; job?.cancel(); job = null
+        cache[original.contentKey()] = longer
+        mutable.value = ArticleContentState(original.contentKey(), longer, attempted = true, viaBrowser = true)
+        return true
     }
     fun close() { ++generation; job?.cancel(); job = null; current = null; mutable.value = ArticleContentState() }
 }
