@@ -25,7 +25,7 @@ class DiscoverySettingsTest {
         val context = compose.activity
         val original = AndroidSettingsStore(context).load()
         try {
-            val settings = original.copy(theme = AppTheme.OLED, showFeedSearch = false)
+            val settings = original.copy(theme = AppTheme.OLED, showFeedSearch = false, showFreshRss = false, showFlipRss = false)
             compose.runOnIdle {
                 ViewModelProvider(context)[LibraryViewModel::class.java].library.updateSettings(settings)
             }
@@ -33,6 +33,9 @@ class DiscoverySettingsTest {
             val restored = AndroidSettingsStore(context).load()
             org.junit.Assert.assertEquals(AppTheme.OLED, restored.theme)
             org.junit.Assert.assertFalse(restored.showFeedSearch)
+            org.junit.Assert.assertFalse(restored.showFreshRss)
+            org.junit.Assert.assertFalse(restored.showFlipRss)
+            compose.onNodeWithText("Saved", useUnmergedTree = true).assertIsSelected()
         } finally {
             compose.runOnIdle { ViewModelProvider(context)[LibraryViewModel::class.java].library.updateSettings(original) }
         }

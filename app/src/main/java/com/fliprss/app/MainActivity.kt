@@ -90,7 +90,8 @@ private val Red = Color(0xFFB83224)
     val fresh by model.freshLibrary.state.collectAsStateWithLifecycle()
     val feeds by model.localFeeds.collectAsStateWithLifecycle()
     val directory by model.directory.state.collectAsStateWithLifecycle()
-    var destination by rememberSaveable { mutableStateOf("FlipRSS") }
+    var selectedDestination by rememberSaveable { mutableStateOf("FlipRSS") }
+    val destination = availableDestination(selectedDestination, local.settings.showFeedSearch, local.settings.showFreshRss, local.settings.showFlipRss)
     var topic by rememberSaveable { mutableStateOf<String?>(null) }
     var readerIds by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
     var seenFreshRevision by rememberSaveable { mutableIntStateOf(fresh.accountRevision) }
@@ -128,7 +129,9 @@ private val Red = Color(0xFFB83224)
     val context = LocalContext.current
     val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
     val uriHandler = LocalUriHandler.current
-    LaunchedEffect(local.settings.showFeedSearch) { destination = availableDestination(destination, local.settings.showFeedSearch) }
+    LaunchedEffect(destination) {
+        if (selectedDestination != destination) { selectedDestination = destination; topic = null }
+    }
     LaunchedEffect(fresh.accountRevision, local.accountRevision) {
         if (seenFreshRevision != fresh.accountRevision || seenLocalRevision != local.accountRevision) {
             seenFreshRevision = fresh.accountRevision; seenLocalRevision = local.accountRevision
@@ -185,8 +188,8 @@ private val Red = Color(0xFFB83224)
     if (readerArticles.isNotEmpty()) Reader(readerArticles, initialPage, state, model, onSpeechSettings = { speechReturnToSettings = false; speechSettingsOpen = true }) { readerIds = emptyList() }
     else Scaffold(bottomBar = {
         NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-            libraryDestinations(local.settings.showFeedSearch).forEach { item ->
-                NavigationBarItem(selected = destination == item, onClick = { destination = item; topic = null },
+            libraryDestinations(local.settings.showFeedSearch, local.settings.showFreshRss, local.settings.showFlipRss).forEach { item ->
+                NavigationBarItem(selected = destination == item, onClick = { selectedDestination = item; topic = null },
                     icon = { Icon(when (item) { "Search" -> Icons.Outlined.Search; "Saved" -> Icons.Outlined.BookmarkBorder
                         "FreshRSS" -> Icons.Outlined.RssFeed; else -> Icons.Outlined.ViewDay }, null) }, label = { Text(item) })
             }

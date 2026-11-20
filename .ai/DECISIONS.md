@@ -330,3 +330,7 @@ Use a separately owned native-messaging extension, not changes to BPC. Capture v
 ## 2026-11-19 — Rendered-reader native publication verified (#40, Codex)
 
 Verify published native APK bytes and metadata/checksum against signed release; all13 historical APK digests match manifest. Keep one FlipRSS.apk release asset, internal eight-part transport only. Current v0.11 updater accepts size; older<=0.10.1 needs direct install. Record rendered extraction fixtures separately from unexecuted real Gecko/BPC/phone behavior; successful DOM simulation does not establish actual publisher compatibility.
+
+## 2026-11-20 — Independent source-tab visibility (#43, Codex)
+
+Persist showFreshRss/showFlipRss independently, default true for existing installs. Treat switches as navigation visibility; keep account and feed data and combined Saved contents. Always retain Saved for reachability when all optional tabs are hidden. Resolve active destination from available tabs immediately, then persist fallback selection and reset category; do not return automatically to re-enabled tabs. Continue explicit user main/build/publish authorization.
