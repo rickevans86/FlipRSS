@@ -10,6 +10,8 @@ data class AppSettings(
     val hideEmptyCategories: Boolean = false,
     val useLocalFeeds: Boolean = false,
     val showFeedSearch: Boolean = true,
+    val showFreshRss: Boolean = true,
+    val showFlipRss: Boolean = true,
     val markReadOnScroll: Boolean = false,
     val confirmMarkAllRead: Boolean = true,
     val autoLoadFullArticles: Boolean = true,

@@ -35,7 +35,14 @@ internal object FeedDirectory {
     }
 }
 
-internal fun libraryDestinations(showFeedSearch: Boolean) =
-    if (showFeedSearch) listOf("FreshRSS", "FlipRSS", "Search", "Saved") else listOf("FreshRSS", "FlipRSS", "Saved")
-internal fun availableDestination(current: String, showFeedSearch: Boolean) =
-    current.takeIf { it in libraryDestinations(showFeedSearch) } ?: "FlipRSS"
+/** Saved is always reachable, including when all optional tabs are hidden. */
+internal fun libraryDestinations(showFeedSearch: Boolean, showFreshRss: Boolean = true, showFlipRss: Boolean = true) = buildList {
+    if (showFreshRss) add("FreshRSS")
+    if (showFlipRss) add("FlipRSS")
+    if (showFeedSearch) add("Search")
+    add("Saved")
+}
+internal fun availableDestination(current: String, showFeedSearch: Boolean, showFreshRss: Boolean = true, showFlipRss: Boolean = true): String {
+    val visible = libraryDestinations(showFeedSearch, showFreshRss, showFlipRss)
+    return current.takeIf { it in visible } ?: visible.firstOrNull { it == "FlipRSS" } ?: visible.first()
+}

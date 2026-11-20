@@ -14,6 +14,8 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
         hideEmptyCategories = preferences.getBoolean("hide-empty-categories", false),
         useLocalFeeds = preferences.getBoolean("use-local-feeds", false),
         showFeedSearch = preferences.getBoolean("show-feed-search", true),
+        showFreshRss = preferences.getBoolean("show-fresh-rss", true),
+        showFlipRss = preferences.getBoolean("show-flip-rss", true),
         markReadOnScroll = preferences.getBoolean("mark-read-on-scroll", false),
         confirmMarkAllRead = preferences.getBoolean("confirm-mark-all-read", true),
         autoLoadFullArticles = preferences.getBoolean("auto-load-full-articles", true),
@@ -30,6 +32,8 @@ class AndroidSettingsStore(context: Context) : SettingsStore {
             putBoolean("hide-empty-categories", value.hideEmptyCategories)
             putBoolean("use-local-feeds", value.useLocalFeeds)
             putBoolean("show-feed-search", value.showFeedSearch)
+            putBoolean("show-fresh-rss", value.showFreshRss)
+            putBoolean("show-flip-rss", value.showFlipRss)
             putBoolean("mark-read-on-scroll", value.markReadOnScroll)
             putBoolean("confirm-mark-all-read", value.confirmMarkAllRead)
             putBoolean("auto-load-full-articles", value.autoLoadFullArticles)

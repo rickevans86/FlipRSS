@@ -36,9 +36,17 @@ import kotlin.math.roundToInt
             Text("A quieter reading experience.", fontFamily = FontFamily.Serif,
                 fontSize = settings.readerTextSize.sp, lineHeight = (settings.readerTextSize * 1.55f).sp)
             HorizontalDivider()
+            Text("Bottom navigation", style = MaterialTheme.typography.titleSmall)
+            SettingsToggle("Show FreshRSS", "Show the FreshRSS tab in the bottom bar. Your account and saved stories are kept.", settings.showFreshRss) {
+                onSettings(settings.copy(showFreshRss = it))
+            }
+            SettingsToggle("Show FlipRSS", "Show the local feeds tab in the bottom bar. Your feeds and saved stories are kept.", settings.showFlipRss) {
+                onSettings(settings.copy(showFlipRss = it))
+            }
             SettingsToggle("Show feed search", "Browse and search popular RSS feeds from the Search tab.", settings.showFeedSearch) {
                 onSettings(settings.copy(showFeedSearch = it))
             }
+            HorizontalDivider()
             SettingsToggle("Hide read stories", "Applies to FreshRSS and FlipRSS; Saved always includes read stories.", settings.hideRead) {
                 onSettings(settings.copy(hideRead = it))
             }

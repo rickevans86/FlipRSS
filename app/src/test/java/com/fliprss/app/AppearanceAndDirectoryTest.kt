@@ -54,4 +54,34 @@ class AppearanceAndDirectoryTest {
         assertEquals(26, store.load().readerTextSize)
         assertTrue(AppSettings().showFeedSearch)
     }
+    @Test fun sourceVisibilityKeepsEveryNavigationCombinationReachable() {
+        for (search in listOf(false, true)) for (fresh in listOf(false, true)) for (local in listOf(false, true)) {
+            val tabs = libraryDestinations(search, fresh, local)
+            assertEquals(fresh, "FreshRSS" in tabs)
+            assertEquals(local, "FlipRSS" in tabs)
+            assertEquals(search, "Search" in tabs)
+            assertEquals("Saved", tabs.last())
+            assertEquals(tabs.size, tabs.toSet().size)
+            val fallback = when { local -> "FlipRSS"; fresh -> "FreshRSS"; search -> "Search"; else -> "Saved" }
+            for (current in listOf("FreshRSS", "FlipRSS", "Search", "Saved", "unknown")) {
+                val result = availableDestination(current, search, fresh, local)
+                assertEquals(if (current in tabs) current else fallback, result)
+                assertTrue(result in tabs)
+            }
+        }
+    }
+    @Test fun sourceVisibilityDefaultsAndIndependentSettingsSurviveNormalization() {
+        assertTrue(AppSettings().showFreshRss)
+        assertTrue(AppSettings().showFlipRss)
+        val store = MemorySettingsStore()
+        for (fresh in listOf(false, true)) for (local in listOf(false, true)) {
+            store.save(AppSettings(showFreshRss = fresh, showFlipRss = local, readerTextSize = 99))
+            val restored = store.load()
+            assertEquals(fresh, restored.showFreshRss)
+            assertEquals(local, restored.showFlipRss)
+            assertTrue(restored.showFeedSearch)
+            assertEquals(26, restored.readerTextSize)
+        }
+    }
+
 }
