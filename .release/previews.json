@@ -191,5 +191,49 @@
     ],
     "prerelease": false,
     "description": "Article reader now loads rendered browser text when the plain fetch misses content. The existing Bypass Paywalls Clean setting applies; with it enabled the reader also checks for more text after partial static results. No automatic add-on enablement. Existing article text stays available on failure.\n\nOpen original article, wait for the page, then tap Read in app to return visible article paragraphs to the reader and Read aloud. Load browser text provides an explicit retry. Story identity/source/read/saved state are preserved; capture is bounded and cancelled on navigation/backgrounding.\n\nAI: ChatGPT Codex, #40. 107 JVM tests EACH debug/release, six headless Chromium DOM fixtures, nine publisher tests, actionlint, release build/lint (0 errors,17 warnings), instrumentation compilation pass. All committed assets/39 native libraries, signing/alignment/package/version/ABI verified. Actual Gecko/BPC/The Age/phone/audio/installer behavior and independent review remain untested. Same prototype signer; production signing unconfigured. Universal APK about249 MiB. v0.11 updater supports it; <=0.10.1 requires direct install over existing app."
+  },
+  {
+    "tag": "v0.12.1",
+    "artifact_commit": "28186f022e1d76014abf449d86616de42871ef14",
+    "directory": "release-download",
+    "source_commit": "78756ccea778b26b909319bd6f1264419f865131",
+    "apk": "FlipRSS.apk",
+    "sha256": "df1c963eda36fc0bfb022ce4f1cd761caa5a58607832b9379eae32fc3d05d5a5",
+    "apk_parts": [
+      {
+        "name": "FlipRSS.apk.part001",
+        "sha256": "f96ddb415b68a9c2a02c6fd6249ad157ac212965676beb4a027ad0e8fada755d"
+      },
+      {
+        "name": "FlipRSS.apk.part002",
+        "sha256": "de83d5639102f89fea4512ca1a989de4f0c4a18143d8e04b34dbe80e87718618"
+      },
+      {
+        "name": "FlipRSS.apk.part003",
+        "sha256": "8d68985f008d50083e4662b6275971dcd41c8e97fc397f4353a7168febd61131"
+      },
+      {
+        "name": "FlipRSS.apk.part004",
+        "sha256": "674c7b0c57ea63420d88872a2ec32136b55e7a6326f060961d2acf412eb01659"
+      },
+      {
+        "name": "FlipRSS.apk.part005",
+        "sha256": "cb46d24ebec2bb245e816fc61b52985c77fd0dfea3da5522ff7074ad134f7a10"
+      },
+      {
+        "name": "FlipRSS.apk.part006",
+        "sha256": "3163928299e1d005d6ffd62071ba28166b6b0f3f0ea4558cdd6ddf2e1527fff0"
+      },
+      {
+        "name": "FlipRSS.apk.part007",
+        "sha256": "95aa4dd71ea8b1d72263d20b13937a2a908dd96123b6415f05dacf46956a273e"
+      },
+      {
+        "name": "FlipRSS.apk.part008",
+        "sha256": "5f53d634597eb16864f9da5244ce68a6ca25dec528b63705c11f930a38feee1a"
+      }
+    ],
+    "prerelease": false,
+    "description": "Settings \u2192 Bottom navigation now has independent Show FreshRSS and Show FlipRSS switches. Both default on; turning one off hides its bottom bar icon. Choices persist across restarts. Existing accounts, feeds and combined Saved stories are retained. Search visibility remains independent.\n\nWhen the current tab is hidden, select another visible tab and clear its old category. Saved stays available even when FreshRSS, FlipRSS and Search are all hidden.\n\nAI: ChatGPT Codex, #43. 109 JVM tests EACH debug/release, release build/lint (0 errors,12 warnings), instrumentation compilation,9 publisher tests/actionlint pass. Android preference persistence assertion compiles but has not been executed on a device. All assets/39 Mozilla libraries/signing/alignment/package/version/SDK/ABI verified. Same prototype test signer retained; production signing unconfigured. Android UI/installer and independent review not run. v0.11+ updater accepts APK size; <=0.10.1 requires direct installation over existing app."
   }
 ]

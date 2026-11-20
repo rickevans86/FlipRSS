@@ -523,3 +523,8 @@ If the selected tab is hidden, the app moves to FlipRSS, FreshRSS, Search or Sav
 in that order of availability and clears the previous category. Saved always stays
 visible, including when every optional tab is off. These switches control tab
 visibility; they do not sign out or stop background account restoration.
+
+Release candidate **v0.12.1/code16**:109 JVM tests each variant, release build/lint
+0errors12warnings, instrumentation compilation,9 publisher tests/actionlint pass.
+APK 261408558 bytes, SHA256 `df1c963eda36fc0bfb022ce4f1cd761caa5a58607832b9379eae32fc3d05d5a5`.
+Native publication pending; actual phone preference/navigation checks not run.
