@@ -334,3 +334,7 @@ Verify published native APK bytes and metadata/checksum against signed release; 
 ## 2026-11-20 — Independent source-tab visibility (#43, Codex)
 
 Persist showFreshRss/showFlipRss independently, default true for existing installs. Treat switches as navigation visibility; keep account and feed data and combined Saved contents. Always retain Saved for reachability when all optional tabs are hidden. Resolve active destination from available tabs immediately, then persist fallback selection and reset category; do not return automatically to re-enabled tabs. Continue explicit user main/build/publish authorization.
+
+## 2026-11-20 — Source-tab release publication verified (#43, Codex)
+
+Publish standard native FlipRSS.apk asset with same upgrade signer; verify hosted APK bytes, metadata and checksum against signed local build and all14 release digests against manifest. Keep eight-part transport branch unmerged. Distinguish all8-combination JVM navigation coverage and compiled Android settings assertion from unexecuted physical UI/restart checks.

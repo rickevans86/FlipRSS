@@ -1,9 +1,11 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-20 by Codex.
+Rebuilt from live GitHub Issues on 2026-11-20 by ChatGPT Codex.
 
-| Issue | Task | Agent | Status | Branch |
-|---|---|---|---|---|
-| #43 | FreshRSS/FlipRSS bottom navigation settings | Codex | Implementation complete, PR/publication pending | codex/43-source-tab-settings |
+No open Issues. #43 closed after PR #44 merge and verified regular/latest native
+v0.12.1 publication. All14 native release APK digests/three assets verified; latest
+APK bytes/metadata/checksum downloaded and matched. No active implementation claims.
 
-No other open Issues or overlapping claims. v0.12.1 native publication pending.
+Next: phone checks for independent source tab switches, selected-tab fallback,
+Saved with all optional tabs off and restart persistence. Existing Windows CI
+queue/runner permissions restriction remains unchanged; no unrelated fix started.
