@@ -338,3 +338,12 @@ Persist showFreshRss/showFlipRss independently, default true for existing instal
 ## 2026-11-20 — Source-tab release publication verified (#43, Codex)
 
 Publish standard native FlipRSS.apk asset with same upgrade signer; verify hosted APK bytes, metadata and checksum against signed local build and all14 release digests against manifest. Keep eight-part transport branch unmerged. Distinguish all8-combination JVM navigation coverage and compiled Android settings assertion from unexecuted physical UI/restart checks.
+
+## 2026-11-20 — Separate record verification from release testing (#46, Codex)
+
+For Rick's documentation refresh, reconcile current GitHub state and retain the
+existing verified v0.12.1 release provenance. Do not imply that historical build,
+APK download or unit-test evidence was rerun for this records-only task. Keep
+physical-device checks and queued Windows CI explicit; do not fold a runner fix
+into an AI-records update. Preserve the collaboration protocol and append-only
+history. No application architecture or release change is introduced.

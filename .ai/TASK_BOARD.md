@@ -2,10 +2,14 @@
 
 Rebuilt from live GitHub Issues on 2026-11-20 by ChatGPT Codex.
 
-No open Issues. #43 closed after PR #44 merge and verified regular/latest native
-v0.12.1 publication. All14 native release APK digests/three assets verified; latest
-APK bytes/metadata/checksum downloaded and matched. No active implementation claims.
+| Issue | Responsible AI | Status at verification | Branch |
+|---|---|---|---|
+| #46 — Refresh AI collaboration records after v0.12.1 release | Codex | Records complete; awaiting this PR merge/closure | codex/46-ai-records |
 
-Next: phone checks for independent source tab switches, selected-tab fallback,
-Saved with all optional tabs off and restart persistence. Existing Windows CI
-queue/runner permissions restriction remains unchanged; no unrelated fix started.
+Snapshot is taken before this records PR merges; its closing reference closes #46.
+No open application implementation tasks. #43 closed; #44/#45 merged; latest
+regular v0.12.1 published and verified. No other AI claims or implementation PRs.
+
+Remaining checks: physical phone source-tab visibility/fallback/restart/Saved,
+The Age browser-to-reader text and audio. Windows CI remains queued; runner
+health/labels are unverified due earlier access restriction. No runner fix started.

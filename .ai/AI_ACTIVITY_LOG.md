@@ -349,3 +349,16 @@ Codex implemented #43 settings/store/navigation/UI/tests/version/README. Source7
 ## 2026-11-20 — Verified source-tab settings v0.12.1 release (#43, Codex)
 
 AI: Codex. Completed #43/PR#44 (merge2e3606e) under continuing explicit Rick main/build/publish authorization. Source78756cc/app94fbed4 equals main; immutable artifact28186f0. Publisher44737339847 SUCCESS; regular/latest v0.12.1 native FlipRSS.apk 261408558 bytes SHA256df1c963eda36fc0bfb022ce4f1cd761caa5a58607832b9379eae32fc3d05d5a5. All14 native release digests and3assets checked; latest native bytes/build-info/checksum downloaded and match.109 JVM tests each variant, release build/lint0errors12warnings, instrumentation compilation,9 publisher tests/actionlint with custom label config passed. All assets/39 libraries/package/signing/alignment/SDK/ABI/prior signer verified. Phone UI/preferences/installer tests and independent review NOT RUN. Six records/README synchronized, live board rebuilt, task closed and claims clear; no unrelated runner work.
+
+## 2026-11-20 — Reconciled shared AI records (#46, Codex)
+
+Rick requested “Update ai files.” Codex refreshed all six .ai records from live
+GitHub: main cb08049, #44/#45 merged, #43 closed, latest regular v0.12.1 native
+assets/APK digest and publisher44737339847 success. No other AI changes or claims
+found. App tree94fbed4 still equals release source78756cc. Documented queued
+Windows CI and pending phone/Gecko/BPC/audio validation without claiming success.
+Preserved existing activity/decision history; rebuilt live issue board and cleared
+completed claims. Branch codex/46-ai-records; records PR closes #46 on merge.
+Checks: .ai-only diff, unchanged app tree, append-only history, git diff --check.
+Build/unit/device tests not rerun for documentation only; prior release test
+results are historical evidence. No app/version/release/runner changes made.
