@@ -509,7 +509,7 @@ Development checks: `npm ci --ignore-scripts`, `npx playwright install chromium`
 These are headless browser DOM fixture tests, including simulated add-on updates;
 they do not establish real Gecko/BPC behavior on every site or a physical phone.
 
-Published regular/latest **v0.12.0/code15**: source9dda973, 107 JVM tests each variant, six
+Previous release **v0.12.0/code15**: source9dda973, 107 JVM tests each variant, six
 headless Chromium fixtures, release build/lint0errors17warnings and nine publisher
 tests/actionlint pass; instrumentation compiled only. Signed APK 261408558 bytes,
 SHA256 `b55d2dbba7bdedd5fa7940eadcefa229fc51094e658dc9992dcaff05caec99f5`. Hosted publisher44537613170 SUCCESS; all13 native release digests verified,
@@ -528,7 +528,7 @@ in that order of availability and clears the previous category. Saved always sta
 visible, including when every optional tab is off. These switches control tab
 visibility; they do not sign out or stop background account restoration.
 
-Published regular/latest **v0.12.1/code16**:109 JVM tests each variant, release build/lint
+Previous release **v0.12.1/code16**:109 JVM tests each variant, release build/lint
 0errors12warnings, instrumentation compilation,9 publisher tests/actionlint pass.
 APK 261408558 bytes, SHA256 `df1c963eda36fc0bfb022ce4f1cd761caa5a58607832b9379eae32fc3d05d5a5`.
 Hosted publisher44737339847 SUCCESS; all14 native release digests verified.
@@ -557,13 +557,16 @@ preference is saved. Real device checks for navigation, private-session behavior
 add-on operation and layout persistence remain pending; build and unit checks do
 not establish those runtime results.
 
-Before publishing, run `python3 scripts/verify-apk-assets.py path/to/FlipRSS.apk`.
+Before publishing, use Python 3.11+ to run `python3 scripts/verify-apk-assets.py path/to/FlipRSS.apk`.
 This checks every bundled asset against source, including uBlock's required
 `_locales` files. Android's default asset filter excludes underscore-prefixed
 folders; this project overrides that filter to keep extension locales in the APK.
 
-Release candidate **v0.13.0/code17**:110 JVM tests each variant, release build/lint
+Published regular/latest **v0.13.0/code17**:110 JVM tests each variant, release build/lint
 0errors12warnings, instrumentation compilation,9 publisher tests/actionlint and
 4 APK-verifier smoke fixtures pass. All720 assets and39 native libraries verified.
 APK 267602668 bytes; SHA256 `eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3`.
-Native publication pending; physical device behavior not tested.
+Hosted publisher44876127929 SUCCESS; all15 native release digests verified.
+Latest native APK/build-info/checksum downloaded and matched signed build.
+[Download FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.13.0/FlipRSS.apk).
+Physical device behavior not tested.

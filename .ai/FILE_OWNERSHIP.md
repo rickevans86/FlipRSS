@@ -1,4 +1,4 @@
 # FILE_OWNERSHIP
 
-No in-progress implementation claims. #49 build/packaging fix complete; native
-publication and verification are tracked in task board.
+No in-progress task claims. #49 closed after corrected build and native release
+publication/download verification. Claude #48 feature work is complete.
