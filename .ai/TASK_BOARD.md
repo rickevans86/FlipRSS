@@ -2,10 +2,11 @@
 
 Rebuilt from live GitHub Issues on 2026-11-21 by Codex.
 
-| Issue | Task | AI | Status | Branch |
-|---|---|---|---|---|
-| #49 | Build/publish Claude update v0.13.0 | Codex | Corrected build/signing complete; PR/publication pending | codex/49-claude-release |
+No open Issues. #49 closed after #50 merge and verified regular/latest native
+v0.13.0 publication. #48 (Claude) feature implementation remains closed. Codex
+built, fixed required locale packaging, tested, signed and published. All15 native
+release digests/three assets verified; latest bytes/metadata/checksum match.
 
-#48 closed: Claude implemented features in main2985325; Codex is building/publishing.
-No other open Issues, PRs or overlapping claims. Physical device validation and
-independent review remain unexecuted. Existing Windows CI queue unchanged.
+No in-progress implementation claims. Next: phone compact browser/system Back,
+private sessions, independent add-on controls, Tiles/List/restart checks. Physical
+validation and independent review NOT RUN. Existing Windows CI queue unchanged.
