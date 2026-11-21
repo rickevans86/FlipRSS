@@ -70,7 +70,9 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
         }
         newTab()
         configure(engine.requestedEnabled)
+        configureAdblock(engine.requestedAdblock)
     }
+    fun configureAdblock(enabled: Boolean) { viewModelScope.launch { engine.configureAdblock(enabled) } }
     fun configure(enabled: Boolean) { cancelCapture(); viewModelScope.launch {
         if (engine.configure(enabled)) {
             ready = true; error = null
@@ -93,7 +95,7 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
         newTab().loadUri(url)
     }
     fun newTab(active: Boolean = true): GeckoSession {
-        val session = GeckoSession(); val tab = BrowserTab(session)
+        val session = GeckoSession(GeckoSessionSettings.Builder().usePrivateMode(true).build()); val tab = BrowserTab(session)
         session.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onLocationChange(session: GeckoSession, url: String?, perms: MutableList<GeckoSession.PermissionDelegate.ContentPermission>, hasUserGesture: Boolean) {
                 if (url != null) tab.url = url
@@ -127,7 +129,7 @@ internal class BrowserModel(application: Application) : AndroidViewModel(applica
     }
     fun newPopup(): GeckoSession {
         dismissPopup()
-        val session = GeckoSession()
+        val session = GeckoSession(GeckoSessionSettings.Builder().usePrivateMode(true).build())
         session.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onLoadRequest(session: GeckoSession, request: GeckoSession.NavigationDelegate.LoadRequest): GeckoResult<AllowOrDeny> =
                 if (BrowserUrls.allowed(request.uri, engine.state.value.optionsUrl)) GeckoResult.allow() else GeckoResult.deny()

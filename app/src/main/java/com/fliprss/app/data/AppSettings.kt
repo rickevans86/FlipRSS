@@ -1,8 +1,10 @@
 package com.fliprss.app.data
 
 enum class AppTheme { SYSTEM, LIGHT, DARK, OLED }
+enum class FeedLayout { TILE, LIST }
 data class AppSettings(
     val theme: AppTheme = AppTheme.SYSTEM,
+    val feedLayout: FeedLayout = FeedLayout.TILE,
     val readerTextSize: Int = 19,
     val autoMarkRead: Boolean = true,
     val showImages: Boolean = true,

@@ -12,6 +12,13 @@ Source: https://gitflic.ru/project/magnolia1234/bypass-paywalls-firefox-clean
 SHA256: 0d0b9c627eb5085c16a263f61415c5706428ce7ba259566d0d50c4ac7e096dac
 The bundled extension is unmodified. Its own options control any optional rule/version checks.
 
+uBlock Origin 1.76.7.0 — Raymond Hill (gorhill), GPL-3.0.
+Built from pinned source: https://github.com/gorhill/uBlock
+Pinned commit: 4d6a3adc716c1a8e47167234f37279eb83613e66
+Bundled filter lists from https://github.com/uBlockOrigin/uAssets (their own licences apply).
+SHA256 (built Firefox package, third_party/ublock/uBlock0_1.76.7.0.firefox.xpi): 302d0966c04c905425306e53bc87e9660f91e0210b4639cb70234f7c3e72cd21
+The bundled extension is built unmodified from the pinned source. Full GPL-3.0 text: notices/GPL-3.0.txt and the extension's own LICENSE.txt.
+
 MIT License
 
 Copyright (c) 2020, magnolia1234

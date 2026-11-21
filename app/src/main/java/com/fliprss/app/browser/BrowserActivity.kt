@@ -12,21 +12,13 @@ import androidx.core.net.toUri
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowForward
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
@@ -86,12 +78,9 @@ internal fun openExternal(context: Context, url: String) {
     val addon by model.engine.state.collectAsStateWithLifecycle()
     LaunchedEffect(model.returnArticle) { model.returnArticle?.let(returnText) }
     var settings by rememberSaveable { mutableStateOf(settingsOnly) }
-    var showTabs by rememberSaveable { mutableStateOf(false) }
     var licences by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val tab = model.current
-    var address by remember(tab) { mutableStateOf(tab?.url.orEmpty()) }
-    LaunchedEffect(tab?.url) { address = tab?.url.orEmpty().takeUnless { it == "about:blank" }.orEmpty() }
     fun back() { when {
         tab?.back == true -> tab.session.goBack()
         model.tabs.size > 1 && tab != null -> model.closeTab(tab.session)
@@ -100,32 +89,12 @@ internal fun openExternal(context: Context, url: String) {
     BackHandler { back() }
     Scaffold(topBar = {
         Column(Modifier.statusBarsPadding()) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                IconButton(onClick = close) { Icon(Icons.Outlined.Close, "Close browser") }
-                IconButton(enabled = tab?.back == true, onClick = { tab?.session?.goBack() }) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "Back") }
-                IconButton(enabled = tab?.forward == true, onClick = { tab?.session?.goForward() }) { Icon(Icons.AutoMirrored.Outlined.ArrowForward, "Forward") }
-                IconButton(enabled = model.ready, onClick = { if (tab?.loading == true) tab.session.stop() else tab?.session?.reload() }) {
-                    Icon(if (tab?.loading == true) Icons.Outlined.Stop else Icons.Outlined.Refresh, if (tab?.loading == true) "Stop loading" else "Reload")
-                }
-                TextButton(onClick = { showTabs = true }) { Text("${model.tabs.size} tabs") }
-                IconButton(onClick = { settings = true }) { Icon(Icons.Outlined.Extension, "Browser and add-on settings") }
-            }
-            Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
-                OutlinedTextField(address, { address = it }, Modifier.weight(1f), singleLine = true, label = { Text("Web address") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Go),
-                    keyboardActions = KeyboardActions(onGo = { model.navigate(address) }))
-                TextButton(enabled = model.ready, onClick = { model.navigate(address) }) { Text("Go") }
-            }
             Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
                 Text(tab?.title.orEmpty(), Modifier.weight(1f), maxLines = 1, style = MaterialTheme.typography.labelSmall)
                 TextButton(enabled = tab?.url?.let { it.startsWith("http") && BrowserUrls.web(it) != null } == true,
                     onClick = { tab?.url?.let { openExternal(context, it) } }) { Text("External") }
             }
-            if (model.canReadInApp) TextButton(onClick = model::readInApp,
-                enabled = model.ready && !model.capturing && tab?.loading != true && tab?.url?.startsWith("http") == true) {
-                Text(if (model.capturing) "Reading page…" else "Read in app")
-            }
-            if (tab?.loading == true || addon.busy || model.capturing) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (tab?.loading == true || addon.busy || addon.adblockBusy || model.capturing) LinearProgressIndicator(Modifier.fillMaxWidth())
         }
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).navigationBarsPadding()) {
@@ -139,15 +108,8 @@ internal fun openExternal(context: Context, url: String) {
                 })
         }
     }
-    if (showTabs) AlertDialog(onDismissRequest = { showTabs = false }, title = { Text("Browser tabs") }, text = {
-        Column(Modifier.verticalScroll(rememberScrollState())) {
-            model.tabs.toList().forEach { item -> Row {
-                TextButton(modifier = Modifier.weight(1f), onClick = { model.select(item.session); showTabs = false }) { Text(item.title, maxLines = 2) }
-                IconButton(onClick = { model.closeTab(item.session) }) { Icon(Icons.Outlined.Close, "Close ${item.title}") }
-            } }
-        }
-    }, confirmButton = { TextButton(onClick = { showTabs = false }) { Text("Done") } })
-    if (settings) AlertDialog(onDismissRequest = { settings = false }, title = { Text("Browser and add-on") }, text = {
+    val closeSettings = { if (settingsOnly) close() else settings = false }
+    if (settings) AlertDialog(onDismissRequest = closeSettings, title = { Text("Browser and add-on") }, text = {
         Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Bypass Paywalls Clean 4.4.9.6")
             Row {
@@ -160,9 +122,18 @@ internal fun openExternal(context: Context, url: String) {
             TextButton(enabled = addon.enabled && model.ready && !addon.busy, onClick = { settings = false; if (!model.engine.clickAction(model.current?.session)) model.openOptions() }) { Text("Add-on site controls") }
             TextButton(enabled = addon.enabled && model.ready && !addon.busy, onClick = { settings = false; model.openOptions() }) { Text("Extension options") }
             TextButton(onClick = { settings = false; model.navigate("https://gitflic.ru/project/magnolia1234/bpc_uploads") }) { Text("Add-on project") }
+            HorizontalDivider()
+            Text("uBlock Origin 1.76.7.0")
+            Row {
+                Text("Enable ad blocker", Modifier.weight(1f))
+                Switch(addon.adblockEnabled, onCheckedChange = model::configureAdblock, enabled = !addon.adblockBusy)
+            }
+            Text("Blocks ads and trackers on pages opened in this browser using uBlock Origin's bundled filter lists. Runs in the background; no toolbar button.")
+            Text(if (addon.adblockBusy) "Applying ad blocker setting…" else if (addon.adblockEnabled) "Ad blocker enabled" else "Ad blocker off")
+            addon.adblockError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             TextButton(onClick = { licences = true }) { Text("Licences and source") }
         }
-    }, confirmButton = { TextButton(onClick = { settings = false }) { Text("Done") } })
+    }, confirmButton = { TextButton(onClick = closeSettings) { Text("Done") } })
     if (licences) {
         val text = remember { context.assets.open("notices/browser.txt").bufferedReader().use { it.readText() } }
         AlertDialog(onDismissRequest = { licences = false }, title = { Text("Licences and source") }, text = {

@@ -30,6 +30,13 @@ import kotlin.math.roundToInt
                         label = { Text(when (theme) { AppTheme.SYSTEM -> "System"; AppTheme.LIGHT -> "Light"; AppTheme.DARK -> "Dark"; AppTheme.OLED -> "OLED" }) })
                 }
             }
+            Text("Feed layout", style = MaterialTheme.typography.titleSmall)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                FeedLayout.entries.forEach { layout ->
+                    FilterChip(selected = settings.feedLayout == layout, onClick = { onSettings(settings.copy(feedLayout = layout)) },
+                        label = { Text(when (layout) { FeedLayout.TILE -> "Tiles"; FeedLayout.LIST -> "List" }) })
+                }
+            }
             Text("Reader text size: ${settings.readerTextSize}")
             Slider(value = settings.readerTextSize.toFloat(), onValueChange = { onSettings(settings.copy(readerTextSize = it.roundToInt())) },
                 valueRange = 16f..26f, steps = 9, modifier = Modifier.semantics { contentDescription = "Reader text size" })

@@ -256,11 +256,17 @@ private val Red = Color(0xFFB83224)
                         Text(if (destination == "Saved") "Bookmarks from FreshRSS and FlipRSS appear here, including read stories." else if (destination == "FlipRSS") "Find RSS feeds in Search or refresh your local feeds." else "Add server feeds with + or refresh FreshRSS.")
                     }
                 }
-                selected.firstOrNull()?.let { article -> item(key = "story:${article.id}") { StoryCard(article, true, state, model) { open(article) } } }
-                items(rows.size, key = { "story-row:${rows[it].first().id}" }) { index ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        rows[index].forEach { article -> Box(Modifier.weight(1f)) { StoryCard(article, false, state, model) { open(article) } } }
-                        if (rows[index].size == 1) Spacer(Modifier.weight(1f))
+                if (state.settings.feedLayout == com.fliprss.app.data.FeedLayout.LIST) {
+                    items(selected.size, key = { "story-list:${selected[it].id}" }) { index ->
+                        StoryRow(selected[index], state, model) { open(selected[index]) }
+                    }
+                } else {
+                    selected.firstOrNull()?.let { article -> item(key = "story:${article.id}") { StoryCard(article, true, state, model) { open(article) } } }
+                    items(rows.size, key = { "story-row:${rows[it].first().id}" }) { index ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            rows[index].forEach { article -> Box(Modifier.weight(1f)) { StoryCard(article, false, state, model) { open(article) } } }
+                            if (rows[index].size == 1) Spacer(Modifier.weight(1f))
+                        }
                     }
                 }
                 if (state.continuation != null) item {
@@ -358,6 +364,24 @@ private val Red = Color(0xFFB83224)
             if (hero) Text(article.summary, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text("${if (article.local || article.demo) "FlipRSS" else "FreshRSS"} · ${article.source} · ${article.minutes} MIN READ", fontSize = 9.sp, lineHeight = 14.sp, letterSpacing = .4.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+@Composable private fun StoryRow(article: Article, state: LibraryState, library: LibraryViewModel, onOpen: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(onClickLabel = "Read ${article.title}", onClick = onOpen),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Eyebrow(article.topic.uppercase())
+            Text(article.title, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Medium,
+                fontSize = 18.sp, lineHeight = 22.sp, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            Text(article.summary, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text("${if (article.local || article.demo) "FlipRSS" else "FreshRSS"} · ${article.source} · ${article.minutes} MIN READ${if (article.id in state.readIds) " · READ" else ""}",
+                fontSize = 9.sp, lineHeight = 14.sp, letterSpacing = .4.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            if (state.settings.showImages) Box(Modifier.size(84.dp).clip(RoundedCornerShape(10.dp))) { Cover(article, Modifier.fillMaxSize()) }
+            SaveButton(article, state, library)
         }
     }
 }

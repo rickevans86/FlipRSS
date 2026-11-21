@@ -1,14 +1,20 @@
 # HANDOFF
 
-Agent: ChatGPT Codex. Task: #46, update AI records at Rick's request.
-Completed: reconciled all six .ai files with live GitHub, final #43 records merge #45/cb08049, latest v0.12.1 native release/digest and successful publisher44737339847. No other AI changes found. Source-tab settings task #43 is closed; only this administrative issue was open during verification.
-In progress: no application development. Records branch codex/46-ai-records; its PR closes #46 when merged. Standing explicit session main/build/publish authorization applies; the repository collaboration protocol itself is unchanged.
-Tests/checks: git diff --check, .ai-only diff, append-only activity/decision history and app-tree equality. No new build/unit/device tests run because this change is documentation only. Historical release validation:109 JVM tests each debug/release, release lint0errors12warnings/build, instrumentation compilation,9 publisher tests/actionlint passed. No physical UI/installer/Gecko/BPC/audio tests or independent review claimed.
-Blockers: none for records. Windows SelfHosted Android runs are queued; earlier runner-list access403 prevents confirming runner health/labels. No unrelated runner fix started.
-Next action: Rick install/update v0.12.1; independently toggle Show FreshRSS/Show FlipRSS, hide the active tab, turn all optional tabs off to check Saved, re-enable and restart. Also test The Age via Open original → wait for visible full text → Read in app → Read aloud. Report the exact article URL if extraction still fails. New implementation work needs Rick's assignment under AGENTS.md.
-Shared records updated: Yes; history preserved, task board rebuilt, implementation claims clear. No .ai/chat-backups folder exists.
-Remote synchronization: current main/source/artifact/feature and records PRs/latest release/publisher confirmed before this commit; this branch's push/merge must be confirmed by the acting agent before reporting completion.
+Agent responsible: Claude. Issue #48, authorized by Rick in-session (direct-to-main; owner-merge rule overridden by explicit session instruction). Claude authored this change and therefore does not review it — Rick names the reviewer.
 
-Latest APK: https://github.com/rickevans86/FlipRSS/releases/download/v0.12.1/FlipRSS.apk
-Version0.12.1/code16;261,408,558 bytes; SHA256df1c963eda36fc0bfb022ce4f1cd761caa5a58607832b9379eae32fc3d05d5a5.
-Source78756ccea778b26b909319bd6f1264419f865131; app tree94fbed4c7d68aff17cfdb04a2c9215b249768312 matches main. Immutable artifact28186f022e1d76014abf449d86616de42871ef14/codex/43-release-download; never merge binary branch. Retain signing key; never publish it. v0.11+ in-app updater supports size; older<=0.10.1 install directly without uninstalling. Full state/provenance in PROJECT_STATE.md; prior activity/decisions remain append-only.
+Completed (in-app browser + feeds):
+- Compact browser chrome: the browser now shows only the page title + External button + load progress. Removed the top row (close, back, forward, reload/stop, tab switcher, add-on puzzle icon), the address bar + Go, and the Read-in-app button. Close/back use the Android system back gesture (existing BackHandler: history back → close extra tab → finish).
+- Add-on controls relocated: the in-browser puzzle entry is gone. Add-on management stays at Settings → "Browser and add-on" (reuses the settings-only BrowserActivity, which now closes on dismiss).
+- Non-persistent browsing: GeckoView sessions/popups use private mode (no persisted cookies/history/cache); all tabs close on exit; BPC and uBlock are marked allowedInPrivateBrowsing so they still run.
+- uBlock Origin 1.76.7.0 (MV2, GPL-3.0) added as a second bundled add-on: built unmodified from pinned upstream source (gorhill/uBlock commit 4d6a3adc716c1a8e47167234f37279eb83613e66) with uBlockOrigin/uAssets filter lists, unpacked into app/src/main/assets/ublock/, pinned xpi at third_party/ublock/uBlock0_1.76.7.0.firefox.xpi (SHA256 302d0966c04c905425306e53bc87e9660f91e0210b4639cb70234f7c3e72cd21). Installed via ensureBuiltIn, independent toggle/pref ("ublock-enabled"), no toolbar/popup UI (background blocking). ~29 MB added to assets.
+- Feed layout setting: AppSettings.feedLayout (TILE default | LIST), persisted in app-settings ("feed-layout"); Settings → Appearance → Feed layout. LIST renders single-column compact rows with a right-hand thumbnail (StoryRow).
+
+Files changed: app/src/main/java/com/fliprss/app/browser/{BrowserActivity,BrowserEngine,BrowserModel}.kt; MainActivity.kt; SettingsDialog.kt; data/{AppSettings,AndroidSettingsStore}.kt; app/src/main/assets/ublock/** (new, 667 files); app/src/main/assets/notices/{browser.txt,GPL-3.0.txt}; THIRD_PARTY_NOTICES.md; third_party/ublock/uBlock0_1.76.7.0.firefox.xpi (new); app/src/test/java/com/fliprss/app/browser/UBlockBundledAddonTest.kt (new).
+
+Tests: NOT RUN. No Android SDK / GeckoView build or device in the authoring environment (maven.mozilla.org is outside the allowlist, so Gradle cannot resolve GeckoView here). Needs the SelfHosted CI build + on-device verification by Rick. Added UBlockBundledAddonTest mirrors BundledAddonTest (pins xpi hash, verifies assets match the archive byte-for-byte, checks manifest id/version and GPL licence).
+
+Blockers: Existing Windows CI queue / SelfHosted runner permissions restriction unchanged (not touched). Production signing still unconfigured (prototype signer).
+
+Next action: Rick build v-next on SelfHosted + install, then verify — browser shows only title/External and system-back closes it; add-on + ad-blocker toggles from Settings; open a news/paywall page with BPC on and an ad-heavy page with uBlock on; confirm nothing persists after exit (cookies/history); switch Feed layout Tiles↔List and confirm it persists across restart.
+
+Shared records updated: Yes. Remote synchronization: Confirmed (pushed to main). Reviewer: Rick to name (not Claude).

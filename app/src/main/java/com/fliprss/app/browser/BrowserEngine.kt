@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.mozilla.geckoview.*
 
 internal data class AddonState(val enabled: Boolean = false, val busy: Boolean = false,
-    val error: String? = null, val optionsUrl: String? = null)
+    val error: String? = null, val optionsUrl: String? = null,
+    val adblockEnabled: Boolean = false, val adblockBusy: Boolean = false, val adblockError: String? = null)
 internal suspend fun <T : Any> GeckoResult<T>.awaitResult(): T = suspendCancellableCoroutine { continuation ->
     accept({ value -> if (continuation.isActive) {
         if (value != null) continuation.resume(value)
@@ -27,6 +28,7 @@ internal class BrowserEngine private constructor(context: Context) {
     val reader = ReaderBridge(runtime)
     private val preferences = context.applicationContext.getSharedPreferences("browser-addon", 0)
     private val mutex = Mutex()
+    private val adblockMutex = Mutex()
     private val mutable = MutableStateFlow(AddonState())
     val state = mutable.asStateFlow()
     private var extension: WebExtension? = null
@@ -53,6 +55,7 @@ internal class BrowserEngine private constructor(context: Context) {
     fun detach(session: GeckoSession) { reader.detach(session); actions.remove(session) }
     var host = WeakReference<BrowserModel>(null)
     val requestedEnabled get() = preferences.getBoolean("enabled", false)
+    val requestedAdblock get() = preferences.getBoolean("ublock-enabled", false)
     init {
         runtime.webExtensionController.setPromptDelegate(object : WebExtensionController.PromptDelegate {
             override fun onOptionalPrompt(extension: WebExtension, permissions: Array<String>, origins: Array<String>,
@@ -69,17 +72,40 @@ internal class BrowserEngine private constructor(context: Context) {
             if (installed != null) {
                 installed = if (enabled) runtime.webExtensionController.enable(installed, WebExtensionController.EnableSource.USER).awaitResult()
                     else runtime.webExtensionController.disable(installed, WebExtensionController.EnableSource.USER).awaitResult()
+                if (enabled) installed = runtime.webExtensionController.setAllowedInPrivateBrowsing(installed, true).awaitResult()
                 bind(installed)
             }
             extension = installed
             val actual = installed?.metaData?.enabled == true
             check(actual == enabled)
             preferences.edit { putBoolean("enabled", actual) }
-            mutable.value = AddonState(enabled = actual, optionsUrl = installed?.metaData?.optionsPageUrl)
+            mutable.value = mutable.value.copy(enabled = actual, busy = false, error = null, optionsUrl = installed?.metaData?.optionsPageUrl)
             true
         } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
         catch (_: Exception) {
             mutable.value = mutable.value.copy(busy = false, error = "Could not apply the add-on setting. Retry or use your external browser.")
+            false
+        }
+    }
+    }
+    suspend fun configureAdblock(enabled: Boolean): Boolean = adblockMutex.withLock { kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
+        mutable.value = mutable.value.copy(adblockBusy = true, adblockError = null)
+        try {
+            var installed = runtime.webExtensionController.list().awaitResult().firstOrNull { it.id == UBLOCK_ID }
+            if (enabled) installed = runtime.webExtensionController.ensureBuiltIn("resource://android/assets/ublock/", UBLOCK_ID).awaitResult()
+            if (installed != null) {
+                installed = if (enabled) runtime.webExtensionController.enable(installed, WebExtensionController.EnableSource.USER).awaitResult()
+                    else runtime.webExtensionController.disable(installed, WebExtensionController.EnableSource.USER).awaitResult()
+                if (enabled) installed = runtime.webExtensionController.setAllowedInPrivateBrowsing(installed, true).awaitResult()
+            }
+            val actual = installed?.metaData?.enabled == true
+            check(actual == enabled)
+            preferences.edit { putBoolean("ublock-enabled", actual) }
+            mutable.value = mutable.value.copy(adblockEnabled = actual, adblockBusy = false, adblockError = null)
+            true
+        } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+        catch (_: Exception) {
+            mutable.value = mutable.value.copy(adblockBusy = false, adblockError = "Could not apply the ad blocker setting. Retry or use your external browser.")
             false
         }
     }
@@ -117,6 +143,7 @@ internal class BrowserEngine private constructor(context: Context) {
     }
     companion object {
         const val ID = "magnolia@12.34"
+        const val UBLOCK_ID = "uBlock0@raymondhill.net"
         fun addonRequested(context: Context) = context.applicationContext.getSharedPreferences("browser-addon", 0).getBoolean("enabled", false)
         private var instance: BrowserEngine? = null
         fun get(context: Context): BrowserEngine = instance ?: BrowserEngine(context).also { instance = it }

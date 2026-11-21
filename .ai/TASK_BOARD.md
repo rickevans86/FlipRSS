@@ -1,15 +1,14 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-20 by ChatGPT Codex.
+Updated 2026-11-21 by Claude.
 
-| Issue | Responsible AI | Status at verification | Branch |
-|---|---|---|---|
-| #46 — Refresh AI collaboration records after v0.12.1 release | Codex | Records complete; awaiting this PR merge/closure | codex/46-ai-records |
+- #48 (ai:claude) — Compact in-app browser; add-on settings in app Settings; private
+  (non-persistent) browsing; add uBlock Origin ad blocker; feed Tiles/List layout.
+  Implemented and pushed directly to main at Rick's in-session instruction. Tests NOT
+  RUN in authoring env (no Android/GeckoView build/device). Awaiting SelfHosted CI build
+  + Rick device verification and reviewer assignment.
 
-Snapshot is taken before this records PR merges; its closing reference closes #46.
-No open application implementation tasks. #43 closed; #44/#45 merged; latest
-regular v0.12.1 published and verified. No other AI claims or implementation PRs.
+Earlier: #43 closed after PR #44 merge and verified native v0.12.1 publication.
 
-Remaining checks: physical phone source-tab visibility/fallback/restart/Saved,
-The Age browser-to-reader text and audio. Windows CI remains queued; runner
-health/labels are unverified due earlier access restriction. No runner fix started.
+Existing Windows CI queue / SelfHosted runner permissions restriction remains unchanged;
+no unrelated fix started.

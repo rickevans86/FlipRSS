@@ -347,3 +347,28 @@ APK download or unit-test evidence was rerun for this records-only task. Keep
 physical-device checks and queued Windows CI explicit; do not fold a runner fix
 into an AI-records update. Preserve the collaboration protocol and append-only
 history. No application architecture or release change is introduced.
+
+## 2026-11-21 — In-app browser minimal chrome, private sessions, second add-on; feed layout (Claude, with Rick)
+
+- **Minimal browser chrome.** The in-app browser shows only the page title, an External
+  button and load progress. Navigation and closing rely on the Android system back
+  gesture (history back → close extra tab → finish). Removed the toolbar (close, back,
+  forward, reload/stop, tab switcher), the address bar + Go, and Read-in-app. Trade-off:
+  no in-browser reload or tab switcher; additional tabs are reachable only via back.
+- **Add-on controls in app Settings.** The in-browser puzzle entry is removed; add-on
+  management stays at Settings → "Browser and add-on", reusing the settings-only
+  BrowserActivity (now closes on dismiss) rather than duplicating the GeckoRuntime inside
+  the main Settings screen.
+- **Non-persistent browsing.** GeckoView sessions and the BPC popup use private mode (no
+  persisted cookies/history/cache); all tabs close on exit. Extensions are marked
+  allowedInPrivateBrowsing so BPC and uBlock keep working. Within a session, private
+  cookies still function (just not persisted), so BPC behaviour is preserved per-session.
+- **Second bundled add-on: uBlock Origin (MV2), GPL-3.0.** Built unmodified from pinned
+  upstream source (gorhill/uBlock commit 4d6a3adc, v1.76.7.0) with uBlockOrigin/uAssets
+  filter lists, bundled like BPC (unpacked assets + pinned xpi + hash test), installed via
+  ensureBuiltIn, managed by an independent toggle and pref ("ublock-enabled"). No toolbar
+  action/popup UI — it blocks in the background (webRequest). Adds ~29 MB to app assets;
+  accepted given the already-large GeckoView APK.
+- **Feed layout option.** AppSettings.feedLayout (TILE default | LIST), persisted. LIST
+  renders single-column compact rows with a right-hand thumbnail; TILE keeps the hero +
+  two-column magazine cards.

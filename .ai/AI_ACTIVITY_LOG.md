@@ -362,3 +362,25 @@ completed claims. Branch codex/46-ai-records; records PR closes #46 on merge.
 Checks: .ai-only diff, unchanged app tree, append-only history, git diff --check.
 Build/unit/device tests not rerun for documentation only; prior release test
 results are historical evidence. No app/version/release/runner changes made.
+
+- 2026-11-21 — **Claude** — Issue #48, authorized by Rick in-session (direct-to-main).
+  Compacted the in-app browser to page title + External only (removed close/back/
+  forward/reload/tab-switcher/add-on icon, address bar + Go, and Read in app); close
+  and back now use the Android system back gesture. Removed the in-browser add-on
+  puzzle entry; add-on controls remain in app Settings → "Browser and add-on" (the
+  settings-only browser now closes on dismiss). Made browsing non-persistent: GeckoView
+  private-mode sessions/popups, all tabs closed on exit, extensions allowedInPrivate
+  Browsing so BPC/uBlock still run. Added uBlock Origin 1.76.7.0 (MV2, GPL-3.0) as a
+  second bundled add-on, built unmodified from pinned source (gorhill/uBlock 4d6a3adc)
+  with uAssets lists, unpacked into app/src/main/assets/ublock/, pinned xpi
+  third_party/ublock/uBlock0_1.76.7.0.firefox.xpi (SHA256 302d0966...), installed via
+  ensureBuiltIn with an independent toggle/pref ("ublock-enabled") and background-only
+  blocking. Added a feed layout setting (Tiles/List) at Settings → Appearance; LIST
+  renders compact rows with a right-hand thumbnail. Files: browser/{BrowserActivity,
+  BrowserEngine,BrowserModel}.kt, MainActivity.kt, SettingsDialog.kt, data/{AppSettings,
+  AndroidSettingsStore}.kt, assets/ublock/** (new), assets/notices/{browser.txt,
+  GPL-3.0.txt}, THIRD_PARTY_NOTICES.md, third_party/ublock/*.xpi, test/.../
+  UBlockBundledAddonTest.kt. Tests: Not run (no Android/GeckoView build or device in
+  this environment; maven.mozilla.org off the allowlist). Pushed directly to main per
+  Rick's instruction. Claude authored this change and does not review it; Rick names
+  the reviewer.
