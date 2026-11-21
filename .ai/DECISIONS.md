@@ -372,3 +372,7 @@ history. No application architecture or release change is introduced.
 - **Feed layout option.** AppSettings.feedLayout (TILE default | LIST), persisted. LIST
   renders single-column compact rows with a right-hand thumbnail; TILE keeps the hero +
   two-column magazine cards.
+
+## 2026-11-21 — Preserve required extension locales in APK (#49, Codex)
+
+Codex #49: override Android’s default asset ignore pattern to preserve underscore-prefixed extension directories. Source/archive checks alone miss APK filtering; verify every source asset against the final signed APK before publication using scripts/verify-apk-assets.py. Retain Claude #48 compact/private browser and layout design. Ship v0.13.0/code17 with existing signer and standard FlipRSS.apk asset, keeping internal verified parts branch unmerged. No runtime private/add-on behavior claim from compilation alone.

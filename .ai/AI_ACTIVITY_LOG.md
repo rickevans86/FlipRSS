@@ -384,3 +384,7 @@ results are historical evidence. No app/version/release/runner changes made.
   this environment; maven.mozilla.org off the allowlist). Pushed directly to main per
   Rick's instruction. Claude authored this change and does not review it; Rick names
   the reviewer.
+
+## 2026-11-21 — Built Claude update and corrected release asset packaging (#49, Codex)
+
+AI: Codex, #49. Claude retains feature authorship (#48/main2985325). Built v0.13.0/code17 from be13b5c50b08d47bfb3f081544fd0138b671c37e/app00f7466ec51ce32c7c54460c160e05adcf4e76e5. Found initial APK omitted72 required uBlock locale files due Android default underscore-folder filtering; fixed packaging and rebuilt. All720 assets now match. Added reusable APK asset verifier;4 smoke fixtures pass.110 JVM tests each variant, release build/lint0errors12warnings, instrumentation compilation,9 publisher tests/actionlint pass. Signature/prior signer/alignment/version/SDK/ABI/39 native libraries verified. Immutable artifact3cac8bab1f2e3cc3733cfa1348755897e11f1921, 267602668 bytes SHA256eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3. Native publication pending. No incomplete APK published, no physical device tests or independent review claimed. No unrelated runner work. Preserved Claude history and updated six shared records.

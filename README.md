@@ -465,6 +465,10 @@ add-on tests remain pending.
 
 ## Browser text in the reader and Read aloud (#40)
 
+As of v0.13.0, Claude’s compact browser removes the manual **Read in app** button.
+The automatic reader loader and **Load browser text** remain available. The manual
+return instructions below describe the earlier v0.12.x browser.
+
 The reader now uses the built-in browser when a plain article fetch cannot expand
 the feed text. If Bypass Paywalls Clean is enabled, its page changes apply to this
 load too; with the add-on enabled the app also checks for more text after a partial
@@ -531,3 +535,35 @@ Hosted publisher44737339847 SUCCESS; all14 native release digests verified.
 Latest native APK/build-info/checksum downloaded and matched signed build.
 [Download FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.12.1/FlipRSS.apk).
 Actual phone preference/navigation checks not run.
+
+## Compact browser, private tabs, uBlock and feed layout (#48/#49)
+
+Claude implemented these features in main commit `2985325`; Codex builds and
+publishes them in v0.13.0 (code 17). The browser shows a page title, **External**
+and loading progress. Use Android system Back to navigate back or close it.
+Browser add-on controls remain under **Settings → Browser and add-on**. The prior
+address toolbar, tab switcher, add-on icon and manual **Read in app** action are
+removed by this design; automatic article text loading remains available.
+
+Browser tabs and add-on popups use Gecko private sessions, and tabs close on exit.
+The Settings page has independent switches for bundled Bypass Paywalls Clean and
+**uBlock Origin 1.76.7.0**. Both are opt-in; existing choices are retained. uBlock
+runs as a background ad blocker. Its pinned XPI, source reference and GPL-3.0
+licence are included in `third_party/ublock`, the asset bundle and notices.
+
+Under **Settings → Appearance → Feed layout**, choose **Tiles** for the existing
+magazine layout or **List** for compact rows with right-hand thumbnails. This
+preference is saved. Real device checks for navigation, private-session behavior,
+add-on operation and layout persistence remain pending; build and unit checks do
+not establish those runtime results.
+
+Before publishing, run `python3 scripts/verify-apk-assets.py path/to/FlipRSS.apk`.
+This checks every bundled asset against source, including uBlock's required
+`_locales` files. Android's default asset filter excludes underscore-prefixed
+folders; this project overrides that filter to keep extension locales in the APK.
+
+Release candidate **v0.13.0/code17**:110 JVM tests each variant, release build/lint
+0errors12warnings, instrumentation compilation,9 publisher tests/actionlint and
+4 APK-verifier smoke fixtures pass. All720 assets and39 native libraries verified.
+APK 267602668 bytes; SHA256 `eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3`.
+Native publication pending; physical device behavior not tested.

@@ -1,3 +1,4 @@
 # FILE_OWNERSHIP
 
-No in-progress task claims. #48 implemented and pushed directly to main (Claude); files released.
+No in-progress implementation claims. #49 build/packaging fix complete; native
+publication and verification are tracked in task board.
