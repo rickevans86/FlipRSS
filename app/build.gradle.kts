@@ -11,8 +11,8 @@ android {
         applicationId = "com.fliprss.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 16
-        versionName = "0.12.1"
+        versionCode = 17
+        versionName = "0.13.0"
         ndk { abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64") }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
