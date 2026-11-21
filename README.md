@@ -561,3 +561,9 @@ Before publishing, run `python3 scripts/verify-apk-assets.py path/to/FlipRSS.apk
 This checks every bundled asset against source, including uBlock's required
 `_locales` files. Android's default asset filter excludes underscore-prefixed
 folders; this project overrides that filter to keep extension locales in the APK.
+
+Release candidate **v0.13.0/code17**:110 JVM tests each variant, release build/lint
+0errors12warnings, instrumentation compilation,9 publisher tests/actionlint and
+4 APK-verifier smoke fixtures pass. All720 assets and39 native libraries verified.
+APK 267602668 bytes; SHA256 `eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3`.
+Native publication pending; physical device behavior not tested.

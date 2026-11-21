@@ -1,5 +1,4 @@
 # FILE_OWNERSHIP
 
-| Files / paths | Task | Agent | Branch |
-|---|---|---|---|
-| app/build.gradle.kts; concrete build blockers if found; README.md; .release/**; .ai/** | #49 build/publish Claude update | Codex | codex/49-claude-release |
+No in-progress implementation claims. #49 build/packaging fix complete; native
+publication and verification are tracked in task board.

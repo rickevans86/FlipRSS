@@ -235,5 +235,49 @@
     ],
     "prerelease": false,
     "description": "Settings \u2192 Bottom navigation now has independent Show FreshRSS and Show FlipRSS switches. Both default on; turning one off hides its bottom bar icon. Choices persist across restarts. Existing accounts, feeds and combined Saved stories are retained. Search visibility remains independent.\n\nWhen the current tab is hidden, select another visible tab and clear its old category. Saved stays available even when FreshRSS, FlipRSS and Search are all hidden.\n\nAI: ChatGPT Codex, #43. 109 JVM tests EACH debug/release, release build/lint (0 errors,12 warnings), instrumentation compilation,9 publisher tests/actionlint pass. Android preference persistence assertion compiles but has not been executed on a device. All assets/39 Mozilla libraries/signing/alignment/package/version/SDK/ABI verified. Same prototype test signer retained; production signing unconfigured. Android UI/installer and independent review not run. v0.11+ updater accepts APK size; <=0.10.1 requires direct installation over existing app."
+  },
+  {
+    "tag": "v0.13.0",
+    "artifact_commit": "3cac8bab1f2e3cc3733cfa1348755897e11f1921",
+    "directory": "release-download",
+    "source_commit": "be13b5c50b08d47bfb3f081544fd0138b671c37e",
+    "apk": "FlipRSS.apk",
+    "sha256": "eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3",
+    "apk_parts": [
+      {
+        "name": "FlipRSS.apk.part001",
+        "sha256": "a0690778ee4c4d169a3875d6ec4f72941e876ca1cfa54268f5385848f737b61a"
+      },
+      {
+        "name": "FlipRSS.apk.part002",
+        "sha256": "67d5c61ec4e6aa577f324f39eb2fe2c48d59068b6dd86c42ecbb1418fe33f9af"
+      },
+      {
+        "name": "FlipRSS.apk.part003",
+        "sha256": "e7f4ed48b521cd5b53ca6fce8432b4aae1658540913a41d03d0233c7535156ac"
+      },
+      {
+        "name": "FlipRSS.apk.part004",
+        "sha256": "b7aad8a23cb1d7cd8009af41619b5b8cf7fa4acfb45c05923223fa392f3b851d"
+      },
+      {
+        "name": "FlipRSS.apk.part005",
+        "sha256": "b57a6a3f7e05de627e40c3f2db217bd22b80f91df546695b64c85fec00f6ad35"
+      },
+      {
+        "name": "FlipRSS.apk.part006",
+        "sha256": "a72de86940b055a7fbb0b3aef650391b4998cb05b293d75c742d6f7d34b0922d"
+      },
+      {
+        "name": "FlipRSS.apk.part007",
+        "sha256": "14171678b1bd2cc5d714ef1a7c7d188489b8b262bcb673113e5a6e5e0862382e"
+      },
+      {
+        "name": "FlipRSS.apk.part008",
+        "sha256": "62a5efef238181e25948655d1c232e470aadde1bb1f9a03642964ffe1ca64e0d"
+      }
+    ],
+    "prerelease": false,
+    "description": "Claude\u2019s #48 update: compact in-app browser with title, External and progress; Android system Back handles navigation/closing. Browser tabs and add-on popups use private sessions. Add-on controls remain in Settings \u2192 Browser and add-on, with separate opt-in BPC and uBlock Origin 1.76.7.0 switches. Settings \u2192 Appearance \u2192 Feed layout offers Tiles or compact List rows with right-hand thumbnails. The old browser toolbar, address bar, tab switcher and manual Read in app button are removed by this design; automatic reader text loading remains.\n\nCodex #49 built and published this update, bumped version17, fixed Android default asset filtering that omitted 72 required uBlock locale files, and added reusable APK asset verification. All720 bundled assets now match source; no incomplete APK was published.\n\nValidation:110 JVM tests EACH debug/release, release build/lint (0 errors,12 warnings), instrumentation compilation,9 publisher tests/actionlint,4 asset-checker smoke fixtures passed. Signed APK assets/39 Mozilla native libraries/package/version/SDK/ABI/alignment/prior signer verified. Actual device/private-session/add-on/site/layout/installer behavior and independent review remain untested. Same prototype test signer retained; production signing unconfigured. Android8+, ARM64/ARMv7/x86-64. v0.11+ updater supports APK size; <=0.10.1 needs direct installation over existing app."
   }
 ]
