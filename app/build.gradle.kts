@@ -22,6 +22,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     packaging { jniLibs.useLegacyPackaging = true }
+    // Keep extension _locales folders; Android defaults exclude underscore-prefixed asset directories.
+    androidResources { ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~" }
 }
 
 dependencies {
