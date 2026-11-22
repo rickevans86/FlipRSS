@@ -570,3 +570,29 @@ Hosted publisher44876127929 SUCCESS; all15 native release digests verified.
 Latest native APK/build-info/checksum downloaded and matched signed build.
 [Download FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.13.0/FlipRSS.apk).
 Physical device behavior not tested.
+
+## Pinned reading controls and category memory (#52)
+
+The library header stays fixed while stories scroll. A small **F** logo leaves
+room for 48dp action buttons: FreshRSS-only **+**, an eye for **Hide read**, stacked
+pages for **All stories**, a **✓** for **Mark all read**, refresh and Settings.
+Hide read and All stories indicate their active state and have accessible labels.
+Saved and Search keep the compact header without source filters or bulk read.
+The former text control row and All stories category chip are removed.
+
+Each local library/FreshRSS account remembers its selected category across restarts.
+First use selects the first available category; a removed or hidden category falls
+back to the first visible category. Explicitly choosing All stories is remembered.
+If no categories are available, All stories is the fallback. Account identities
+use separate hashed preference keys; account credentials are not stored there.
+
+Successful bulk-read operations update read state without a “Marked … as read”
+banner. Failure messages and useful subscription notices remain. The existing
+bottom bulk-read shortcut and Settings → Confirm mark all read apply as before;
+the toolbar tick respects the selected source/category and pending-write guards.
+
+Release candidate **v0.14.0/code18**:117 JVM tests each variant, release build/lint
+0errors12warnings, instrumentation compilation and9 publisher tests/actionlint pass.
+Header320dp/pinned-scroll/category-store device tests compile only; not executed.
+APK 267606764 bytes; SHA256 `ca746d20fb78a46c5b74d603726d3e917b596d9fb8a3c64b175ed408e64d52aa`.
+All720 assets/39 native libraries verified. Native publication pending.

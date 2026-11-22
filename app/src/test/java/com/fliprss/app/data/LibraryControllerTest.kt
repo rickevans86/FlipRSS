@@ -248,7 +248,18 @@ class LibraryControllerTest {
         assertTrue(repository.readWrites.isEmpty())
         assertTrue(story.id in controller.state.value.readIds)
         assertEquals(0, controller.state.value.unread)
-        assertNotNull(controller.state.value.notice)
+        assertNull(controller.state.value.notice)
+    }
+
+    @Test fun demoBulkReadUpdatesStoriesWithoutSuccessBanner() = runTest {
+        val prefs = DemoPrefs()
+        val controller = LibraryController(this, Connector(emptyMap()), SavedSession(), prefs)
+        advanceUntilIdle()
+        val target = controller.markReadTarget()
+        controller.markAllRead(target)
+        assertTrue(controller.state.value.readIds.isNotEmpty())
+        assertNull(controller.state.value.notice)
+        assertNull(controller.state.value.error)
     }
 
     @Test fun bulkFailureDoesNotClaimReadAndStaleAccountConfirmationIsRejected() = runTest {

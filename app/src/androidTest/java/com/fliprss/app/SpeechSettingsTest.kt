@@ -9,7 +9,7 @@ import org.junit.Test
 class SpeechSettingsTest {
     @get:Rule val compose=createAndroidComposeRule<MainActivity>()
     @Test fun speechDialogHasExplicitOnlineOptInAndPreviewControls() {
-        compose.onNodeWithContentDescription("App settings").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("App settings").performClick()
         compose.onNodeWithText("Speech and voices").performScrollTo().performClick()
         compose.onNodeWithText("Allow online voices").assertExists()
         compose.onNodeWithText("Preview voice").performScrollTo().assertExists()

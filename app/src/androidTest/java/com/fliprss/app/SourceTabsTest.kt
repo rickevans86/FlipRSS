@@ -20,6 +20,6 @@ class SourceTabsTest {
         compose.onNodeWithText("Website or feed URL").assertIsDisplayed()
         compose.onNodeWithText("Saved",useUnmergedTree=true).performClick()
         compose.onNodeWithContentDescription("Add feed").assertDoesNotExist()
-        compose.onNodeWithText("Hide read").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Hide read stories").assertDoesNotExist()
     }
 }

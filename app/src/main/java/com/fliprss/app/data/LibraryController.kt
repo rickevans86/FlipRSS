@@ -344,7 +344,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
         if (old.demo) {
             val ids = DemoLibrary.articles.map { it.id }.toSet()
             // Use the confirmed snapshot, not the subsequently selected scope.
-            mutable.update { it.copy(readIds = it.readIds + target.knownIds.intersect(ids), notice = "Marked ${target.title} as read.") }
+            mutable.update { it.copy(readIds = it.readIds + target.knownIds.intersect(ids), notice = null) }
             demoPreferences.save(DemoReadingState(mutable.value.savedIds, mutable.value.readIds))
             return
         }
@@ -358,7 +358,7 @@ class LibraryController(private val scope: CoroutineScope, private val connector
                 if (current == generation) {
                     target.knownIds.forEach { readRevision[it] = ++revision }
                     mutable.update { it.copy(markingAll = false, readIds = it.readIds + target.knownIds,
-                        notice = "Marked ${target.title} as read.") }
+                        notice = null) }
                     refresh()
                 }
             } catch (cancelled: CancellationException) { throw cancelled }

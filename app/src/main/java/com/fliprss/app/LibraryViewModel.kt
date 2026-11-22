@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class LibraryViewModel(application: Application) : AndroidViewModel(application) {
     private val preferences = application.getSharedPreferences("demo-reading-state", 0)
     private val settings = AndroidSettingsStore(application)
+    internal val categories = CategorySelections(AndroidCategoryStore(application))
     private val demo = object : DemoPreferences {
         override fun load() = DemoReadingState(preferences.getStringSet("saved", emptySet()).orEmpty().toSet(),
             preferences.getStringSet("read", emptySet()).orEmpty().toSet())
