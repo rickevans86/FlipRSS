@@ -1,4 +1,3 @@
 # FILE_OWNERSHIP
 
-No in-progress implementation claims. #52 implemented; native publication and
-verification tracked in task board.
+No in-progress task claims. #52 closed after verified native v0.14.0 publication.

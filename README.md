@@ -562,7 +562,7 @@ This checks every bundled asset against source, including uBlock's required
 `_locales` files. Android's default asset filter excludes underscore-prefixed
 folders; this project overrides that filter to keep extension locales in the APK.
 
-Published regular/latest **v0.13.0/code17**:110 JVM tests each variant, release build/lint
+Previous release **v0.13.0/code17**:110 JVM tests each variant, release build/lint
 0errors12warnings, instrumentation compilation,9 publisher tests/actionlint and
 4 APK-verifier smoke fixtures pass. All720 assets and39 native libraries verified.
 APK 267602668 bytes; SHA256 `eee82eca7aff377acf8adc979fedd389c39fbed4af21b4f2cdf9e0379f5433e3`.
@@ -591,8 +591,11 @@ banner. Failure messages and useful subscription notices remain. The existing
 bottom bulk-read shortcut and Settings → Confirm mark all read apply as before;
 the toolbar tick respects the selected source/category and pending-write guards.
 
-Release candidate **v0.14.0/code18**:117 JVM tests each variant, release build/lint
+Published regular/latest **v0.14.0/code18**:117 JVM tests each variant, release build/lint
 0errors12warnings, instrumentation compilation and9 publisher tests/actionlint pass.
 Header320dp/pinned-scroll/category-store device tests compile only; not executed.
 APK 267606764 bytes; SHA256 `ca746d20fb78a46c5b74d603726d3e917b596d9fb8a3c64b175ed408e64d52aa`.
-All720 assets/39 native libraries verified. Native publication pending.
+All720 assets/39 native libraries verified. Hosted publisher45005126569 SUCCESS.
+All16 native release digests verified; latest APK/build-info/checksum downloaded
+and matched signed build.
+[Download FlipRSS.apk](https://github.com/rickevans86/FlipRSS/releases/download/v0.14.0/FlipRSS.apk).

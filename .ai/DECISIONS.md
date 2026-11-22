@@ -384,3 +384,7 @@ Verify native v0.13.0 release download/metadata/checksum against the signed APK 
 ## 2026-11-22 — Keep source controls pinned and category identity scoped (#52, Codex)
 
 Place library toolbar in Scaffold.topBar with24dp F brand and48dp targets, six actions plus8dp padding fit320dp. Keep source controls off Saved/Search. Remember category separately from appearance settings using hashed per-account namespaces and a distinct absent-vs-explicit-All preference. Resolve category before enabling scope-sensitive actions; select first visible on missing/hidden category, retain empty catalogue preference, guard stale auto-persistence. Clear only bulk-read success notice, retain errors/subscription feedback and prior footer/confirmation behavior. Current Rick main/build/publish instruction authorizes release.
+
+## 2026-11-22 — Publish and verify pinned-header release (#52, Codex)
+
+Publish regular/latest v0.14.0 with standard native FlipRSS.apk and same signer; check downloaded native bytes/build-info/checksum against signed build and all16 release digests against manifest. Keep8-part artifact branch unmerged. Preserve distinction between117 JVM tests/compiled new UI tests and unexecuted physical header/layout/persistence/installer behavior. Do not broaden this UI release into runner/browser changes.
