@@ -2,10 +2,11 @@
 
 Rebuilt from live GitHub Issues on 2026-11-22 by Codex.
 
-| Issue | Task | AI | Status | Branch |
-|---|---|---|---|---|
-| #52 | Pinned compact reading toolbar/category memory | Codex | Implementation/build/signing complete; PR/publication pending | codex/52-reading-toolbar |
+No open Issues. #52 closed after #53 merge and verified regular/latest native
+v0.14.0 publication. All16 native release digests/three assets checked; latest
+APK bytes/metadata/checksum downloaded and match signed build. No active claims.
 
-No other open Issues/PRs/overlapping claims. Published latest v0.13.0 until new
-native publication verified. Physical UI/persistence tests and independent review
-not run. Existing Windows runner queue unchanged; no unrelated fix started.
+Next: phone fixed-header/320dp actions/active icons/category persistence/source
+isolation/scoped tick/no-read-banner checks. Device tests compiled, NOT executed.
+Independent review and existing browser/installer physical checks remain pending.
+Existing Windows runner queue unchanged; no unrelated fix started.
