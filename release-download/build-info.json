@@ -1,0 +1,56 @@
+{
+  "version": "0.14.0",
+  "version_code": 18,
+  "source_commit": "be59574b4de834ccd9e2861539d26fd8780c080d",
+  "app_tree": "799c0021b4b56b0ec7f2a207eef346af97b0b2ee",
+  "sha256": "ca746d20fb78a46c5b74d603726d3e917b596d9fb8a3c64b175ed408e64d52aa",
+  "size_bytes": 267606764,
+  "variant": "release",
+  "debuggable": false,
+  "min_sdk": 26,
+  "target_sdk": 35,
+  "compile_sdk": "37.2",
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "ai": "ChatGPT Codex",
+  "task": 52,
+  "geckoview": "160.0.20261116130455",
+  "addon": {
+    "version": "4.4.9.6",
+    "id": "magnolia@12.34",
+    "upstream_commit": "50f74c1e667eff99e04a22f28158634509234e8d",
+    "xpi_sha256": "0d0b9c627eb5085c16a263f61415c5706428ce7ba259566d0d50c4ac7e096dac",
+    "default_enabled": false,
+    "licence": "MIT; bundled DOMPurify MPL-2.0 option; notices/source included"
+  },
+  "feature_author": "Codex (#52 pinned toolbar and category memory); existing browser/uBlock/layout Claude (#48)",
+  "adblocker": {
+    "name": "uBlock Origin",
+    "version": "1.76.7.0",
+    "id": "uBlock0@raymondhill.net",
+    "source_commit": "4d6a3adc716c1a8e47167234f37279eb83613e66",
+    "xpi_sha256": "302d0966c04c905425306e53bc87e9660f91e0210b4639cb70234f7c3e72cd21",
+    "licence": "GPL-3.0",
+    "default_enabled": false
+  },
+  "tests": {
+    "jvm_debug": 117,
+    "jvm_release": 117,
+    "release_build": "passed",
+    "release_lint": "0 errors / 12 target/dependency/version/KTX warnings",
+    "instrumentation": "compiled only; not executed",
+    "publisher_tests": 9,
+    "actionlint": "passed",
+    "assets": "all committed assets byte-equal; pinned XPI hash and all extracted entries checked",
+    "mozilla_native_libraries": 39,
+    "signing_alignment_sdk_package_abi": "verified"
+  },
+  "signing": "Same prototype test signer as previous releases; production signing unconfigured",
+  "toolchain": "AGP 9.5.1 / Gradle 9.6.0 / built-in Kotlin and Compose 2.4.21 / JDK17 / SDK37.2 / build-tools36",
+  "upgrade": "Direct installation required from <=0.10.1 due to old 80MB updater cap; new limit512MB",
+  "runtime_validation": "No device/emulator browser/rendering/popup/permission/site-bypass/audio/installer/account-write tests or independent review claimed",
+  "source_note": "Exact sourcebe59574/app799c002 built and tested; Codex52 pinned reading toolbar/category memory; required extension locales retained; AGP worktree VCS metadata unavailable"
+}
