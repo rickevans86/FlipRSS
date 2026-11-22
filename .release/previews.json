@@ -279,5 +279,49 @@
     ],
     "prerelease": false,
     "description": "Claude\u2019s #48 update: compact in-app browser with title, External and progress; Android system Back handles navigation/closing. Browser tabs and add-on popups use private sessions. Add-on controls remain in Settings \u2192 Browser and add-on, with separate opt-in BPC and uBlock Origin 1.76.7.0 switches. Settings \u2192 Appearance \u2192 Feed layout offers Tiles or compact List rows with right-hand thumbnails. The old browser toolbar, address bar, tab switcher and manual Read in app button are removed by this design; automatic reader text loading remains.\n\nCodex #49 built and published this update, bumped version17, fixed Android default asset filtering that omitted 72 required uBlock locale files, and added reusable APK asset verification. All720 bundled assets now match source; no incomplete APK was published.\n\nValidation:110 JVM tests EACH debug/release, release build/lint (0 errors,12 warnings), instrumentation compilation,9 publisher tests/actionlint,4 asset-checker smoke fixtures passed. Signed APK assets/39 Mozilla native libraries/package/version/SDK/ABI/alignment/prior signer verified. Actual device/private-session/add-on/site/layout/installer behavior and independent review remain untested. Same prototype test signer retained; production signing unconfigured. Android8+, ARM64/ARMv7/x86-64. v0.11+ updater supports APK size; <=0.10.1 needs direct installation over existing app."
+  },
+  {
+    "tag": "v0.14.0",
+    "artifact_commit": "a5093ec3cf0a2cf7a8e9fc14774aad17ac6c666d",
+    "directory": "release-download",
+    "source_commit": "be59574b4de834ccd9e2861539d26fd8780c080d",
+    "apk": "FlipRSS.apk",
+    "sha256": "ca746d20fb78a46c5b74d603726d3e917b596d9fb8a3c64b175ed408e64d52aa",
+    "apk_parts": [
+      {
+        "name": "FlipRSS.apk.part001",
+        "sha256": "37304f4202e55059265f5d829b4a91016ba5afc735a77d9ab61b898a1826736e"
+      },
+      {
+        "name": "FlipRSS.apk.part002",
+        "sha256": "7bc42b79fef1ef17687385ce6d2e686130f461feee68efb95fab1c25e0155a53"
+      },
+      {
+        "name": "FlipRSS.apk.part003",
+        "sha256": "0fa0539a99096e5ac037769b7ddd7072156ee85c72909a7e4f8e0eeecc61143f"
+      },
+      {
+        "name": "FlipRSS.apk.part004",
+        "sha256": "8cc5ca67d7879e5dfab33940d871962d21342387bf58a45fed0bef1cc2a8ecbf"
+      },
+      {
+        "name": "FlipRSS.apk.part005",
+        "sha256": "5d5d92ad2f7b61c2858134e0d87868ce39ba46c0cef13df7e91cc3dfdee9143a"
+      },
+      {
+        "name": "FlipRSS.apk.part006",
+        "sha256": "014b6429d3812df3e48a24bf300f37df4fa366bf0fad9f2229b1a409744b03ee"
+      },
+      {
+        "name": "FlipRSS.apk.part007",
+        "sha256": "1e40b3b3a37f03ebbc2ed6ed8e063ec257fb180614e58bd30ac98717b743bc51"
+      },
+      {
+        "name": "FlipRSS.apk.part008",
+        "sha256": "ee9cdc973515fd0427df93cc22ff44f614fd510a5c6d79dcc06d2baf9be38848"
+      }
+    ],
+    "prerelease": false,
+    "description": "Fixed library header with small F branding and icon actions: FreshRSS-only +, eye Hide read toggle, stacked-pages All stories, tick Mark all read, refresh and Settings. Source controls are omitted from Saved/Search. 48dp action targets are sized for a320dp header. Remove the separate text filter row and All stories category chip.\n\nRemember category choices per local library/FreshRSS account. First use chooses the first available category; hidden/removed categories fall back safely. Explicit All stories is remembered. Accounts use separate hashed preference keys. Successful bulk read no longer shows a Marked as read banner; errors and useful subscription notices remain. Existing footer shortcut and confirmation preference retained.\n\nAI: Codex, #52.117 JVM tests EACH debug/release, release build/lint (0 errors,12 warnings), instrumentation compilation,9 publisher tests/actionlint passed. New 320dp semantics/sticky-header/Android-persistence device tests compile but were NOT executed. All720 assets/39 native libraries/signing/alignment/package/version/SDK/ABI/prior signer verified. Physical UI/installer/browser tests and independent review remain unexecuted. Same prototype signing identity; production signing unconfigured. Android8+, ARM64/ARMv7/x86-64. v0.11+ updater supports APK size; older<=0.10.1 needs direct install over existing app."
   }
 ]

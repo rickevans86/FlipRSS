@@ -1,12 +1,11 @@
 # TASK_BOARD
 
-Rebuilt from live GitHub Issues on 2026-11-21 by Codex.
+Rebuilt from live GitHub Issues on 2026-11-22 by Codex.
 
-No open Issues. #49 closed after #50 merge and verified regular/latest native
-v0.13.0 publication. #48 (Claude) feature implementation remains closed. Codex
-built, fixed required locale packaging, tested, signed and published. All15 native
-release digests/three assets verified; latest bytes/metadata/checksum match.
+| Issue | Task | AI | Status | Branch |
+|---|---|---|---|---|
+| #52 | Pinned compact reading toolbar/category memory | Codex | Implementation/build/signing complete; PR/publication pending | codex/52-reading-toolbar |
 
-No in-progress implementation claims. Next: phone compact browser/system Back,
-private sessions, independent add-on controls, Tiles/List/restart checks. Physical
-validation and independent review NOT RUN. Existing Windows CI queue unchanged.
+No other open Issues/PRs/overlapping claims. Published latest v0.13.0 until new
+native publication verified. Physical UI/persistence tests and independent review
+not run. Existing Windows runner queue unchanged; no unrelated fix started.

@@ -380,3 +380,7 @@ Codex #49: override Android’s default asset ignore pattern to preserve undersc
 ## 2026-11-21 — Publish only corrected complete-asset APK (#49, Codex)
 
 Verify native v0.13.0 release download/metadata/checksum against the signed APK after final720-asset check, including72 uBlock locale files omitted by the first build. Keep one standard FlipRSS.apk asset and internal8-part artifact branch unmerged. Preserve Claude feature attribution and record Codex build/packaging/release work separately. Do not infer runtime private/add-on behavior from successful build or unit tests.
+
+## 2026-11-22 — Keep source controls pinned and category identity scoped (#52, Codex)
+
+Place library toolbar in Scaffold.topBar with24dp F brand and48dp targets, six actions plus8dp padding fit320dp. Keep source controls off Saved/Search. Remember category separately from appearance settings using hashed per-account namespaces and a distinct absent-vs-explicit-All preference. Resolve category before enabling scope-sensitive actions; select first visible on missing/hidden category, retain empty catalogue preference, guard stale auto-persistence. Clear only bulk-read success notice, retain errors/subscription feedback and prior footer/confirmation behavior. Current Rick main/build/publish instruction authorizes release.
